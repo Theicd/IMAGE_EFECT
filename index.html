@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>אנימציות Pixi.js ל-MP4</title>
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.x/dist/pixi.min.js"></script>
+    <!-- גרסה עדכנית של ffmpeg שתומכת בדפדפנים מודרניים -->
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/ffmpeg.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #121212, #1a1a2e);
+            color: #ffffff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        #controls {
+            background: rgba(30, 30, 30, 0.9);
+            padding: 10px;
+            border-radius: 12px;
+            margin: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        button, select, input[type="file"]::file-selector-button {
+            padding: 8px 16px;
+            background: linear-gradient(45deg, #1e88e5, #42a5f5);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        button:hover, select:hover, input[type="file"]::file-selector-button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #1565c0, #1976d2);
+            box-shadow: 0 4px 15px rgba(30, 136, 229, 0.4);
+        }
+
+        #canvas-container {
+            width: 90vw;
+            height: 60vh;
+            max-width: 800px;
+            max-height: 450px;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            margin: 10px;
+        }
+
+        .progress-bar {
+            width: 90%;
+            max-width: 600px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1e88e5, #42a5f5);
+            width: 0;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <input type="file" id="upload" accept="image/*">
+        <select id="effects">
+            <option value="rotate">סיבוב</option>
+            <option value="zoom">זום</option>
+            <option value="wave">גלים</option>
+            <option value="particles">חלקיקים</option>
+            <option value="glitch">גליץ'</option>
+        </select>
+        <button id="createVideo">צור MP4</button>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-bar-fill"></div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script>
+        let app, sprite, particlesContainer;
+
+        async function setupPixi(imgSrc) {
+            if (app) {
+                app.destroy(true, { children: true, texture: true });
+                document.getElementById('canvas-container').innerHTML = '';
+            }
+
+            app = new PIXI.Application();
+            await app.init({
+                width: Math.min(window.innerWidth * 0.9, 800),
+                height: Math.min(window.innerHeight * 0.6, 450),
+                backgroundColor: 0x000000,
+                resolution: window.devicePixelRatio || 1,
+                autoDensity: true,
+                antialias: true
+            });
+
+            const container = document.getElementById('canvas-container');
+            container.appendChild(app.canvas);
+
+            const texture = PIXI.Texture.from(imgSrc);
+            sprite = new PIXI.Sprite(texture);
+            sprite.anchor.set(0.5);
+            sprite.x = app.screen.width / 2;
+            sprite.y = app.screen.height / 2;
+
+            const scale = Math.min(
+                app.screen.width / sprite.width,
+                app.screen.height / sprite.height
+            ) * 0.8;
+            sprite.scale.set(scale);
+
+            app.stage.addChild(sprite);
+        }
+
+        const upload = document.getElementById('upload');
+        const effectsSelect = document.getElementById('effects');
+        const createVideo = document.getElementById('createVideo');
+        const progressBar = document.querySelector('.progress-bar');
+        const progressFill = document.querySelector('.progress-bar-fill');
+
+        upload.onchange = (e) => {
+            if (!e.target.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                if (event.target.result) {
+                    await setupPixi(event.target.result);
+                }
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        const effects = {
+            rotate: () => {
+                const ticker = (delta) => {
+                    sprite.rotation += 0.03 * delta;
+                    sprite.scale.x = 0.8 + Math.sin(Date.now() * 0.002) * 0.2;
+                };
+                app.ticker.add(ticker);
+                return ticker;
+            },
+            zoom: () => {
+                const ticker = (delta) => {
+                    const pulse = 0.8 + Math.sin(Date.now() * 0.003) * 0.3;
+                    sprite.scale.set(pulse);
+                };
+                app.ticker.add(ticker);
+                return ticker;
+            },
+            wave: () => {
+                const ticker = (delta) => {
+                    sprite.y = app.screen.height / 2 + Math.sin(Date.now() * 0.002) * 50;
+                    sprite.skew.x = Math.cos(Date.now() * 0.003) * 0.1;
+                };
+                app.ticker.add(ticker);
+                return ticker;
+            },
+            particles: () => {
+                particlesContainer = new PIXI.Container();
+                app.stage.addChild(particlesContainer);
+                
+                for (let i = 0; i < 30; i++) { // פחות חלקיקים למובייל
+                    const particle = new PIXI.Sprite(PIXI.Texture.WHITE);
+                    particle.tint = 0x1e88e5;
+                    particle.scale.set(0.5 + Math.random());
+                    particle.x = Math.random() * app.screen.width;
+                    particle.y = Math.random() * app.screen.height;
+                    particle.velocity = { x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2 };
+                    particlesContainer.addChild(particle);
+                }
+
+                const ticker = (delta) => {
+                    particlesContainer.children.forEach(p => {
+                        p.x += p.velocity.x * delta;
+                        p.y += p.velocity.y * delta;
+                        p.alpha = Math.sin(Date.now() * 0.002) * 0.5 + 0.5;
+                        if (p.x < 0 || p.x > app.screen.width) p.velocity.x *= -1;
+                        if (p.y < 0 || p.y > app.screen.height) p.velocity.y *= -1;
+                    });
+                };
+                app.ticker.add(ticker);
+                return ticker;
+            },
+            glitch: () => {
+                const glitchFilter = new PIXI.filters.GlitchFilter({
+                    slices: 10,
+                    offset: 50,
+                    direction: 0
+                });
+                sprite.filters = [glitchFilter];
+                
+                const ticker = (delta) => {
+                    glitchFilter.seed = Math.random();
+                    glitchFilter.offset = Math.sin(Date.now() * 0.003) * 100;
+                };
+                app.ticker.add(ticker);
+                return ticker;
+            }
+        };
+
+        createVideo.onclick = async () => {
+            if (!sprite) return alert('נא להעלות תמונה תחילה!');
+            
+            const ticker = effects[effectsSelect.value]();
+            
+            const stream = app.canvas.captureStream(30); // 30fps למובייל
+            const mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+            const chunks = [];
+            
+            mediaRecorder.ondataavailable = e => chunks.push(e.data);
+            mediaRecorder.start();
+
+            progressBar.style.display = 'block';
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 2;
+                progressFill.style.width = `${Math.min(progress, 100)}%`;
+            }, 100);
+
+            await new Promise(r => setTimeout(r, 5000));
+            mediaRecorder.stop();
+
+            mediaRecorder.onstop = async () => {
+                clearInterval(progressInterval);
+                app.ticker.stop();
+                app.ticker.remove(ticker);
+
+                try {
+                    const ffmpeg = FFmpeg.createFFmpeg({ log: true });
+                    await ffmpeg.load();
+
+                    const webmBlob = new Blob(chunks, { type: "video/webm" });
+                    const webmData = new Uint8Array(await webmBlob.arrayBuffer());
+                    ffmpeg.FS('writeFile', 'input.webm', webmData);
+
+                    await ffmpeg.run('-i', 'input.webm', '-c:v', 'libx264', '-vf', 'scale=640:360', '-preset', 'fast', 'output.mp4');
+
+                    const mp4Data = ffmpeg.FS('readFile', 'output.mp4');
+                    const mp4Blob = new Blob([mp4Data.buffer], { type: 'video/mp4' });
+                    const url = URL.createObjectURL(mp4Blob);
+
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${effectsSelect.value}_animation.mp4`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                } catch (e) {
+                    alert('שגיאה ביצירת הווידאו: ' + e.message);
+                }
+
+                progressBar.style.display = 'none';
+                progressFill.style.width = '0%';
+                app.ticker.start();
+            };
+        };
+
+        window.addEventListener('resize', () => {
+            if (app) {
+                app.renderer.resize(Math.min(window.innerWidth * 0.9, 800), Math.min(window.innerHeight * 0.6, 450));
+                if (sprite) {
+                    sprite.x = app.screen.width / 2;
+                    sprite.y = app.screen.height / 2;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
