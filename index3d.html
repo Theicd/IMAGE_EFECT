@@ -17,7 +17,7 @@
     <div class="header">
       <div class="logo">IMAGE2VIDEO</div>
       <div class="menu">
-        <a href="#" class="active">בית</a>
+        <a href="#" id="home-button" class="active">בית</a>
         <a href="#">אודות</a>
         <a href="#">צור קשר</a>
       </div>
@@ -90,6 +90,12 @@
     // הפעלת השיפורים לחדר אחרי טעינת הדף
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(enhanceRoom, 2000); // מתן זמן לטעינת החדר המקורי
+      
+      // הוספת פונקציונליות לכפתור הבית - רענון הדף
+      document.getElementById('home-button').addEventListener('click', function(e) {
+        e.preventDefault(); // מניעת התנהגות ברירת המחדל של הקישור
+        location.reload(); // רענון הדף (כמו F5)
+      });
     });
   </script>
 </body>
