@@ -309,6 +309,123 @@ function enhanceRoom() {
     
     // הפעלת אנימציה ראשונית כדי לוודא שהאפקטים מופעלים מיד
     updateFlyingLines(cityObjects);
+    
+    // הפעלת סיור אוטומטי בחדר
+    startRoomTour();
+}
+
+// סיור אוטומטי בחדר בכניסה
+function startRoomTour() {
+    // שמירת המצב המקורי של הבקרים
+    const originalControlsEnabled = controls.enabled;
+    
+    // ביטול זמני של הבקרים כדי שהמשתמש לא יפריע לסיור
+    controls.enabled = false;
+    
+    // שמירת המיקום המקורי של המצלמה
+    const originalPosition = {
+        x: camera.position.x,
+        y: camera.position.y,
+        z: camera.position.z
+    };
+    
+    // שמירת הכיוון המקורי של המצלמה
+    const originalTarget = controls.target.clone();
+    
+    // נקודות מבט לסיור
+    const viewpoints = [
+        { // נקודת מבט 1: זווית רחבה שמראה את החדר והחלון השמאלי
+            position: { x: -2.5, y: 0, z: 2 },
+            target: { x: 0, y: 0, z: 0 },
+            duration: 1.5 // משך בשניות
+        },
+        { // נקודת מבט 2: מבט על החלון הימני
+            position: { x: 2.5, y: 0, z: 2 },
+            target: { x: 0, y: 0, z: 0 },
+            duration: 1.5
+        },
+        { // נקודת מבט 3: מבט מלמעלה שמראה את כל החדר
+            position: { x: 0, y: 1.5, z: 2.5 },
+            target: { x: 0, y: 0, z: 0 },
+            duration: 1
+        },
+        { // נקודת מבט 4: חזרה למיקום הרגיל מול הטקסט
+            position: originalPosition,
+            target: originalTarget,
+            duration: 1
+        }
+    ];
+    
+    // פונקציה לאנימציה בין שתי נקודות
+    function animateBetweenPoints(startPoint, endPoint, duration, onComplete) {
+        const startTime = Date.now();
+        
+        function updatePosition() {
+            const currentTime = Date.now();
+            const elapsed = (currentTime - startTime) / 1000; // זמן שעבר בשניות
+            const progress = Math.min(elapsed / duration, 1); // התקדמות בין 0 ל-1
+            
+            // פונקציית איזון לתנועה חלקה יותר
+            const easeProgress = progress < 0.5 
+                ? 2 * progress * progress 
+                : -1 + (4 - 2 * progress) * progress;
+            
+            // עדכון מיקום המצלמה
+            camera.position.x = startPoint.position.x + (endPoint.position.x - startPoint.position.x) * easeProgress;
+            camera.position.y = startPoint.position.y + (endPoint.position.y - startPoint.position.y) * easeProgress;
+            camera.position.z = startPoint.position.z + (endPoint.position.z - startPoint.position.z) * easeProgress;
+            
+            // עדכון מטרת המצלמה
+            controls.target.x = startPoint.target.x + (endPoint.target.x - startPoint.target.x) * easeProgress;
+            controls.target.y = startPoint.target.y + (endPoint.target.y - startPoint.target.y) * easeProgress;
+            controls.target.z = startPoint.target.z + (endPoint.target.z - startPoint.target.z) * easeProgress;
+            
+            // עדכון בקרי המצלמה
+            controls.update();
+            
+            if (progress < 1) {
+                // המשך האנימציה
+                requestAnimationFrame(updatePosition);
+            } else {
+                // סיום האנימציה
+                if (onComplete) onComplete();
+            }
+        }
+        
+        // התחלת האנימציה
+        updatePosition();
+    }
+    
+    // ביצוע הסיור דרך כל נקודות המבט ברצף
+    function startTourSequence(index = 0) {
+        if (index >= viewpoints.length - 1) {
+            // סיום הסיור - אנימציה לנקודה האחרונה
+            animateBetweenPoints(
+                { position: camera.position, target: controls.target },
+                viewpoints[index],
+                viewpoints[index].duration,
+                function() {
+                    // החזרת הבקרים למצב המקורי
+                    controls.enabled = originalControlsEnabled;
+                }
+            );
+            return;
+        }
+        
+        // אנימציה לנקודת המבט הנוכחית, ואז המשך לנקודה הבאה
+        animateBetweenPoints(
+            index === 0 ? { position: camera.position, target: controls.target } : viewpoints[index - 1],
+            viewpoints[index],
+            viewpoints[index].duration,
+            function() {
+                // המשך לנקודה הבאה
+                startTourSequence(index + 1);
+            }
+        );
+    }
+    
+    // התחלת הסיור
+    startTourSequence();
 }
 
 // ערפל קל בחדר לתחושת עומק
