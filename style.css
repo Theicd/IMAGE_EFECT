@@ -260,6 +260,7 @@ canvas {
     flex-direction: column;
     gap: 15px;
     text-align: center;
+    padding: 15px;
   }
   
   .menu {
@@ -273,5 +274,56 @@ canvas {
   
   .video-controls {
     flex-direction: column;
+  }
+  
+  /* הגדלת הלוגו */
+  .logo {
+    font-size: 32px;
+    margin-bottom: 5px;
+  }
+  
+  /* הגדלת פריטי התפריט */
+  .menu a {
+    font-size: 20px;
+    padding: 8px 12px;
+  }
+  
+  /* הגדלת הכפתורים */
+  .upload-button, #effect-select, #create-video {
+    padding: 15px 20px;
+    font-size: 18px;
+    min-width: 150px;
+  }
+  
+  /* הגדלת הטקסט של תיבת הבחירה */
+  #effect-select {
+    font-size: 18px;
+  }
+  
+  /* הגדלת האייקונים */
+  .upload-icon {
+    font-size: 24px;
+  }
+}
+
+/* מדיה קוורי למכשירים קטנים יותר */
+@media (max-width: 480px) {
+  .logo {
+    font-size: 28px;
+  }
+  
+  .menu a {
+    font-size: 18px;
+    padding: 6px 10px;
+  }
+  
+  .controls-panel {
+    padding: 12px 15px;
+  }
+  
+  .upload-button, #effect-select, #create-video {
+    padding: 12px 15px;
+    font-size: 16px;
+    min-width: 140px;
   }
 }
