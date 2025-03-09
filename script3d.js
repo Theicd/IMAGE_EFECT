@@ -607,8 +607,114 @@ async function createVideo() {
   progressContainer.style.display = 'block';
   progressFill.style.width = '0%';
   
-  // הקלטת הסצנה
-  const stream = renderer.domElement.captureStream(30);
+  // יצירת רנדרר נפרד רק לתמונה
+  const imageRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  imageRenderer.setSize(800, 600);
+  imageRenderer.setClearColor(0x000000, 0);
+  
+  // יצירת סצנה נפרדת רק לתמונה
+  const imageScene = new THREE.Scene();
+  
+  // העתקת התמונה והאפקטים שלה לסצנה החדשה
+  const imageCopy = imageMesh.clone();
+  imageScene.add(imageCopy);
+  
+  // העתקת התאורה הרלוונטית לסצנה החדשה
+  const light = new THREE.DirectionalLight(0xffffff, 1);
+  light.position.set(0, 0, 1);
+  imageScene.add(light);
+  
+  // יצירת מצלמה חדשה שתתמקד רק בתמונה
+  const imageCamera = new THREE.PerspectiveCamera(75, 800 / 600, 0.1, 1000);
+  imageCamera.position.z = 2;
+  
+  // יצירת מערכת חלקיקים אם נדרש
+  let imageParticleSystem = null;
+  if (currentEffect === 'particles') {
+    try {
+      const particleCount = 1000;
+      const particles = new THREE.BufferGeometry();
+      
+      const positions = new Float32Array(particleCount * 3);
+      const colors = new Float32Array(particleCount * 3);
+      
+      const color1 = new THREE.Color(0x00ffff);
+      const color2 = new THREE.Color(0xff00ff);
+      
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        
+        // מיקום אקראי בחלל
+        positions[i3] = (Math.random() - 0.5) * 8;
+        positions[i3 + 1] = (Math.random() - 0.5) * 8;
+        positions[i3 + 2] = (Math.random() - 0.5) * 8;
+        
+        // צבע אקראי בין כחול לוורוד
+        const mixedColor = color1.clone().lerp(color2, Math.random());
+        colors[i3] = mixedColor.r;
+        colors[i3 + 1] = mixedColor.g;
+        colors[i3 + 2] = mixedColor.b;
+      }
+      
+      particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      
+      const particleMaterial = new THREE.PointsMaterial({
+        size: 0.05,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+      });
+      
+      imageParticleSystem = new THREE.Points(particles, particleMaterial);
+      imageScene.add(imageParticleSystem);
+    } catch (e) {
+      console.error('שגיאה ביצירת מערכת חלקיקים לווידאו:', e);
+    }
+  }
+  
+  // הגדרת פוסט-פרוססינג לסצנה החדשה
+  const imageComposer = new THREE.EffectComposer(imageRenderer);
+  const renderPass = new THREE.RenderPass(imageScene, imageCamera);
+  imageComposer.addPass(renderPass);
+  
+  // העתקת האפקטים הרלוונטיים לפי האפקט הנוכחי
+  switch (currentEffect) {
+    case 'glitch':
+      const glitchPassCopy = new THREE.GlitchPass();
+      glitchPassCopy.enabled = true;
+      imageComposer.addPass(glitchPassCopy);
+      break;
+    case 'color':
+      try {
+        const colorPassCopy = new THREE.ShaderPass(THREE.ColorCorrectionShader);
+        colorPassCopy.uniforms['powRGB'].value = new THREE.Vector3(1.5, 1.2, 0.9); // אפקט צבע מוגזם יותר לווידאו
+        colorPassCopy.uniforms['mulRGB'].value = new THREE.Vector3(1.2, 1.0, 0.8);
+        colorPassCopy.enabled = true;
+        imageComposer.addPass(colorPassCopy);
+      } catch (e) {
+        console.error('שגיאה בטעינת ColorCorrectionShader:', e);
+      }
+      break;
+  }
+  
+  // הוספת FXAA לשיפור איכות הווידאו
+  try {
+    const fxaaPassCopy = new THREE.ShaderPass(THREE.FXAAShader);
+    fxaaPassCopy.material.uniforms['resolution'].value.x = 1 / 800;
+    fxaaPassCopy.material.uniforms['resolution'].value.y = 1 / 600;
+    fxaaPassCopy.enabled = true;
+    imageComposer.addPass(fxaaPassCopy);
+  } catch (e) {
+    console.error('שגיאה בטעינת FXAAShader:', e);
+  }
+  
+  // רינדור ראשוני
+  imageComposer.render();
+  
+  // הקלטת הסצנה החדשה
+  const stream = imageRenderer.domElement.captureStream(30);
   const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
   
   const chunks = [];
@@ -622,6 +728,52 @@ async function createVideo() {
     progress += 2;
     progressFill.style.width = `${Math.min(progress, 100)}%`;
   }, 100);
+  
+  // אנימציה של התמונה למשך 5 שניות
+  const startTime = Date.now();
+  const duration = 5000; // 5 שניות
+  
+  function animateImage() {
+    const elapsed = Date.now() - startTime;
+    if (elapsed < duration) {
+      // עדכון האפקטים על התמונה
+      switch (currentEffect) {
+        case 'rotate':
+          imageCopy.rotation.y = Math.sin(elapsed / 500) * 0.5;
+          break;
+        case 'zoom':
+          const scale = 1 + Math.sin(elapsed / 500) * 0.2;
+          imageCopy.scale.set(scale, scale, scale);
+          break;
+        case 'glitch':
+          // אפקט הגליץ' מטופל על ידי הפוסט-פרוססינג
+          break;
+        case 'color':
+          // אפקט הצבע מטופל על ידי הפוסט-פרוססינג
+          break;
+        case 'particles':
+          if (imageParticleSystem) {
+            imageParticleSystem.rotation.y = elapsed * 0.0002;
+            
+            const positions = imageParticleSystem.geometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i += 3) {
+              positions[i + 1] += Math.sin(elapsed * 0.001 + i) * 0.01;
+            }
+            imageParticleSystem.geometry.attributes.position.needsUpdate = true;
+          }
+          break;
+      }
+      
+      // רינדור הסצנה עם הפוסט-פרוססינג
+      imageComposer.render();
+      
+      // המשך האנימציה
+      requestAnimationFrame(animateImage);
+    }
+  }
+  
+  // התחלת האנימציה
+  animateImage();
   
   // הקלטה למשך 5 שניות
   await new Promise(resolve => setTimeout(resolve, 5000));
