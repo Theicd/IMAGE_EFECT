@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>חדר אפקטים תלת מימדי</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="loader">
+    <div class="spinner"></div>
+    <div class="loader-text">טוען חדר...</div>
+  </div>
+
+  <div id="ui-container">
+    <div class="header">
+      <div class="logo">IMAGE2VIDEO</div>
+      <div class="menu">
+        <a href="#" class="active">בית</a>
+        <a href="#">אודות</a>
+        <a href="#">צור קשר</a>
+      </div>
+    </div>
+
+    <div class="controls-panel">
+      <div class="upload-container">
+        <label for="image-upload" class="upload-button">
+          <span class="upload-icon">📸</span>
+          <span>העלה תמונה</span>
+        </label>
+        <input type="file" id="image-upload" accept="image/*" style="display:none">
+      </div>
+      
+      <div class="effects-container">
+        <select id="effect-select">
+          <option value="neon">ניאון</option>
+          <option value="glitch">גליץ'</option>
+          <option value="wave">גלים</option>
+          <option value="particles">חלקיקים</option>
+          <option value="rotate">סיבוב</option>
+          <option value="bokeh">עומק שדה</option>
+          <option value="film">פילם ישן</option>
+          <option value="color">עריכת צבעים</option>
+        </select>
+      </div>
+      
+      <button id="create-video" disabled>צור וידאו</button>
+    </div>
+  </div>
+
+  <div id="video-container" style="display:none">
+    <video id="output-video" controls></video>
+    <div class="video-controls">
+      <button id="download-video">הורד MP4</button>
+      <button id="back-to-editor">חזור לעריכה</button>
+    </div>
+  </div>
+
+  <canvas id="scene"></canvas>
+
+  <div class="progress-container" style="display:none">
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="progress-text">מעבד וידאו...</div>
+  </div>
+
+  <!-- Three.js and dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r132/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/shaders/CopyShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/shaders/DigitalGlitch.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/postprocessing/GlitchPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/shaders/BokehShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/postprocessing/BokehPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/shaders/FXAAShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/shaders/ColorCorrectionShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/shaders/FilmShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/postprocessing/FilmPass.js"></script>
+  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.0/dist/ffmpeg.min.js"></script>
+  <script src="script3d.js"></script>
+</body>
+</html>
