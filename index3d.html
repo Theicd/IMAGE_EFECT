@@ -85,5 +85,12 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/postprocessing/FilmPass.js"></script>
   <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.0/dist/ffmpeg.min.js"></script>
   <script src="script3d.js"></script>
+  <script src="cityView.js"></script>
+  <script>
+    // הפעלת השיפורים לחדר אחרי טעינת הדף
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(enhanceRoom, 2000); // מתן זמן לטעינת החדר המקורי
+    });
+  </script>
 </body>
 </html>
