@@ -166,12 +166,12 @@ function createRoom() {
   floor.position.y = -3;
   scene.add(floor);
   
-  // יצירת טקסט ניאון
-  createNeonText();
+  // יצירת טקסט כותרת
+  createHeaderText();
 }
 
-// יצירת טקסט ניאון
-function createNeonText() {
+// יצירת טקסט כותרת
+function createHeaderText() {
   const loader = new THREE.TextureLoader();
   
   // יצירת canvas לטקסט
@@ -192,10 +192,9 @@ function createNeonText() {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   
-  // יצירת אפקט זוהר
-  ctx.shadowColor = '#00ffff';
-  ctx.shadowBlur = 20;
-  ctx.fillStyle = '#00ffff';
+  // הסרת אפקט זוהר
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#ffffff';
   
   // כתיבת הטקסט הראשי
   const mainText = 'חדר האפקטים התלת-מימדי';
@@ -217,22 +216,18 @@ function createNeonText() {
     map: textTexture,
     transparent: true,
     opacity: 1,
-    blending: THREE.AdditiveBlending,
     side: THREE.DoubleSide
   });
   
   // יצירת גיאומטריה לטקסט
-  const textGeometry = new THREE.PlaneGeometry(4, 2);
+  const textGeometry = new THREE.PlaneGeometry(5, 3);
   neonText = new THREE.Mesh(textGeometry, neonTextMaterial);
   neonText.position.set(0, 0.5, -4.5);
   scene.add(neonText);
   
-  // אור לטקסט
-  const textLight = new THREE.PointLight(0x00ffff, 2, 10);
-  textLight.position.set(0, 0.5, -4);
-  scene.add(textLight);
+  // אור לטקסט - מוסר
   
-  // יצירת אנימציית הקלדה
+  // הפעלת אנימציית הקלדה
   animateTypingEffect(canvas, ctx, mainText, subText);
 }
 
@@ -391,9 +386,9 @@ function updateEffects() {
       break;
   }
   
-  // אנימציה לטקסט הניאון
+  // אנימציה לטקסט הכותרת
   if (neonText) {
-    neonText.material.opacity = 0.8 + Math.sin(time * 2) * 0.2;
+    neonText.material.opacity = 1.0; // קבוע ללא הבהוב
   }
 }
 
@@ -816,11 +811,16 @@ function drawGlowingTextWithFrame(ctx, text, x, y, fontSize, frameCount = 0) {
   // מדידת רוחב הטקסט
   const textWidth = ctx.measureText(text).width;
   
-  // יצירת מסגרת מעוגלת מסביב לטקסט
-  const padding = fontSize * 0.7; // הגדלת הפדינג לטקסט ברור יותר
-  const frameWidth = textWidth + padding * 2;
-  const frameHeight = fontSize * 1.8; // הגדלת גובה המסגרת
-  const cornerRadius = 10;
+  // חישוב גודל המסגרת יחסית לרוחב הקנבס
+  const canvasWidth = ctx.canvas.width;
+  const canvasHeight = ctx.canvas.height;
+  
+  // הגדלת המסגרת למקסימום שיתאים לטלפון נייד
+  // השתמש ב-80% מרוחב הקנבס
+  const frameWidth = canvasWidth * 0.8;
+  // גובה המסגרת יהיה יחסי לגודל הפונט אבל גדול יותר
+  const frameHeight = fontSize * 2.5;
+  const cornerRadius = 15;
   
   // שמירת מצב הקנבס
   ctx.save();
@@ -850,17 +850,14 @@ function drawGlowingTextWithFrame(ctx, text, x, y, fontSize, frameCount = 0) {
   ctx.fillStyle = gradient;
   ctx.fill();
   
-  // אפקט זוהר למסגרת עם שינוי צבעים
-  const neonColors = getNeonColorByTime(frameCount);
-  
-  ctx.shadowColor = neonColors.glow;
-  ctx.shadowBlur = 15;
-  ctx.strokeStyle = neonColors.border;
+  // מסגרת רגילה ללא אפקט ניאון
+  ctx.shadowBlur = 0; // ביטול אפקט הזוהר
+  ctx.strokeStyle = '#4080a0'; // צבע מסגרת רגיל במקום ניאון
   ctx.lineWidth = 2;
   ctx.stroke();
   
   // הגדרת סגנון הטקסט - ללא אפקט זוהר
-  ctx.shadowBlur = 0; // ביטול אפקט הזוהר
+  ctx.shadowBlur = 0;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 0;
   
