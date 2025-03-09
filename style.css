@@ -278,52 +278,52 @@ canvas {
   
   /* הגדלת הלוגו */
   .logo {
-    font-size: 32px;
+    font-size: 42px;
     margin-bottom: 5px;
   }
   
   /* הגדלת פריטי התפריט */
   .menu a {
-    font-size: 20px;
-    padding: 8px 12px;
+    font-size: 26px;
+    padding: 10px 15px;
   }
   
   /* הגדלת הכפתורים */
   .upload-button, #effect-select, #create-video {
-    padding: 15px 20px;
-    font-size: 18px;
-    min-width: 150px;
+    padding: 18px 24px;
+    font-size: 23px;
+    min-width: 180px;
   }
   
   /* הגדלת הטקסט של תיבת הבחירה */
   #effect-select {
-    font-size: 18px;
+    font-size: 23px;
   }
   
   /* הגדלת האייקונים */
   .upload-icon {
-    font-size: 24px;
+    font-size: 31px;
   }
 }
 
 /* מדיה קוורי למכשירים קטנים יותר */
 @media (max-width: 480px) {
   .logo {
-    font-size: 28px;
+    font-size: 36px;
   }
   
   .menu a {
-    font-size: 18px;
-    padding: 6px 10px;
+    font-size: 23px;
+    padding: 8px 12px;
   }
   
   .controls-panel {
-    padding: 12px 15px;
+    padding: 15px 18px;
   }
   
   .upload-button, #effect-select, #create-video {
-    padding: 12px 15px;
-    font-size: 16px;
-    min-width: 140px;
+    padding: 15px 18px;
+    font-size: 21px;
+    min-width: 160px;
   }
 }
