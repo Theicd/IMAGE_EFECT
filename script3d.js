@@ -172,6 +172,7 @@ function createRoom() {
 
 // יצירת טקסט כותרת
 function createHeaderText() {
+  console.log("יצירת טקסט כותרת");
   const loader = new THREE.TextureLoader();
   
   // יצירת canvas לטקסט
@@ -187,27 +188,7 @@ function createHeaderText() {
   // יצירת רקע מגניב עם עומק
   createCoolBackground(ctx, canvas.width, canvas.height);
   
-  // הגדרת סגנון הטקסט הראשי
-  ctx.font = 'bold 48px Heebo';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  
-  // הסרת אפקט זוהר
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = '#ffffff';
-  
-  // כתיבת הטקסט הראשי
-  const mainText = 'חדר האפקטים התלת-מימדי';
-  ctx.fillText(mainText, canvas.width / 2, canvas.height / 2 - 40);
-  
-  // הגדרת סגנון הטקסט המשני
-  ctx.font = 'bold 32px Heebo';
-  
-  // כתיבת הטקסט המשני
-  const subText = 'העלו תמונה ← בחרו אפקט ← צרו וידאו';
-  ctx.fillText(subText, canvas.width / 2, canvas.height / 2 + 40);
-  
-  // יצירת טקסטורה מה-canvas
+  // הכנת הטקסטורה
   const textTexture = new THREE.Texture(canvas);
   textTexture.needsUpdate = true;
   
@@ -225,10 +206,14 @@ function createHeaderText() {
   neonText.position.set(0, 0.5, -4.5);
   scene.add(neonText);
   
-  // אור לטקסט - מוסר
+  // הגדרת טקסט הכותרת והתת-כותרת
+  const mainText = 'חדר האפקטים התלת-מימדי';
+  const subText = 'העלו תמונה ← בחרו אפקט ← צרו וידאו';
   
+  console.log("קריאה לפונקציית animateTypingEffect");
   // הפעלת אנימציית הקלדה
   animateTypingEffect(canvas, ctx, mainText, subText);
+  console.log("סיום קריאה לפונקציית animateTypingEffect");
 }
 
 // הגדרת תאורה
@@ -679,38 +664,44 @@ async function createVideo() {
 
 // אנימציית הקלדה
 function animateTypingEffect(canvas, ctx, mainText, subText) {
+  console.log("התחלת אנימציית הקלדה");
   let mainTextIndex = 0;
   let subTextIndex = 0;
   let frameCount = 0;
   
   function animate() {
     frameCount++;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // יצירת רקע מגניב עם עומק
-    createCoolBackground(ctx, canvas.width, canvas.height, frameCount);
-    
-    // הגדרת סגנון הטקסט הראשי
-    ctx.font = 'bold 48px Heebo';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    // יצירת מסגרת זוהרת לטקסט
-    drawGlowingTextWithFrame(ctx, mainText.substring(0, mainTextIndex), canvas.width / 2, canvas.height / 2 - 40, 48, frameCount);
-    
-    // הגדרת סגנון הטקסט המשני
-    ctx.font = 'bold 32px Heebo';
-    
-    // יצירת מסגרת זוהרת לטקסט המשני
-    drawGlowingTextWithFrame(ctx, subText.substring(0, subTextIndex), canvas.width / 2, canvas.height / 2 + 40, 32, frameCount);
-    
-    // עדכון הטקסטורה
-    neonText.material.map.needsUpdate = true;
-    
-    // הגדלת האינדקסים
-    if (frameCount % 3 === 0) { // האט את קצב ההקלדה
+    // האט את קצב האנימציה - רק כל 5 פריימים
+    if (frameCount % 5 === 0) {
+      console.log("אנימציית הקלדה פריים:", frameCount, "טקסט:", mainText.substring(0, mainTextIndex));
+      
+      // נקה את הקנבס
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // יצירת רקע מגניב עם עומק
+      createCoolBackground(ctx, canvas.width, canvas.height, frameCount);
+      
+      // הגדרת סגנון הטקסט הראשי
+      ctx.font = 'bold 48px Heebo';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      // יצירת מסגרת זוהרת לטקסט
+      drawGlowingTextWithFrame(ctx, mainText.substring(0, mainTextIndex), canvas.width / 2, canvas.height / 2 - 40, 48, frameCount);
+      
+      // הגדרת סגנון הטקסט המשני
+      ctx.font = 'bold 32px Heebo';
+      
+      // יצירת מסגרת זוהרת לטקסט המשני
+      drawGlowingTextWithFrame(ctx, subText.substring(0, subTextIndex), canvas.width / 2, canvas.height / 2 + 40, 32, frameCount);
+      
+      // עדכון הטקסטורה
+      neonText.material.map.needsUpdate = true;
+      
+      // הגדלת האינדקסים - אט יותר
       mainTextIndex = Math.min(mainTextIndex + 1, mainText.length);
-      if (mainTextIndex >= mainText.length && frameCount % 3 === 0) {
+      if (mainTextIndex >= mainText.length) {
         subTextIndex = Math.min(subTextIndex + 1, subText.length);
       }
     }
@@ -719,11 +710,13 @@ function animateTypingEffect(canvas, ctx, mainText, subText) {
     if (mainTextIndex < mainText.length || subTextIndex < subText.length) {
       requestAnimationFrame(animate);
     } else {
+      console.log("סיום אנימציית הקלדה, מעבר לאנימציית רקע");
       // המשך אנימציית הרקע גם אחרי סיום ההקלדה
       animateBackground(canvas, ctx, mainText, subText);
     }
   }
   
+  // התחל את האנימציה
   animate();
 }
 
@@ -897,10 +890,15 @@ function getNeonColorByTime(frameCount) {
 
 // אנימציית רקע מתמשכת
 function animateBackground(canvas, ctx, mainText, subText) {
+  console.log("התחלת אנימציית רקע");
   let frameCount = 0;
   
   function animate() {
     frameCount++;
+    if (frameCount % 10 === 0) {
+      console.log("אנימציית רקע פריים:", frameCount);
+    }
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     // יצירת רקע מגניב עם עומק
