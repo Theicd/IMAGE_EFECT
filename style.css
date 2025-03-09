@@ -278,43 +278,55 @@ canvas {
   
   /* הגדלת הלוגו */
   .logo {
-    font-size: 42px;
+    font-size: 42px !important;
     margin-bottom: 5px;
+    background: linear-gradient(to right, var(--neon-blue), var(--neon-pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
   }
   
   /* הגדלת פריטי התפריט */
   .menu a {
-    font-size: 26px;
+    font-size: 26px !important;
     padding: 10px 15px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
   }
   
   /* הגדלת הכפתורים */
   .upload-button, #effect-select, #create-video {
-    padding: 18px 24px;
-    font-size: 23px;
+    padding: 18px 24px !important;
+    font-size: 23px !important;
     min-width: 180px;
   }
   
   /* הגדלת הטקסט של תיבת הבחירה */
   #effect-select {
-    font-size: 23px;
+    font-size: 23px !important;
   }
   
   /* הגדלת האייקונים */
   .upload-icon {
-    font-size: 31px;
+    font-size: 31px !important;
   }
 }
 
 /* מדיה קוורי למכשירים קטנים יותר */
 @media (max-width: 480px) {
   .logo {
-    font-size: 36px;
+    font-size: 36px !important;
+    background: linear-gradient(to right, var(--neon-blue), var(--neon-pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
   }
   
   .menu a {
-    font-size: 23px;
+    font-size: 23px !important;
     padding: 8px 12px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
   }
   
   .controls-panel {
@@ -322,8 +334,8 @@ canvas {
   }
   
   .upload-button, #effect-select, #create-video {
-    padding: 15px 18px;
-    font-size: 21px;
+    padding: 15px 18px !important;
+    font-size: 21px !important;
     min-width: 160px;
   }
 }
