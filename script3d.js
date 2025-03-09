@@ -653,26 +653,9 @@ async function createVideo() {
       progressFill.style.width = '100%';
       
       try {
-        // המרה ל-MP4 באמצעות FFMPEG
-        const { createFFmpeg } = FFmpeg;
-        const ffmpeg = createFFmpeg({ log: true });
-        await ffmpeg.load();
-        
-        // יצירת קובץ webm
+        // יצירת קובץ webm ישירות ללא המרה
         const webmBlob = new Blob(chunks, { type: 'video/webm' });
-        const webmBuffer = await webmBlob.arrayBuffer();
-        const webmUint8Array = new Uint8Array(webmBuffer);
-        
-        // כתיבת הקובץ ל-FFMPEG
-        ffmpeg.FS('writeFile', 'input.webm', webmUint8Array);
-        
-        // המרה ל-MP4
-        await ffmpeg.run('-i', 'input.webm', '-c:v', 'libx264', '-preset', 'fast', '-crf', '22', 'output.mp4');
-        
-        // קריאת קובץ ה-MP4
-        const mp4Data = ffmpeg.FS('readFile', 'output.mp4');
-        const mp4Blob = new Blob([mp4Data.buffer], { type: 'video/mp4' });
-        const videoUrl = URL.createObjectURL(mp4Blob);
+        const videoUrl = URL.createObjectURL(webmBlob);
         
         // הצגת הווידאו
         const videoPlayer = document.getElementById('output-video');
@@ -683,15 +666,15 @@ async function createVideo() {
         document.getElementById('download-video').onclick = () => {
           const a = document.createElement('a');
           a.href = videoUrl;
-          a.download = `${currentEffect}_effect.mp4`;
+          a.download = `${currentEffect}_effect.webm`;
           a.click();
         };
         
         progressContainer.style.display = 'none';
         resolve();
       } catch (error) {
-        console.error('שגיאה בהמרת הווידאו:', error);
-        alert('אירעה שגיאה בהמרת הווידאו: ' + error.message);
+        console.error('שגיאה ביצירת הווידאו:', error);
+        alert('אירעה שגיאה ביצירת הווידאו: ' + error.message);
         progressContainer.style.display = 'none';
         resolve();
       }
