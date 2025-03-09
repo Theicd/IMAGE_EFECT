@@ -89,7 +89,24 @@
   <script>
     // הפעלת השיפורים לחדר אחרי טעינת הדף
     document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(enhanceRoom, 2000); // מתן זמן לטעינת החדר המקורי
+      // בדיקה אם האתר רץ על שרת או מקומית
+      const isRunningOnServer = window.location.protocol.includes('http') && !window.location.hostname.includes('localhost');
+      
+      // זמן המתנה ארוך יותר לשרת
+      const waitTime = isRunningOnServer ? 5000 : 2000;
+      
+      console.log('מחכה לטעינת המשאבים:', waitTime, 'מילישניות');
+      
+      // בדיקת טעינת כל המשאבים
+      window.addEventListener('load', function() {
+        console.log('כל המשאבים נטענו');
+        
+        // מתן זמן נוסף לאחר טעינת כל המשאבים
+        setTimeout(function() {
+          console.log('מפעיל שיפורים לחדר');
+          enhanceRoom();
+        }, waitTime);
+      });
       
       // הוספת פונקציונליות לכפתור הבית - רענון הדף
       document.getElementById('home-button').addEventListener('click', function(e) {

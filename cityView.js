@@ -316,6 +316,15 @@ function enhanceRoom() {
 
 // סיור אוטומטי בחדר בכניסה
 function startRoomTour() {
+    console.log('מתחיל סיור בחדר');
+    
+    // בדיקה שכל המשאבים הדרושים קיימים
+    if (!scene || !camera || !controls || !cityObjects) {
+        console.error('חלק מהמשאבים לא נטענו עדיין, מנסה שוב בעוד 2 שניות');
+        setTimeout(startRoomTour, 2000);
+        return;
+    }
+    
     // שמירת המצב המקורי של הבקרים
     const originalControlsEnabled = controls.enabled;
     
@@ -331,6 +340,8 @@ function startRoomTour() {
     
     // שמירת הכיוון המקורי של המצלמה
     const originalTarget = controls.target.clone();
+    
+    console.log('מיקום מצלמה התחלתי:', originalPosition);
     
     // נקודות מבט לסיור
     const viewpoints = [
@@ -359,6 +370,8 @@ function startRoomTour() {
     // פונקציה לאנימציה בין שתי נקודות
     function animateBetweenPoints(startPoint, endPoint, duration, onComplete) {
         const startTime = Date.now();
+        let lastFrameTime = startTime;
+        let animationFrameId;
         
         function updatePosition() {
             const currentTime = Date.now();
@@ -383,17 +396,32 @@ function startRoomTour() {
             // עדכון בקרי המצלמה
             controls.update();
             
+            // חישוב FPS לניטור ביצועים
+            const frameTime = currentTime - lastFrameTime;
+            lastFrameTime = currentTime;
+            
             if (progress < 1) {
                 // המשך האנימציה
-                requestAnimationFrame(updatePosition);
+                animationFrameId = requestAnimationFrame(updatePosition);
             } else {
                 // סיום האנימציה
+                cancelAnimationFrame(animationFrameId);
+                console.log('סיום אנימציה לנקודה');
                 if (onComplete) onComplete();
             }
         }
         
         // התחלת האנימציה
-        updatePosition();
+        animationFrameId = requestAnimationFrame(updatePosition);
+        
+        // החזרת מזהה האנימציה לביטול במקרה הצורך
+        return {
+            cancel: function() {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+            }
+        };
     }
     
     // ביצוע הסיור דרך כל נקודות המבט ברצף
