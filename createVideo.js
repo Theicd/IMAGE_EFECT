@@ -354,7 +354,7 @@ function createVideoFull() {
           videoContainer.style.flexDirection = 'column';
           videoContainer.style.justifyContent = 'center';
           videoContainer.style.alignItems = 'center';
-          videoContainer.style.padding = '20px';
+          videoContainer.style.padding = '30px'; // הגדלת הריפוד למצב טלפון
           videoContainer.style.margin = '0 auto'; // מרכוז אופקי
           videoContainer.style.right = 'auto'; // ביטול צמידה לצד
           videoContainer.style.left = '50%'; // מיקום במרכז המסך
@@ -372,11 +372,11 @@ function createVideoFull() {
           videoControls.style.padding = '15px 10px';
           videoControls.style.background = 'transparent';
           videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '20px';
+          videoControls.style.marginTop = '30px'; // הגדלת המרווח מעל הכפתורים
           
           // התאמת גודל הווידאו
           videoPlayer.style.maxHeight = '50vh';
-          videoPlayer.style.marginBottom = '20px';
+          videoPlayer.style.marginBottom = '30px'; // הגדלת המרווח מתחת לווידאו
           videoPlayer.style.objectFit = 'contain';
           videoPlayer.style.margin = '0 auto'; // מרכוז אופקי
           videoPlayer.style.display = 'block'; // חשוב לתצוגה נכונה
@@ -395,6 +395,20 @@ function createVideoFull() {
             videoInfo.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
             videoInfo.style.background = 'rgba(20, 20, 20, 0.8)';
           }
+        } else {
+          // במצב דסקטופ - הגדרות אחרות
+          videoContainer.style.width = '80%';
+          videoContainer.style.maxWidth = '1280px';
+          videoContainer.style.padding = '40px'; // הגדלת הריפוד בתוך המסגרת
+          
+          // הגדרות למיקום הכפתורים במצב דסקטופ
+          const videoControls = document.querySelector('.video-controls');
+          if (videoControls) {
+            videoControls.style.marginTop = '30px'; // הגדלת המרווח מעל הכפתורים
+          }
+          
+          // הגדרות לווידאו במצב דסקטופ
+          videoPlayer.style.marginBottom = '30px'; // הגדלת המרווח מתחת לווידאו
         }
         
         // הפעלת הווידאו
