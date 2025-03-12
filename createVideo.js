@@ -35,9 +35,32 @@ function createVideoFull() {
   }).join(', ');
   document.getElementById('applied-effects').textContent = effectsList.length > 0 ? `אפקטים: ${effectsList}` : 'ללא אפקטים';
   
-  // יצירת רנדרר נפרד רק לתמונה
+  // בדיקת היחס בין רוחב וגובה של התמונה המקורית
+  let imageAspectRatio = 1;
+  let isPortrait = false;
+  let videoWidth = 1280;
+  let videoHeight = 720;
+  
+  if (imageMesh.userData && imageMesh.userData.originalTexture) {
+    const img = imageMesh.userData.originalTexture.image;
+    if (img) {
+      imageAspectRatio = img.width / img.height;
+      isPortrait = imageAspectRatio < 0.9; // אם היחס קטן מ-0.9, זו כנראה תמונת פורטרט
+      console.log('Image aspect ratio:', imageAspectRatio, 'Is portrait:', isPortrait);
+      
+      // התאמת גודל הווידאו לפי יחס התמונה
+      if (isPortrait) {
+        // אם התמונה היא פורטרט, הפוך את הרוחב והגובה כדי שהתמונה תוצג נכון
+        videoWidth = 720;
+        videoHeight = 1280;
+        console.log('Using portrait video dimensions:', videoWidth, 'x', videoHeight);
+      }
+    }
+  }
+  
+  // יצירת רנדרר נפרד רק לתמונה - עם גודל שמותאם לכיוון התמונה
   const imageRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  imageRenderer.setSize(1280, 720);
+  imageRenderer.setSize(videoWidth, videoHeight);
   imageRenderer.setClearColor(0x000000, 0);
   
   // יצירת סצנה נפרדת רק לתמונה
@@ -54,81 +77,34 @@ function createVideoFull() {
   light.position.set(0, 0, 1);
   imageScene.add(light);
 
-  // בדיקת היחס בין רוחב וגובה של התמונה המקורית
-  let imageAspectRatio = 1;
-  let isPortrait = false;
-  
-  if (imageMesh.userData && imageMesh.userData.originalTexture) {
-    const img = imageMesh.userData.originalTexture.image;
-    if (img) {
-      imageAspectRatio = img.width / img.height;
-      isPortrait = imageAspectRatio < 0.9; // אם היחס קטן מ-0.9, זו כנראה תמונת פורטרט
-      console.log('Image aspect ratio:', imageAspectRatio, 'Is portrait:', isPortrait);
-    }
-  }
-  
-  // מצלמה בגודל סביר
-  const imageCamera = new THREE.PerspectiveCamera(45, 1280 / 720, 0.1, 1000);
+  // מצלמה בגודל סביר - יחס שמותאם לכיוון התמונה
+  const imageCamera = new THREE.PerspectiveCamera(45, videoWidth / videoHeight, 0.1, 1000);
   
   // התאמת מרחק המצלמה בהתאם לכיוון התמונה (פורטרט או לרוחב)
   let cameraDistance = 1.3; // ערך ברירת מחדל לתמונות לרוחב
   
   if (isPortrait) {
     // אם התמונה היא פורטרט, הרחק את המצלמה יותר כדי לכלול את כל הגובה
-    cameraDistance = 2.2; // מרחק גדול יותר לתמונות לאורך
+    cameraDistance = 1.3; // נשתמש באותו מרחק, אבל היחס שונה
   }
   
   // הרחקת המצלמה כדי לכלול את כל התמונה בגודל סביר
   imageCamera.position.z = cameraDistance;
   
-  // וידוא שהעותק של התמונה מוצב ומשוקלל נכון
-  // התאמת גודל התמונה לווידאו
-  imageCopy.position.set(0, 0, 0);
-  if (imageMesh.scale) {
-    // חישוב מקדם הגדלה בהתאם לכיוון התמונה ולאפקט
-    let scaleFactor = 0.5; // ערך ברירת מחדל
-    
-    if (activeEffects.camera) {
-      // הגדלה מוגברת לאפקטי תנועת מצלמה
-      scaleFactor = isPortrait ? 1.8 : 2.0; // התאמה מיוחדת לתמונות פורטרט
-    } else {
-      // הגדלה רגילה לשאר האפקטים
-      scaleFactor = isPortrait ? 0.4 : 0.5; // התאמה מיוחדת לתמונות פורטרט
-    }
-    
-    // החלת הסקייל עם מקדם ההגדלה המחושב
-    imageCopy.scale.copy(imageMesh.scale).multiplyScalar(scaleFactor);
-    
-    // שמירת הסקייל המקורי לשימוש בפונקציות עדכון
-    imageCopy.userData.originalScale = imageCopy.scale.clone();
-  } else {
-    let scaleFactor = 0.5; // ערך ברירת מחדל
-    
-    if (activeEffects.camera) {
-      // הגדלה מוגברת לאפקטי תנועת מצלמה
-      scaleFactor = isPortrait ? 1.8 : 2.0; // התאמה מיוחדת לתמונות פורטרט
-    } else {
-      // הגדלה רגילה לשאר האפקטים
-      scaleFactor = isPortrait ? 0.4 : 0.5; // התאמה מיוחדת לתמונות פורטרט
-    }
-    
-    imageCopy.scale.set(scaleFactor, scaleFactor, scaleFactor);
-    imageCopy.userData.originalScale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
-  }
-  
+  // וידאו של רנדרר נפרד רק לתמונה
   const imageComposer = new THREE.EffectComposer(imageRenderer);
   const renderPass = new THREE.RenderPass(imageScene, imageCamera);
   imageComposer.addPass(renderPass);
   
   const fxaaPassCopy = new THREE.ShaderPass(THREE.FXAAShader);
-  fxaaPassCopy.material.uniforms['resolution'].value.x = 1 / 1280;
-  fxaaPassCopy.material.uniforms['resolution'].value.y = 1 / 720;
+  fxaaPassCopy.material.uniforms['resolution'].value.x = 1 / videoWidth;
+  fxaaPassCopy.material.uniforms['resolution'].value.y = 1 / videoHeight;
   fxaaPassCopy.enabled = true;
   imageComposer.addPass(fxaaPassCopy);
   
   // הוספת הפילטרים הנדרשים לאפקטים
   // BLOOM
-  const bloomPassCopy = new THREE.UnrealBloomPass(new THREE.Vector2(1280, 720), 1.5, 0.4, 0.85);
+  const bloomPassCopy = new THREE.UnrealBloomPass(new THREE.Vector2(videoWidth, videoHeight), 1.5, 0.4, 0.85);
   imageComposer.addPass(bloomPassCopy);
   
   // GLITCH
