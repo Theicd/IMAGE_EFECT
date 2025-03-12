@@ -322,35 +322,39 @@ function createVideoFull() {
         document.getElementById('video-progress').style.display = 'none';
         document.getElementById('create-video').disabled = false;
         
-        // וידוא שהווידאו ממורכז בתוך המיכל
-        const videoElement = document.getElementById('output-video');
-        videoElement.style.display = 'block';
-        videoElement.style.margin = '0 auto';
-        
         // התאמות למובייל - מיקום במרכז המסך
         const videoContainer = document.getElementById('video-container');
         
+        // מיקום במרכז המסך - אחיד לכל המכשירים
+        videoContainer.style.position = 'fixed';
+        videoContainer.style.top = '50%';
+        videoContainer.style.left = '50%';
+        videoContainer.style.transform = 'translate(-50%, -50%)';
+        videoContainer.style.margin = '0 auto';
+        videoContainer.style.width = '90%';
+        videoContainer.style.boxSizing = 'border-box';
+        videoContainer.style.background = 'rgba(15, 15, 25, 0.92)';
+        videoContainer.style.backdropFilter = 'blur(10px)';
+        videoContainer.style.boxShadow = '0 0 20px rgba(0, 200, 255, 0.3)';
+        videoContainer.style.border = '1px solid rgba(100, 200, 255, 0.15)';
+        videoContainer.style.zIndex = '1000';
+        
+        // הגדרת סגנון לווידאו עצמו
+        videoElement.style.width = '100%';
+        videoElement.style.maxWidth = '100%';
+        videoElement.style.borderRadius = '8px';
+        videoElement.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.4)';
+        
         // בדיקה אם המכשיר הוא טלפון נייד (רוחב מסך קטן מ-768 פיקסלים)
         if (window.innerWidth <= 768) {
-          // הגדרת סגנון ספציפי למובייל
-          videoContainer.style.position = 'fixed';
-          videoContainer.style.top = '50%';
-          videoContainer.style.left = '50%';
-          videoContainer.style.transform = 'translate(-50%, -50%)';
-          videoContainer.style.width = '95%';
-          videoContainer.style.height = 'auto';
-          videoContainer.style.maxWidth = '100%';
-          videoContainer.style.maxHeight = '100vh';
+          // הגדרות נוספות ספציפיות למובייל
+          videoContainer.style.maxWidth = '95%';
+          videoContainer.style.maxHeight = '90vh';
           videoContainer.style.display = 'flex';
           videoContainer.style.flexDirection = 'column';
           videoContainer.style.justifyContent = 'center';
           videoContainer.style.alignItems = 'center';
           videoContainer.style.padding = '20px';
-          videoContainer.style.zIndex = '1000';
-          videoContainer.style.background = 'rgba(15, 15, 25, 0.92)';
-          videoContainer.style.backdropFilter = 'blur(10px)';
-          videoContainer.style.boxShadow = '0 0 20px rgba(0, 200, 255, 0.3)';
-          videoContainer.style.border = '1px solid rgba(100, 200, 255, 0.15)';
           
           // הגדרת סגנון לכפתורים
           const videoControls = document.querySelector('.video-controls');
@@ -370,9 +374,6 @@ function createVideoFull() {
           videoElement.style.maxHeight = '50vh';
           videoElement.style.marginBottom = '20px';
           videoElement.style.objectFit = 'contain';
-          videoElement.style.width = '100%';
-          videoElement.style.borderRadius = '8px';
-          videoElement.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.4)';
           
           // התאמת הצגת מידע האפקטים
           const videoInfo = document.querySelector('.video-info');
