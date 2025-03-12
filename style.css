@@ -372,13 +372,16 @@ canvas {
     padding: 10px;
     max-width: 100%;
     max-height: 100vh;
-    top: 0;
+    top: 50%;
     left: 0;
     right: 0;
-    bottom: 0;
-    transform: none;
+    transform: translateY(-50%);
     border-radius: 0;
     position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   
   .video-controls {
@@ -397,6 +400,7 @@ canvas {
   #output-video {
     max-height: 70vh;
     margin-bottom: 60px;
+    object-fit: contain;
   }
   
   .video-info {
