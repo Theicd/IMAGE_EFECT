@@ -80,8 +80,6 @@ function updateMobileButtonStyles() {
     // רשימת כפתורים לעדכון
     const buttonsToStyle = [
       document.querySelector('.upload-button'), // כפתור העלה תמונה
-      document.getElementById('category-select'), // כפתור בחר קטגוריה
-      document.getElementById('effect-select'), // כפתור בחר אפקט
       document.getElementById('create-video') // כפתור צור וידאו
     ];
     
@@ -109,14 +107,79 @@ function updateMobileButtonStyles() {
       }
     });
     
+    // טיפול ספציפי בתפריטי הבחירה (select)
+    const selectElements = [
+      document.getElementById('category-select'),
+      document.getElementById('effect-select')
+    ];
+    
+    selectElements.forEach(select => {
+      if (select) {
+        // ביטול סגנונות קודמים על ידי הגדרתם ישירות
+        select.style.appearance = 'none';
+        select.style.webkitAppearance = 'none';
+        select.style.mozAppearance = 'none';
+        select.style.backgroundImage = `url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")`;
+        select.style.backgroundRepeat = 'no-repeat';
+        select.style.backgroundPosition = 'right 10px center';
+        select.style.backgroundColor = 'rgba(10, 10, 20, 0.8)';
+        select.style.color = 'white';
+        select.style.border = '1px solid rgba(0, 243, 255, 0.3)';
+        select.style.borderRadius = '8px';
+        select.style.padding = '12px 30px 12px 15px';
+        select.style.margin = '5px';
+        select.style.fontFamily = "'Heebo', Arial, sans-serif";
+        select.style.fontSize = '15px';
+        select.style.fontWeight = 'bold';
+        select.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
+        select.style.borderBottom = '2px solid var(--neon-blue, #00f3ff)';
+        select.style.cursor = 'pointer';
+        select.style.textAlign = 'center';
+        select.style.boxSizing = 'border-box';
+        select.style.width = 'auto';
+        select.style.minWidth = '120px';
+        
+        // מעקב אחר שינויים באפשרויות הבחירה ועדכון הסגנון שלהן
+        // הוספת מאזין אירועים לפתיחת התפריט הנפתח
+        select.addEventListener('mousedown', function() {
+          // מוסיף קלאס מיוחד לגוף המסמך שנוכל לזהות בעזרתו מתי התפריט פתוח
+          document.body.classList.add('select-opened');
+          
+          // מוסיף סגנון מיוחד לאפשרויות בתפריט
+          setTimeout(() => {
+            const options = document.querySelectorAll('option');
+            options.forEach(option => {
+              option.style.backgroundColor = 'rgba(5, 5, 15, 0.95)';
+              option.style.color = 'white';
+              option.style.padding = '12px';
+              option.style.fontFamily = "'Heebo', Arial, sans-serif";
+            });
+          }, 0);
+        });
+      }
+    });
+    
     // עיצוב ספציפי לכפתור צור וידאו
     const createVideoButton = document.getElementById('create-video');
     if (createVideoButton) {
       createVideoButton.style.background = 'linear-gradient(45deg, #00f3ff, #9d00ff)';
       createVideoButton.style.boxShadow = '0 0 15px rgba(0, 243, 255, 0.5)';
     }
+    
+    // עיצוב אייקון העלאת תמונה
+    const uploadIcon = document.querySelector('.upload-icon');
+    if (uploadIcon) {
+      uploadIcon.style.color = 'var(--neon-blue, #00f3ff)';
+    }
   }
 }
+
+// הפעלת הפונקציה בטעינת העמוד ובשינוי גודל חלון
+document.addEventListener('DOMContentLoaded', function() {
+  updateMobileButtonStyles();
+});
+
+window.addEventListener('resize', updateMobileButtonStyles);
 
 // פונקציית אתחול
 async function init() {
