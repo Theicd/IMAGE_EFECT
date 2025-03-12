@@ -340,10 +340,10 @@ function createVideoFull() {
         videoContainer.style.zIndex = '1000';
         
         // הגדרת סגנון לווידאו עצמו
-        videoElement.style.width = '100%';
-        videoElement.style.maxWidth = '100%';
-        videoElement.style.borderRadius = '8px';
-        videoElement.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.4)';
+        videoPlayer.style.width = '100%';
+        videoPlayer.style.maxWidth = '100%';
+        videoPlayer.style.borderRadius = '8px';
+        videoPlayer.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.4)';
         
         // בדיקה אם המכשיר הוא טלפון נייד (רוחב מסך קטן מ-768 פיקסלים)
         if (window.innerWidth <= 768) {
@@ -371,9 +371,9 @@ function createVideoFull() {
           videoControls.style.marginTop = '20px';
           
           // התאמת גודל הווידאו
-          videoElement.style.maxHeight = '50vh';
-          videoElement.style.marginBottom = '20px';
-          videoElement.style.objectFit = 'contain';
+          videoPlayer.style.maxHeight = '50vh';
+          videoPlayer.style.marginBottom = '20px';
+          videoPlayer.style.objectFit = 'contain';
           
           // התאמת הצגת מידע האפקטים
           const videoInfo = document.querySelector('.video-info');
@@ -389,7 +389,7 @@ function createVideoFull() {
         }
         
         // הפעלת הווידאו
-        videoElement.play();
+        videoPlayer.play();
         
         document.getElementById('download-video').onclick = () => {
           const a = document.createElement('a');
