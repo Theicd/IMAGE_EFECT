@@ -375,7 +375,7 @@ function createVideoFull() {
           videoControls.style.padding = '15px 10px';
           videoControls.style.background = 'transparent';
           videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '70px'; // הגדלת המרווח מעל הכפתורים ל-70px
+          videoControls.style.marginTop = '95px'; // הגדלת המרווח מעל הכפתורים ל-95px (70px + 25px נוספים)
           
           // עיצוב חדש לכפתורים בהתאם לעיצוב הכללי של הממשק
           const downloadButton = document.getElementById('download-video');
@@ -435,6 +435,10 @@ function createVideoFull() {
             videoInfo.style.fontSize = '14px';
             videoInfo.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
             videoInfo.style.background = 'rgba(20, 20, 20, 0.8)';
+            videoInfo.style.position = 'relative';
+            videoInfo.style.top = '-20px'; // הזזת שורת האפקטים 20px למעלה
+            videoInfo.style.marginBottom = '0px'; // ביטול המרווח התחתון
+            videoInfo.style.fontSize = '15px'; // הקטנת גודל הטקסט
           }
         }
         
