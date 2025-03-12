@@ -12,13 +12,26 @@ const movingObjectsEffects = {
         filmPass.enabled = true;
         composer.addPass(filmPass);
 
-        const noisePass = new THREE.ShaderPass(THREE.NoiseShader);
-        noisePass.uniforms['amount'].value = 0.08;
-        noisePass.enabled = true;
-        composer.addPass(noisePass);
-
-        mesh.userData.customPasses = mesh.userData.customPasses || [];
-        mesh.userData.customPasses.push(filmPass, noisePass);
+        // בדיקה אם NoiseShader קיים ויצירת אובייקט אחיד
+        if (THREE.NoiseShader) {
+          const noisePass = new THREE.ShaderPass(THREE.NoiseShader);
+          if (noisePass && noisePass.uniforms && noisePass.uniforms['amount']) {
+            noisePass.uniforms['amount'].value = 0.08;
+            noisePass.enabled = true;
+            composer.addPass(noisePass);
+            
+            mesh.userData.customPasses = mesh.userData.customPasses || [];
+            mesh.userData.customPasses.push(filmPass, noisePass);
+          } else {
+            console.warn("NoiseShader קיים אבל uniforms['amount'] חסר");
+            mesh.userData.customPasses = mesh.userData.customPasses || [];
+            mesh.userData.customPasses.push(filmPass);
+          }
+        } else {
+          console.warn("NoiseShader לא נמצא בספריית THREE");
+          mesh.userData.customPasses = mesh.userData.customPasses || [];
+          mesh.userData.customPasses.push(filmPass);
+        }
       }
     }
   },
@@ -205,8 +218,15 @@ const movingObjectsEffects = {
       console.log("Applying smoke effect", mesh);
 
       function getImageBounds(mesh) {
-        if (!mesh.geometry || !mesh.geometry.parameters) {
-          console.error("Invalid mesh geometry for smoke effect", mesh);
+        // בדיקה אם זו קבוצה עם מסגרת
+        let targetMesh = mesh;
+        if (mesh.userData && mesh.userData.imagePlane) {
+          // אם יש לנו קבוצה, נשתמש ב-imagePlane לקבלת הגיאומטריה
+          targetMesh = mesh.userData.imagePlane;
+        }
+        
+        if (!targetMesh.geometry || !targetMesh.geometry.parameters) {
+          console.error("Invalid mesh geometry for smoke effect", targetMesh);
           return {
             minX: -1, maxX: 1,
             minY: -1, maxY: 1,
@@ -214,8 +234,8 @@ const movingObjectsEffects = {
           };
         }
 
-        const width = mesh.geometry.parameters.width;
-        const height = mesh.geometry.parameters.height;
+        const width = targetMesh.geometry.parameters.width;
+        const height = targetMesh.geometry.parameters.height;
         console.log("Smoke bounds:", width, height);
 
         return {
@@ -304,13 +324,11 @@ const movingObjectsEffects = {
       smokeParticles.position.z = mesh.position.z + 0.01;
       
       scene.add(smokeParticles);
-      console.log("Smoke particles added at", smokeParticles.position);
 
       mesh.userData.customObjects = mesh.userData.customObjects || [];
       mesh.userData.customObjects.push(smokeParticles);
 
       mesh.userData.updateFunction = function(delta, imageBounds) {
-        console.log("Updating smoke effect");
         smokeMaterial.uniforms.time.value += delta;
 
         const positions = smokeGeometry.attributes.position.array;
@@ -336,8 +354,24 @@ const movingObjectsEffects = {
     value: "bubbles",
     apply: function(mesh, scene, composer) {
       function getImageBounds(mesh) {
-        const width = mesh.geometry.parameters.width;
-        const height = mesh.geometry.parameters.height;
+        // בדיקה אם זו קבוצה עם מסגרת
+        let targetMesh = mesh;
+        if (mesh.userData && mesh.userData.imagePlane) {
+          // אם יש לנו קבוצה, נשתמש ב-imagePlane לקבלת הגיאומטריה
+          targetMesh = mesh.userData.imagePlane;
+        }
+        
+        if (!targetMesh.geometry || !targetMesh.geometry.parameters) {
+          console.error("Invalid mesh geometry for bubbles effect", targetMesh);
+          return {
+            minX: -1, maxX: 1,
+            minY: -1, maxY: 1,
+            z: mesh.position.z + 0.01
+          };
+        }
+        
+        const width = targetMesh.geometry.parameters.width;
+        const height = targetMesh.geometry.parameters.height;
         return {
           minX: -width / 2,
           maxX: width / 2,
@@ -417,8 +451,24 @@ const movingObjectsEffects = {
     value: "rain",
     apply: function(mesh, scene, composer) {
       function getImageBounds(mesh) {
-        const width = mesh.geometry.parameters.width;
-        const height = mesh.geometry.parameters.height;
+        // בדיקה אם זו קבוצה עם מסגרת
+        let targetMesh = mesh;
+        if (mesh.userData && mesh.userData.imagePlane) {
+          // אם יש לנו קבוצה, נשתמש ב-imagePlane לקבלת הגיאומטריה
+          targetMesh = mesh.userData.imagePlane;
+        }
+        
+        if (!targetMesh.geometry || !targetMesh.geometry.parameters) {
+          console.error("Invalid mesh geometry for rain effect", targetMesh);
+          return {
+            minX: -1, maxX: 1,
+            minY: -1, maxY: 1,
+            z: mesh.position.z + 0.01
+          };
+        }
+        
+        const width = targetMesh.geometry.parameters.width;
+        const height = targetMesh.geometry.parameters.height;
         return {
           minX: -width / 2,
           maxX: width / 2,
@@ -455,6 +505,8 @@ const movingObjectsEffects = {
       // שיטה חדשה: יצירת קבוצת גשם שתיצמד למיקום התמונה
       const rainGroup = new THREE.Group();
       rainGroup.position.copy(mesh.position);
+      // חשוב מאוד: מיקום הגשם קדימה יותר מהתמונה בציר ה-Z
+      rainGroup.position.z = mesh.position.z + 0.05;
       scene.add(rainGroup);
 
       const rain = [];
@@ -522,11 +574,20 @@ const movingObjectsEffects = {
 
 // פונקציה להחלת אפקט אובייקטים זזים
 function applyMovingObjectsEffect(effect, mesh, scene, composer) {
+  console.log(`מנסה להחיל אפקט אובייקטים זזים: ${effect}`, mesh);
+  
+  // בדיקה אם זו קבוצה עם מסגרת (מהשינוי החדש) או mesh בודד
+  let actualImageMesh = mesh;
+  
   if (movingObjectsEffects[effect] && movingObjectsEffects[effect].apply) {
+    // לפני החלת אפקט חדש, מנקים אפקטים קודמים
     resetMovingObjectsEffects(mesh, scene, composer);
+    
+    // החלת האפקט עם התמיכה במבנה החדש
     movingObjectsEffects[effect].apply(mesh, scene, composer);
     return true;
   }
+  
   return false;
 }
 

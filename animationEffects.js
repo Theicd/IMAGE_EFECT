@@ -279,9 +279,10 @@ function animateBackground(canvas, ctx, mainText, subText) {
   
   function animate() {
     frameCount++;
-    if (frameCount % 10 === 0) {
-      console.log("אנימציית רקע פריים:", frameCount);
-    }
+    // הסרת הלוג של הפריימים שהיה מעמיס על המשאבים
+    // if (frameCount % 10 === 0) {
+    //   console.log("אנימציית רקע פריים:", frameCount);
+    // }
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     

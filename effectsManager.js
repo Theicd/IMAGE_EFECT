@@ -106,33 +106,55 @@ function updateEffects() {
 function applyEffect(category, effect) {
   if (!imageMesh) return;
   
+  // בדיקה אם זו קבוצה עם מסגרת (מהשינוי החדש) או מש בודד
+  let targetMesh = imageMesh;
+  
+  // אם יש שדה userData.imagePlane, זה אומר שזוהי קבוצה עם מסגרת
+  // במקרה כזה, נשתמש ב-imagePlane לאפקטים של מראה התמונה 
+  // אבל נשמור על imageMesh לאפקטים שמשפיעים על התנועה/מיקום של התמונה
+  if (imageMesh.userData && imageMesh.userData.imagePlane) {
+    // לאפקטים של מראה התמונה (material, opacity) נשתמש ב-imagePlane 
+    // אבל לשאר האפקטים נמשיך להשתמש בקבוצה המקורית
+    if (category === 'appearance') {
+      targetMesh = imageMesh.userData.imagePlane;
+    }
+    
+    // נעביר גם את הנתונים החשובים אל targetMesh במידת הצורך
+    if (targetMesh !== imageMesh) {
+      // העתקת נתונים חיוניים מהקבוצה אל תת-האובייקט
+      targetMesh.userData.originalScale = imageMesh.userData.originalScale;
+      targetMesh.userData.originalPosition = imageMesh.userData.originalPosition;
+      targetMesh.userData.originalRotation = imageMesh.userData.originalRotation;
+    }
+  }
+  
   // בדיקה אם האפקט של קטגוריה זו קיים
   let applied = false;
   
   switch (category) {
     case 'appearance':
       if (window.applyImageAppearanceEffect) {
-        applied = window.applyImageAppearanceEffect(effect, imageMesh, scene, composer);
+        applied = window.applyImageAppearanceEffect(effect, targetMesh, scene, composer);
       }
       break;
     case 'camera':
       if (window.applyCameraMovementEffect) {
-        applied = window.applyCameraMovementEffect(effect, imageMesh, scene, composer);
+        applied = window.applyCameraMovementEffect(effect, targetMesh, scene, composer);
       }
       break;
     case 'objects':
       if (window.applyMovingObjectsEffect) {
-        applied = window.applyMovingObjectsEffect(effect, imageMesh, scene, composer);
+        applied = window.applyMovingObjectsEffect(effect, targetMesh, scene, composer);
       }
       break;
     case 'light':
       if (window.applyLightAndColorEffect) {
-        applied = window.applyLightAndColorEffect(effect, imageMesh, scene, composer);
+        applied = window.applyLightAndColorEffect(effect, targetMesh, scene, composer);
       }
       break;
     default:
       // אם אין קטגוריה, נפעיל את האפקטים הישנים
-      applyLegacyEffect(effect);
+      applyLegacyEffect(effect, targetMesh);
       return;
   }
   
@@ -144,17 +166,52 @@ function applyEffect(category, effect) {
 }
 
 // החלת אפקט מהגרסה הישנה, לצורך תאימות לאחור
-function applyLegacyEffect(effect) {
-  if (!imageMesh) return;
+function applyLegacyEffect(effect, targetMesh) {
+  if (!targetMesh) return;
   
   // איפוס אפקטים קודמים
-  imageMesh.rotation.set(0, 0, 0);
-  imageMesh.position.set(0, 0, -4);
-  imageMesh.scale.set(1, 1, 1);
+  targetMesh.rotation.set(0, 0, 0);
   
-  // בדיקה שה-material וה-color קיימים לפני שימוש ב-set
-  if (imageMesh.material && imageMesh.material.color) {
-    imageMesh.material.color.set(0xffffff);
+  // בדיקה אם זו קבוצה עם מסגרת
+  if (targetMesh === imageMesh && targetMesh.userData && targetMesh.userData.imagePlane) {
+    // מיקום הקבוצה המלאה
+    targetMesh.position.set(0, 0, -4);
+    targetMesh.scale.set(1, 1, 1);
+    
+    // קבלת התמונה עצמה
+    const actualImage = targetMesh.userData.imagePlane;
+    
+    // איפוס ה-material רק אם יש צורך
+    if (actualImage.material && actualImage.material.color) {
+      actualImage.material.color.set(0xffffff);
+    }
+    
+    // ביטול אפקטים קודמים למראה התמונה
+    if (actualImage.userData.originalMaterial) {
+      if (actualImage.material) {
+        actualImage.material.dispose();
+      }
+      actualImage.material = actualImage.userData.originalMaterial;
+      delete actualImage.userData.originalMaterial;
+    }
+  } else {
+    // אם זה מש רגיל, נמשיך כרגיל
+    targetMesh.position.set(0, 0, -4);
+    targetMesh.scale.set(1, 1, 1);
+    
+    // בדיקה שה-material וה-color קיימים לפני שימוש ב-set
+    if (targetMesh.material && targetMesh.material.color) {
+      targetMesh.material.color.set(0xffffff);
+    }
+    
+    // החזרת ה-material המקורי אם יש צורך
+    if (targetMesh.userData.originalMaterial) {
+      if (targetMesh.material) {
+        targetMesh.material.dispose();
+      }
+      targetMesh.material = targetMesh.userData.originalMaterial;
+      delete targetMesh.userData.originalMaterial;
+    }
   }
   
   if (particleSystem) {
@@ -167,15 +224,6 @@ function applyLegacyEffect(effect) {
   if (bokehPass) bokehPass.enabled = false;
   if (colorPass) colorPass.enabled = false;
   if (filmPass) filmPass.enabled = false;
-  
-  // החזרת ה-material המקורי אם יש צורך
-  if (imageMesh.userData.originalMaterial) {
-    if (imageMesh.material) {
-      imageMesh.material.dispose();
-    }
-    imageMesh.material = imageMesh.userData.originalMaterial;
-    delete imageMesh.userData.originalMaterial;
-  }
   
   // החלת האפקט החדש
   switch (effect) {
@@ -206,8 +254,16 @@ function applyLegacyEffect(effect) {
       // שימוש ב-shader לאפקט גלים
       if (imageTexture) {
         try {
+          // בדיקה אם יש צורך לשמור על המבנה החדש
+          let actualTarget = targetMesh;
+          
+          // אם זו קבוצה, ניגש לתמונה עצמה
+          if (targetMesh === imageMesh && targetMesh.userData && targetMesh.userData.imagePlane) {
+            actualTarget = targetMesh.userData.imagePlane;
+          }
+          
           // שמירת ה-material המקורי
-          imageMesh.userData.originalMaterial = imageMesh.material;
+          actualTarget.userData.originalMaterial = actualTarget.material;
           
           // יצירת uniforms
           waveUniforms = {
@@ -238,10 +294,10 @@ function applyLegacyEffect(effect) {
           });
           
           // החלפת ה-material
-          if (imageMesh.material) {
-            imageMesh.material.dispose();
+          if (actualTarget.material) {
+            actualTarget.material.dispose();
           }
-          imageMesh.material = waveMaterial;
+          actualTarget.material = waveMaterial;
         } catch (e) {
           console.error('שגיאה ביצירת אפקט גלים:', e);
         }

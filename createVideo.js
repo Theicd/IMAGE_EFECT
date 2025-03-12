@@ -54,22 +54,35 @@ function createVideoFull() {
   light.position.set(0, 0, 1);
   imageScene.add(light);
   
-  // שינוי: שימוש ב-field of view קטן יותר להגדלת התמונה
-  const imageCamera = new THREE.PerspectiveCamera(25, 1280 / 720, 0.1, 1000);
-  // שינוי: קירוב המצלמה עוד יותר להגדלת התמונה
-  imageCamera.position.z = 0.7;
+  // מצלמה בגודל סביר: הגדלת ה-FOV מ-25 ל-45 כדי לא להגדיל את התמונה יתר על המידה
+  const imageCamera = new THREE.PerspectiveCamera(45, 1280 / 720, 0.1, 1000);
+  // הרחקת המצלמה כדי לכלול את כל התמונה בגודל סביר
+  imageCamera.position.z = 1.3;
   
   // וידוא שהעותק של התמונה מוצב ומשוקלל נכון
-  // שינוי: הגדלה משמעותית של התמונה בווידאו
+  // התאמת גודל התמונה לווידאו
   imageCopy.position.set(0, 0, 0);
   if (imageMesh.scale) {
-    // הגדלת התמונה פי 6.0 מהגודל המקורי
-    imageCopy.scale.copy(imageMesh.scale).multiplyScalar(6.0);
+    // בדיקה אם מדובר באפקט תנועת מצלמה, ואם כן - הגדלת התמונה יותר
+    if (activeEffects.camera) {
+      // הגדלה מוגברת לאפקטי תנועת מצלמה
+      imageCopy.scale.copy(imageMesh.scale).multiplyScalar(2.0);
+    } else {
+      // הגדלה רגילה לשאר האפקטים
+      imageCopy.scale.copy(imageMesh.scale).multiplyScalar(0.5);
+    }
     // שמירת הסקייל המקורי לשימוש בפונקציות עדכון
     imageCopy.userData.originalScale = imageCopy.scale.clone();
   } else {
-    imageCopy.scale.set(6.0, 6.0, 6.0);
-    imageCopy.userData.originalScale = new THREE.Vector3(6.0, 6.0, 6.0);
+    if (activeEffects.camera) {
+      // הגדלה מוגברת לאפקטי תנועת מצלמה
+      imageCopy.scale.set(2.0, 2.0, 2.0);
+      imageCopy.userData.originalScale = new THREE.Vector3(2.0, 2.0, 2.0);
+    } else {
+      // הגדלה רגילה לשאר האפקטים
+      imageCopy.scale.set(0.5, 0.5, 0.5);
+      imageCopy.userData.originalScale = new THREE.Vector3(0.5, 0.5, 0.5);
+    }
   }
   
   const imageComposer = new THREE.EffectComposer(imageRenderer);

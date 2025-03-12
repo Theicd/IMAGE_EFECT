@@ -48,8 +48,15 @@ const cameraMovementEffects = {
     
     // פונקציית עדכון לשימוש בווידאו
     update: function(mesh, delta) {
-      // בווידאו, לא נשנה את הגודל שנקבע ב-createVideo.js
-      // פונקציה ריקה כדי למנוע את ברירת המחדל של החזרה לגודל המקורי
+      // שמירה על גודל התמונה שהוגדר ב-createVideo.js
+      if (mesh.userData.videoScale) {
+        mesh.scale.copy(mesh.userData.videoScale);
+      } else {
+        // שמירת הגודל הנוכחי כדי להשתמש בו בעתיד
+        mesh.userData.videoScale = mesh.scale.clone();
+      }
+      // המשך אנימציית הזום באופן חלק
+      TWEEN.update();
     }
   },
   
@@ -99,8 +106,15 @@ const cameraMovementEffects = {
     
     // פונקציית עדכון לשימוש בווידאו
     update: function(mesh, delta) {
-      // בווידאו, לא נשנה את הגודל שנקבע ב-createVideo.js
-      // פונקציה ריקה כדי למנוע את ברירת המחדל של החזרה לגודל המקורי
+      // שמירה על גודל התמונה שהוגדר ב-createVideo.js
+      if (mesh.userData.videoScale) {
+        mesh.scale.copy(mesh.userData.videoScale);
+      } else {
+        // שמירת הגודל הנוכחי כדי להשתמש בו בעתיד
+        mesh.userData.videoScale = mesh.scale.clone();
+      }
+      // המשך אנימציית הזום אאוט באופן חלק
+      TWEEN.update();
     }
   },
   
@@ -137,8 +151,15 @@ const cameraMovementEffects = {
     
     // פונקציית עדכון לשימוש בווידאו
     update: function(mesh, delta) {
-      // בווידאו, לא נשנה את הגודל שנקבע ב-createVideo.js
-      // פונקציה ריקה כדי למנוע את ברירת המחדל של החזרה לגודל המקורי
+      // שמירה על גודל התמונה שהוגדר ב-createVideo.js
+      if (mesh.userData.videoScale) {
+        mesh.scale.copy(mesh.userData.videoScale);
+      } else {
+        // שמירת הגודל הנוכחי כדי להשתמש בו בעתיד
+        mesh.userData.videoScale = mesh.scale.clone();
+      }
+      // המשך אנימציית הפאן באופן חלק
+      TWEEN.update();
     }
   },
   
@@ -175,8 +196,15 @@ const cameraMovementEffects = {
     
     // פונקציית עדכון לשימוש בווידאו
     update: function(mesh, delta) {
-      // בווידאו, לא נשנה את הגודל שנקבע ב-createVideo.js
-      // פונקציה ריקה כדי למנוע את ברירת המחדל של החזרה לגודל המקורי
+      // שמירה על גודל התמונה שהוגדר ב-createVideo.js
+      if (mesh.userData.videoScale) {
+        mesh.scale.copy(mesh.userData.videoScale);
+      } else {
+        // שמירת הגודל הנוכחי כדי להשתמש בו בעתיד
+        mesh.userData.videoScale = mesh.scale.clone();
+      }
+      // המשך אנימציית הפאן האנכי באופן חלק
+      TWEEN.update();
     }
   },
   
@@ -218,8 +246,15 @@ const cameraMovementEffects = {
     
     // פונקציית עדכון לשימוש בווידאו
     update: function(mesh, delta) {
-      // בווידאו, לא נשנה את הגודל שנקבע ב-createVideo.js
-      // פונקציה ריקה כדי למנוע את ברירת המחדל של החזרה לגודל המקורי
+      // שמירה על גודל התמונה שהוגדר ב-createVideo.js
+      if (mesh.userData.videoScale) {
+        mesh.scale.copy(mesh.userData.videoScale);
+      } else {
+        // שמירת הגודל הנוכחי כדי להשתמש בו בעתיד
+        mesh.userData.videoScale = mesh.scale.clone();
+      }
+      // המשך אנימציית הגלים באופן חלק
+      TWEEN.update();
     }
   },
   
@@ -261,8 +296,15 @@ const cameraMovementEffects = {
     
     // הוספת פונקציית עדכון שתשמור על גודל התמונה בווידאו
     update: function(mesh, delta) {
-      // בווידאו, לא נשנה את הגודל שנקבע ב-createVideo.js
-      // פונקציה ריקה כדי למנוע את ברירת המחדל של החזרה לגודל המקורי
+      // שמירה על גודל התמונה שהוגדר ב-createVideo.js
+      if (mesh.userData.videoScale) {
+        mesh.scale.copy(mesh.userData.videoScale);
+      } else {
+        // שמירת הגודל הנוכחי כדי להשתמש בו בעתיד
+        mesh.userData.videoScale = mesh.scale.clone();
+      }
+      // המשך אנימציית הרעידה באופן חלק
+      TWEEN.update();
     }
   },
   
@@ -306,8 +348,15 @@ const cameraMovementEffects = {
     
     // הוספת פונקציית עדכון שתשמור על גודל התמונה בווידאו
     update: function(mesh, delta) {
-      // בווידאו, לא נשנה את הגודל שנקבע ב-createVideo.js
-      // פונקציה ריקה כדי למנוע את ברירת המחדל של החזרה לגודל המקורי
+      // שמירה על גודל התמונה שהוגדר ב-createVideo.js
+      if (mesh.userData.videoScale) {
+        mesh.scale.copy(mesh.userData.videoScale);
+      } else {
+        // שמירת הגודל הנוכחי כדי להשתמש בו בעתיד
+        mesh.userData.videoScale = mesh.scale.clone();
+      }
+      // המשך אנימציית מבט מלמעלה באופן חלק
+      TWEEN.update();
     }
   },
 };

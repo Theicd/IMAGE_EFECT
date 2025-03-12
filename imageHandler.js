@@ -30,8 +30,8 @@ function handleImageUpload(event) {
         side: THREE.DoubleSide
       });
       
-      imageMesh = new THREE.Mesh(geometry, material);
-      imageMesh.position.z = 0.01; // מיקום התמונה קצת קדימה
+      const imagePlane = new THREE.Mesh(geometry, material);
+      imagePlane.position.z = 0.01; // מיקום התמונה קצת קדימה
       
       // יצירת מסגרת תלת-מימדית
       const frameThickness = 0.1; // עובי המסגרת
@@ -56,17 +56,24 @@ function handleImageUpload(event) {
       
       // הוספת התמונה והמסגרת לקבוצה
       imageGroup.add(backPlate);
-      imageGroup.add(imageMesh);
+      imageGroup.add(imagePlane);
       
       // שמירת הקבוצה כ-imageMesh לשמירה על תאימות עם שאר הקוד
       imageMesh = imageGroup;
       imageMesh.position.z = -4;
+      
+      // שמירת התמונה עצמה כדי שאפקטים יוכלו לגשת אליה ישירות
+      imageMesh.userData.imagePlane = imagePlane;
       
       // שמירת נתוני התמונה המקורית עבור אפקטים
       imageMesh.userData.originalImageWidth = img.width;
       imageMesh.userData.originalImageHeight = img.height;
       imageMesh.userData.width = width;
       imageMesh.userData.height = height;
+      
+      // שמירת הטקסטורה ומטריאל של התמונה לגישה קלה לאפקטים
+      imageMesh.userData.imageTexture = imageTexture;
+      imageMesh.userData.imageMaterial = material;
       
       scene.add(imageMesh);
       

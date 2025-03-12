@@ -88,8 +88,7 @@ function addWindowsToRoom() {
         const pmaterial = new THREE.MeshPhongMaterial({
             color: 0x000000,
             side: THREE.DoubleSide,
-            roughness: 10,
-            metalness: 0.6,
+            shininess: 30, // שימוש בshininess במקום roughness/metalness
             opacity: 0.9,
             transparent: true
         });
@@ -298,11 +297,9 @@ function enhanceReflectiveFloor() {
     const floorMaterial = new THREE.MeshPhongMaterial({ 
         color: 0x000000, 
         side: THREE.DoubleSide,
-        roughness: 10,
-        metalness: 0.6,
+        shininess: 100,
         opacity: 0.9,
-        transparent: true,
-        shininess: 100
+        transparent: true
     });
     
     currentFloor = new THREE.Mesh(floorGeometry, floorMaterial);

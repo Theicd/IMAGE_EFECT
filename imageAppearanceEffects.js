@@ -140,30 +140,65 @@ const imageAppearanceEffects = {
     name: "סיבוב",
     value: "spin",
     apply: function(mesh, scene, composer) {
-      // שמירת הסיבוב המקורי
-      mesh.userData.originalRotation = mesh.rotation.clone();
-      // שמירת הסקייל המקורי
-      mesh.userData.originalScale = mesh.scale.clone();
-      
-      // הגדרת סיבוב התחלתי
-      mesh.rotation.z = Math.PI * 2; // סיבוב מלא
-      
-      if (mesh.material) {
-        mesh.material.transparent = true;
-        mesh.material.opacity = 0;
+      // שמירת הסיבוב המקורי של התמונה
+      if (!mesh.userData.originalRotation) {
+        mesh.userData.originalRotation = mesh.rotation.clone();
       }
       
-      // הגדרת אנימציות
-      const rotationTween = new TWEEN.Tween(mesh.rotation)
-        .to({ z: mesh.userData.originalRotation.z }, 1200)
-        .easing(TWEEN.Easing.Cubic.Out);
-        
-      const opacityTween = new TWEEN.Tween(mesh.material)
-        .to({ opacity: 1 }, 1000)
-        .easing(TWEEN.Easing.Cubic.In);
+      // שמירת הגודל המקורי של התמונה
+      if (!mesh.userData.originalScale) {
+        mesh.userData.originalScale = mesh.scale.clone();
+      }
       
-      rotationTween.start();
-      opacityTween.start();
+      // סיבוב התמונה ל-180 מעלות ב-Z כדי שתסתובב חזרה למצב הרגיל
+      mesh.rotation.z = Math.PI;
+      
+      // הגדרת שקיפות התחלתית ל-0 אם יש material
+      // בדיקת מבנה התמונה (רגיל או עם מסגרת)
+      let targetMaterial = null;
+      
+      // אם זו תמונה עם מסגרת, ייתכן שהמטריאל נמצא ב-imagePlane
+      if (mesh.userData && mesh.userData.imagePlane && mesh.userData.imagePlane.material) {
+        targetMaterial = mesh.userData.imagePlane.material;
+      } 
+      // אחרת, אם יש לו מטריאל ישירות
+      else if (mesh.material) {
+        targetMaterial = mesh.material;
+      }
+      
+      // וידוא שיש לנו מטריאל תקין לאנימציה
+      if (targetMaterial) {
+        // שמירת השקיפות המקורית
+        if (!mesh.userData.originalOpacity) {
+          mesh.userData.originalOpacity = targetMaterial.opacity;
+        }
+        
+        // הגדרת השקיפות ההתחלתית
+        targetMaterial.opacity = 0;
+        targetMaterial.transparent = true;
+        
+        // אנימציית סיבוב
+        const rotationTween = new TWEEN.Tween(mesh.rotation)
+          .to({ z: mesh.userData.originalRotation.z }, 1200)
+          .easing(TWEEN.Easing.Cubic.Out);
+          
+        // אנימציית שקיפות - רק אם יש מטריאל תקין
+        const opacityTween = new TWEEN.Tween(targetMaterial)
+          .to({ opacity: mesh.userData.originalOpacity || 1 }, 1000)
+          .easing(TWEEN.Easing.Cubic.In);
+        
+        rotationTween.start();
+        opacityTween.start();
+      } else {
+        console.warn("לא נמצא material לאנימציית שקיפות באפקט spin");
+        
+        // הפעל לפחות את אנימציית הסיבוב
+        const rotationTween = new TWEEN.Tween(mesh.rotation)
+          .to({ z: mesh.userData.originalRotation.z }, 1200)
+          .easing(TWEEN.Easing.Cubic.Out);
+          
+        rotationTween.start();
+      }
     },
     
     // הוספת פונקציית עדכון שתשמור על גודל התמונה בווידאו
