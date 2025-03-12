@@ -325,14 +325,7 @@ function createVideoFull() {
           console.error('שגיאה בטעינת הווידאו:', e);
         };
         
-        document.getElementById('video-container').style.display = 'flex';
-        document.getElementById('video-progress').style.display = 'none';
-        document.getElementById('create-video').disabled = false;
-        
-        // התאמות למובייל - מיקום במרכז המסך
         const videoContainer = document.getElementById('video-container');
-        
-        // מיקום במרכז המסך - אחיד לכל המכשירים
         videoContainer.style.position = 'fixed';
         videoContainer.style.top = '50%';
         videoContainer.style.left = '50%';
@@ -346,104 +339,140 @@ function createVideoFull() {
         videoContainer.style.border = '1px solid rgba(100, 200, 255, 0.15)';
         videoContainer.style.zIndex = '1000';
         
-        // הגדרת סגנון לווידאו עצמו
-        videoPlayer.style.width = '100%';
-        videoPlayer.style.maxWidth = '100%';
-        videoPlayer.style.borderRadius = '8px';
-        videoPlayer.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.4)';
+        // הגדרת סגנון לווידאו עצמו - בהתאם לאוריינטציה של התמונה
+        if (isPortrait) {
+          console.log('Applying portrait video styling');
+          
+          // התאמת גודל הווידאו לפי יחס התמונה
+          videoPlayer.style.width = 'auto';
+          videoPlayer.style.height = '70vh';
+          videoPlayer.style.maxHeight = '80vh';
+        } else {
+          console.log('Applying landscape video styling');
+          
+          // הגדרת סגנון לווידאו עצמו - ברירת מחדל
+          videoPlayer.style.width = '100%';
+          videoPlayer.style.maxWidth = '100%';
+        }
         
-        // בדיקה אם המכשיר הוא טלפון נייד (רוחב מסך קטן מ-768 פיקסלים)
-        if (window.innerWidth <= 768) {
-          // הגדרות נוספות ספציפיות למובייל
-          videoContainer.style.maxWidth = '95%';
-          videoContainer.style.maxHeight = '90vh';
-          videoContainer.style.display = 'flex';
-          videoContainer.style.flexDirection = 'column';
-          videoContainer.style.justifyContent = 'center';
-          videoContainer.style.alignItems = 'center';
-          videoContainer.style.padding = '20px';
-          videoContainer.style.paddingBottom = '60px'; // הגדלת הפדינג התחתון
-          videoContainer.style.margin = '0 auto'; // מרכוז אופקי
-          videoContainer.style.right = 'auto'; // ביטול צמידה לצד
-          videoContainer.style.left = '50%'; // מיקום במרכז המסך
-          videoContainer.style.transform = 'translate(-50%, -50%)'; // שמירה על מרכוז אנכי ואופקי
-          videoContainer.style.height = 'auto'; // גובה אוטומטי
-          videoContainer.style.minHeight = '80vh'; // גובה מינימלי
-          
-          // הגדרת סגנון לכפתורים
-          const videoControls = document.querySelector('.video-controls');
-          videoControls.style.position = 'relative';
-          videoControls.style.bottom = 'auto';
-          videoControls.style.left = '0';
-          videoControls.style.right = '0';
-          videoControls.style.width = '100%';
-          videoControls.style.display = 'flex';
-          videoControls.style.justifyContent = 'center';
-          videoControls.style.padding = '15px 10px';
-          videoControls.style.background = 'transparent';
-          videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '70px'; // הגדלת המרווח מעל הכפתורים ל-70px
-          
-          // עיצוב חדש לכפתורים בהתאם לעיצוב הכללי של הממשק
-          const downloadButton = document.getElementById('download-video');
-          const backButton = document.getElementById('back-to-editor');
-          
-          // מערך הכפתורים לעיצוב
-          const buttonsToStyle = [downloadButton, backButton];
-          
-          buttonsToStyle.forEach(button => {
-            if (button) {
-              // עיצוב בסיסי
-              button.style.backgroundColor = 'rgba(10, 10, 20, 0.8)';
-              button.style.color = 'white';
-              button.style.border = 'none';
-              button.style.borderRadius = '8px';
-              button.style.padding = '12px 20px';
-              button.style.margin = '0 10px';
-              button.style.fontFamily = "'Heebo', Arial, sans-serif";
-              button.style.fontSize = '16px';
-              button.style.fontWeight = 'bold';
-              button.style.cursor = 'pointer';
-              button.style.transition = 'all 0.3s ease';
-              button.style.textAlign = 'center';
-              button.style.width = '100%';
-              button.style.boxSizing = 'border-box';
-              
-              // אפקטים מתקדמים - תאורת ניאון וגלו
-              button.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.3)';
-              button.style.borderBottom = '2px solid var(--neon-blue, #00f3ff)';
-              button.style.backdropFilter = 'blur(5px)';
-            }
-          });
-          
-          // עיצוב ספציפי לכפתור הורדה
-          if (downloadButton) {
-            downloadButton.style.background = 'linear-gradient(45deg, #00f3ff, #9d00ff)';
-            downloadButton.style.boxShadow = '0 0 15px rgba(0, 243, 255, 0.5)';
+        videoPlayer.style.display = 'block';
+        videoPlayer.style.margin = '0 auto';
+        videoPlayer.style.marginBottom = '20px';
+        
+        // התאמת המכל של הווידאו
+        videoContainer.style.display = 'flex';
+        videoContainer.style.flexDirection = 'column';
+        videoContainer.style.alignItems = 'center';
+        videoContainer.style.justifyContent = 'center';
+        videoContainer.style.padding = '20px';
+        
+        // כפתורי הפעלה
+        const videoControls = document.createElement('div');
+        videoControls.className = 'video-controls';
+        videoControls.style.display = 'flex';
+        videoControls.style.flexDirection = 'row';
+        videoControls.style.justifyContent = 'center';
+        videoControls.style.width = '100%';
+        videoControls.style.marginTop = '20px';
+        
+        const downloadButton = document.createElement('button');
+        downloadButton.id = 'download-video';
+        downloadButton.className = 'control-button';
+        downloadButton.innerText = 'הורד MP4';
+        
+        const backButton = document.createElement('button');
+        backButton.id = 'back-to-editor';
+        backButton.className = 'control-button';
+        backButton.innerText = 'חזור לעריכה';
+        
+        videoControls.appendChild(downloadButton);
+        videoControls.appendChild(backButton);
+        
+        // נקה את המכל קודם למניעת כפילויות
+        while (videoContainer.firstChild) {
+          videoContainer.removeChild(videoContainer.firstChild);
+        }
+        
+        videoContainer.appendChild(videoPlayer);
+        videoContainer.appendChild(videoControls);
+        
+        // הגדרת אירועים לכפתורים
+        downloadButton.onclick = function() {
+          const a = document.createElement('a');
+          a.href = videoUrl;
+          a.download = 'effect-cube-video.mp4';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        };
+        
+        backButton.onclick = function() {
+          videoContainer.style.display = 'none';
+          document.querySelector('.controls-panel').style.display = 'flex';
+        };
+        
+        // סגנון כפתורים
+        const buttonsStyle = `
+          .control-button {
+            background-color: rgba(15, 15, 25, 0.85);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            margin: 0 10px;
+            font-family: 'Heebo', Arial, sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+            border-bottom: 2px solid #00f3ff;
+            backdrop-filter: blur(5px);
           }
           
-          // התאמת גודל הווידאו
-          videoPlayer.style.maxHeight = '50vh';
-          videoPlayer.style.marginBottom = '20px';
-          videoPlayer.style.objectFit = 'contain';
-          videoPlayer.style.margin = '0 auto'; // מרכוז אופקי
-          videoPlayer.style.display = 'block'; // חשוב לתצוגה נכונה
-          videoPlayer.style.position = 'relative'; // הגדרת מיקום יחסי
-          videoPlayer.style.right = 'auto'; // ביטול צמידה לצד ימין
-          videoPlayer.style.left = 'auto'; // ביטול צמידה לצד שמאל
+          .control-button:hover {
+            background-color: rgba(30, 30, 50, 0.9);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+            transform: translateY(-2px);
+          }
           
-          // התאמת הצגת מידע האפקטים
-          const videoInfo = document.querySelector('.video-info');
-          if (videoInfo) {
-            videoInfo.style.marginBottom = '15px';
-            videoInfo.style.marginTop = '0';
-            videoInfo.style.width = '90%';
-            videoInfo.style.padding = '8px 10px';
-            videoInfo.style.fontSize = '14px';
-            videoInfo.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
-            videoInfo.style.background = 'rgba(20, 20, 20, 0.8)';
+          #download-video {
+            background: linear-gradient(45deg, #00f3ff, #9d00ff);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+          }
+          
+          #download-video:hover {
+            background: linear-gradient(45deg, #00f3ff, #b700ff);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.7);
+          }
+        `;
+        
+        // הוספת סגנון לדף
+        const styleElement = document.createElement('style');
+        styleElement.textContent = buttonsStyle;
+        document.head.appendChild(styleElement);
+        
+        // התאמות ספציפיות למובייל
+        if (window.innerWidth <= 768) {
+          videoControls.style.flexDirection = 'column';
+          videoControls.style.alignItems = 'center';
+          downloadButton.style.marginBottom = '15px';
+          downloadButton.style.width = '80%';
+          backButton.style.width = '80%';
+          
+          // התאמת גודל הווידאו למובייל בהתאם לאוריינטציה
+          if (isPortrait) {
+            videoPlayer.style.height = '60vh';
+            videoPlayer.style.width = 'auto';
+          } else {
+            videoPlayer.style.width = '100%';
+            videoPlayer.style.maxHeight = '50vh';
           }
         }
+        
+        document.getElementById('video-container').style.display = 'flex';
+        document.getElementById('video-progress').style.display = 'none';
+        document.getElementById('create-video').disabled = false;
         
         // הפעלת הווידאו
         videoPlayer.play();
