@@ -327,6 +327,45 @@ function createVideoFull() {
         videoElement.style.display = 'block';
         videoElement.style.margin = '0 auto';
         
+        // התאמות למובייל - מיקום במרכז המסך
+        const videoContainer = document.getElementById('video-container');
+        
+        // בדיקה אם המכשיר הוא טלפון נייד (רוחב מסך קטן מ-768 פיקסלים)
+        if (window.innerWidth <= 768) {
+          // הגדרת סגנון ספציפי למובייל
+          videoContainer.style.position = 'fixed';
+          videoContainer.style.top = '50%';
+          videoContainer.style.left = '0';
+          videoContainer.style.right = '0';
+          videoContainer.style.transform = 'translateY(-50%)';
+          videoContainer.style.maxWidth = '100%';
+          videoContainer.style.maxHeight = '100vh';
+          videoContainer.style.display = 'flex';
+          videoContainer.style.flexDirection = 'column';
+          videoContainer.style.justifyContent = 'center';
+          videoContainer.style.alignItems = 'center';
+          videoContainer.style.padding = '10px';
+          videoContainer.style.zIndex = '1000';
+          
+          // הגדרת סגנון לכפתורים
+          const videoControls = document.querySelector('.video-controls');
+          videoControls.style.position = 'fixed';
+          videoControls.style.bottom = '10px';
+          videoControls.style.left = '0';
+          videoControls.style.right = '0';
+          videoControls.style.width = '100%';
+          videoControls.style.display = 'flex';
+          videoControls.style.justifyContent = 'center';
+          videoControls.style.padding = '10px';
+          videoControls.style.background = 'rgba(10, 10, 10, 0.8)';
+          videoControls.style.zIndex = '1001';
+          
+          // התאמת גודל הווידאו
+          videoElement.style.maxHeight = '60vh';
+          videoElement.style.marginBottom = '60px';
+          videoElement.style.objectFit = 'contain';
+        }
+        
         // הפעלת הווידאו
         videoElement.play();
         
