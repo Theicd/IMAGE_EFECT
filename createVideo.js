@@ -349,7 +349,7 @@ function createVideoFull() {
         if (window.innerWidth <= 768) {
           // הגדרות נוספות ספציפיות למובייל
           videoContainer.style.maxWidth = '95%';
-          videoContainer.style.maxHeight = '90vh';
+          videoContainer.style.maxHeight = '95vh';
           videoContainer.style.display = 'flex';
           videoContainer.style.flexDirection = 'column';
           videoContainer.style.justifyContent = 'center';
@@ -361,7 +361,7 @@ function createVideoFull() {
           videoContainer.style.left = '50%'; // מיקום במרכז המסך
           videoContainer.style.transform = 'translate(-50%, -50%)'; // שמירה על מרכוז אנכי ואופקי
           videoContainer.style.height = 'auto'; // גובה אוטומטי
-          videoContainer.style.minHeight = '80vh'; // גובה מינימלי
+          videoContainer.style.minHeight = '95vh'; // הגדלת הגובה המינימלי
           
           // הגדרת סגנון לכפתורים
           const videoControls = document.querySelector('.video-controls');
@@ -375,7 +375,9 @@ function createVideoFull() {
           videoControls.style.padding = '15px 10px';
           videoControls.style.background = 'transparent';
           videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '40px'; // הגדלת המרווח בין הווידאו לכפתורים
+          videoControls.style.marginTop = '80px'; // הגדלה משמעותית של המרווח בין הווידאו לכפתורים
+          videoControls.style.position = 'relative';
+          videoControls.style.bottom = '-40px'; // הזזת הכפתורים כלפי מטה
           
           // התאמת גודל הווידאו
           videoPlayer.style.maxHeight = '50vh';
