@@ -377,6 +377,44 @@ function createVideoFull() {
           videoControls.style.zIndex = '1001';
           videoControls.style.marginTop = '70px'; // הגדלת המרווח מעל הכפתורים ל-70px
           
+          // עיצוב חדש לכפתורים בהתאם לעיצוב הכללי של הממשק
+          const downloadButton = document.getElementById('download-video');
+          const backButton = document.getElementById('back-to-editor');
+          
+          // מערך הכפתורים לעיצוב
+          const buttonsToStyle = [downloadButton, backButton];
+          
+          buttonsToStyle.forEach(button => {
+            if (button) {
+              // עיצוב בסיסי
+              button.style.backgroundColor = 'rgba(10, 10, 20, 0.8)';
+              button.style.color = 'white';
+              button.style.border = 'none';
+              button.style.borderRadius = '8px';
+              button.style.padding = '12px 20px';
+              button.style.margin = '0 10px';
+              button.style.fontFamily = "'Heebo', Arial, sans-serif";
+              button.style.fontSize = '16px';
+              button.style.fontWeight = 'bold';
+              button.style.cursor = 'pointer';
+              button.style.transition = 'all 0.3s ease';
+              button.style.textAlign = 'center';
+              button.style.width = '100%';
+              button.style.boxSizing = 'border-box';
+              
+              // אפקטים מתקדמים - תאורת ניאון וגלו
+              button.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.3)';
+              button.style.borderBottom = '2px solid var(--neon-blue, #00f3ff)';
+              button.style.backdropFilter = 'blur(5px)';
+            }
+          });
+          
+          // עיצוב ספציפי לכפתור הורדה
+          if (downloadButton) {
+            downloadButton.style.background = 'linear-gradient(45deg, #00f3ff, #9d00ff)';
+            downloadButton.style.boxShadow = '0 0 15px rgba(0, 243, 255, 0.5)';
+          }
+          
           // התאמת גודל הווידאו
           videoPlayer.style.maxHeight = '50vh';
           videoPlayer.style.marginBottom = '20px';
