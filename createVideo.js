@@ -35,38 +35,10 @@ function createVideoFull() {
   }).join(', ');
   document.getElementById('applied-effects').textContent = effectsList.length > 0 ? `אפקטים: ${effectsList}` : 'ללא אפקטים';
   
-  // בדיקת היחס בין רוחב וגובה של התמונה המקורית
-  let imageAspectRatio = 1;
-  let isPortrait = false;
-  let videoWidth = 1280;
-  let videoHeight = 720;
-  
-  if (imageMesh.userData && imageMesh.userData.originalTexture) {
-    const img = imageMesh.userData.originalTexture.image;
-    if (img) {
-      imageAspectRatio = img.width / img.height;
-      isPortrait = imageAspectRatio < 0.9; // אם היחס קטן מ-0.9, זו כנראה תמונת פורטרט
-      console.log('Image aspect ratio:', imageAspectRatio, 'Is portrait:', isPortrait);
-      
-      // התאמת גודל הווידאו לפי יחס התמונה
-      if (isPortrait) {
-        // אם התמונה היא פורטרט, החלף את הרוחב והגובה
-        videoWidth = 720;
-        videoHeight = 1280;
-        console.log('Using portrait video dimensions:', videoWidth, 'x', videoHeight);
-      } else {
-        console.log('Using landscape video dimensions:', videoWidth, 'x', videoHeight);
-      }
-    }
-  }
-  
-  // יצירת רנדרר נפרד רק לתמונה - עם גודל שמותאם לכיוון התמונה
+  // יצירת רנדרר נפרד רק לתמונה
   const imageRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  imageRenderer.setSize(videoWidth, videoHeight);
+  imageRenderer.setSize(1280, 720);
   imageRenderer.setClearColor(0x000000, 0);
-  
-  // ודא שהרקע שקוף
-  imageRenderer.setClearAlpha(0);
   
   // יצירת סצנה נפרדת רק לתמונה
   const imageScene = new THREE.Scene();
@@ -81,35 +53,51 @@ function createVideoFull() {
   const light = new THREE.DirectionalLight(0xffffff, 1);
   light.position.set(0, 0, 1);
   imageScene.add(light);
-
-  // מצלמה בגודל סביר - יחס שמותאם לכיוון התמונה
-  const imageCamera = new THREE.PerspectiveCamera(45, videoWidth / videoHeight, 0.1, 1000);
   
-  // התאמת מרחק המצלמה בהתאם לכיוון התמונה (פורטרט או לרוחב)
-  let cameraDistance = 1.3; // ערך ברירת מחדל לתמונות לרוחב
+  // מצלמה בגודל סביר: הגדלת ה-FOV מ-25 ל-45 כדי לא להגדיל את התמונה יתר על המידה
+  const imageCamera = new THREE.PerspectiveCamera(45, 1280 / 720, 0.1, 1000);
+  // הרחקת המצלמה כדי לכלול את כל התמונה בגודל סביר
+  imageCamera.position.z = 1.3;
   
-  if (isPortrait) {
-    // אם התמונה היא פורטרט, הרחק את המצלמה יותר כדי לכלול את כל הגובה
-    cameraDistance = 1.3; // נשתמש באותו מרחק, אבל היחס שונה
+  // וידוא שהעותק של התמונה מוצב ומשוקלל נכון
+  // התאמת גודל התמונה לווידאו
+  imageCopy.position.set(0, 0, 0);
+  if (imageMesh.scale) {
+    // בדיקה אם מדובר באפקט תנועת מצלמה, ואם כן - הגדלת התמונה יותר
+    if (activeEffects.camera) {
+      // הגדלה מוגברת לאפקטי תנועת מצלמה
+      imageCopy.scale.copy(imageMesh.scale).multiplyScalar(2.0);
+    } else {
+      // הגדלה רגילה לשאר האפקטים
+      imageCopy.scale.copy(imageMesh.scale).multiplyScalar(0.5);
+    }
+    // שמירת הסקייל המקורי לשימוש בפונקציות עדכון
+    imageCopy.userData.originalScale = imageCopy.scale.clone();
+  } else {
+    if (activeEffects.camera) {
+      // הגדלה מוגברת לאפקטי תנועת מצלמה
+      imageCopy.scale.set(2.0, 2.0, 2.0);
+      imageCopy.userData.originalScale = new THREE.Vector3(2.0, 2.0, 2.0);
+    } else {
+      // הגדלה רגילה לשאר האפקטים
+      imageCopy.scale.set(0.5, 0.5, 0.5);
+      imageCopy.userData.originalScale = new THREE.Vector3(0.5, 0.5, 0.5);
+    }
   }
   
-  // הרחקת המצלמה כדי לכלול את כל התמונה בגודל סביר
-  imageCamera.position.z = cameraDistance;
-  
-  // וידאו של רנדרר נפרד רק לתמונה
   const imageComposer = new THREE.EffectComposer(imageRenderer);
   const renderPass = new THREE.RenderPass(imageScene, imageCamera);
   imageComposer.addPass(renderPass);
   
   const fxaaPassCopy = new THREE.ShaderPass(THREE.FXAAShader);
-  fxaaPassCopy.material.uniforms['resolution'].value.x = 1 / videoWidth;
-  fxaaPassCopy.material.uniforms['resolution'].value.y = 1 / videoHeight;
+  fxaaPassCopy.material.uniforms['resolution'].value.x = 1 / 1280;
+  fxaaPassCopy.material.uniforms['resolution'].value.y = 1 / 720;
   fxaaPassCopy.enabled = true;
   imageComposer.addPass(fxaaPassCopy);
   
   // הוספת הפילטרים הנדרשים לאפקטים
   // BLOOM
-  const bloomPassCopy = new THREE.UnrealBloomPass(new THREE.Vector2(videoWidth, videoHeight), 1.5, 0.4, 0.85);
+  const bloomPassCopy = new THREE.UnrealBloomPass(new THREE.Vector2(1280, 720), 1.5, 0.4, 0.85);
   imageComposer.addPass(bloomPassCopy);
   
   // GLITCH
@@ -129,39 +117,20 @@ function createVideoFull() {
   
   imageComposer.render();
   
-  // קביעת צבע רקע שחור ואטום כדי למנוע שקיפות ולהבטיח צבע בסיס למסגרת
-  document.body.style.backgroundColor = "rgba(0, 0, 0, 1)";
-  
-  // הגדרת המדיה רקורדר - חשוב להשתמש בגודל המתאים לפי סוג התמונה
-  const mediaStream = imageRenderer.domElement.captureStream(30);
-  const mediaRecorder = new MediaRecorder(mediaStream, {
-    mimeType: 'video/webm;codecs=vp9',
-    videoBitsPerSecond: 8000000 // איכות גבוהה
-  });
-  
-  document.getElementById('video-progress').style.display = 'block';
-  document.getElementById('video-progress').style.width = '0%';
-  
-  // רשימה לשמירת קטעי הוידאו שנקלטו
+  const stream = imageRenderer.domElement.captureStream(30);
+  const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
   const chunks = [];
-  
+  mediaRecorder.ondataavailable = e => chunks.push(e.data);
   mediaRecorder.start();
+  
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += 2;
+    document.getElementById('video-progress').style.width = `${Math.min(progress, 100)}%`;
+  }, 100);
+  
   const startTime = Date.now();
   const duration = 5000; // 5 שניות
-  
-  // עדכון שורת ההתקדמות
-  const progressInterval = setInterval(() => {
-    const elapsed = Date.now() - startTime;
-    const progress = Math.min(elapsed / duration * 100, 100);
-    document.getElementById('video-progress').style.width = progress + '%';
-  }, 50);
-  
-  // קביעת פונקציית האירוע לקליטת נתונים
-  mediaRecorder.ondataavailable = (e) => {
-    if (e.data.size > 0) {
-      chunks.push(e.data);
-    }
-  };
   
   // פונקציה להחלת האפקטים על העותק של התמונה
   function applyEffectsToImageCopy() {
@@ -349,31 +318,14 @@ function createVideoFull() {
           console.error('שגיאה בטעינת הווידאו:', e);
         };
         
+        document.getElementById('video-container').style.display = 'flex';
+        document.getElementById('video-progress').style.display = 'none';
+        document.getElementById('create-video').disabled = false;
+        
+        // התאמות למובייל - מיקום במרכז המסך
         const videoContainer = document.getElementById('video-container');
         
-        // וידוא שמאפיין data-orientation הוגדר עבור הווידאו
-        if (isPortrait) {
-          videoPlayer.setAttribute('data-orientation', 'portrait');
-          console.log('Setting video to portrait mode');
-        } else {
-          videoPlayer.setAttribute('data-orientation', 'landscape');
-          console.log('Setting video to landscape mode');
-        }
-        
-        // הסרת סגנונות inline שעלולים להתנגש עם ה-CSS
-        videoPlayer.removeAttribute('style');
-        
-        // ווידוא שהסגנונות של ה-CSS החדשים חלים
-        // אבל גם הגדרה ישירה של כמה סגנונות קריטיים
-        if (isPortrait) {
-          videoPlayer.style.width = 'auto !important';
-          videoPlayer.style.height = '70vh !important';
-          videoPlayer.style.maxHeight = '80vh !important';
-          videoPlayer.style.objectFit = 'contain !important';
-        }
-        
-        // התאמת המכל
-        videoContainer.style.display = 'flex';
+        // מיקום במרכז המסך - אחיד לכל המכשירים
         videoContainer.style.position = 'fixed';
         videoContainer.style.top = '50%';
         videoContainer.style.left = '50%';
@@ -387,136 +339,104 @@ function createVideoFull() {
         videoContainer.style.border = '1px solid rgba(100, 200, 255, 0.15)';
         videoContainer.style.zIndex = '1000';
         
-        // הגדרת סגנון לווידאו עצמו - בהתאם לאוריינטציה של התמונה
-        if (isPortrait) {
-          console.log('Applying portrait video styling');
-          
-          // התאמת גודל הווידאו לפי יחס התמונה
-          videoPlayer.style.width = 'auto';
-          videoPlayer.style.height = '70vh';
-          videoPlayer.style.maxHeight = '80vh';
-          videoPlayer.style.objectFit = 'contain'; // מבטיח שכל התמונה תהיה נראית
-        } else {
-          console.log('Applying landscape video styling');
-          
-          // הגדרת סגנון לווידאו עצמו - ברירת מחדל
-          videoPlayer.style.width = '100%';
-          videoPlayer.style.maxWidth = '100%';
-          videoPlayer.style.objectFit = 'contain'; // מבטיח שכל התמונה תהיה נראית
-        }
-        
-        videoPlayer.style.display = 'block';
-        videoPlayer.style.margin = '0 auto';
-        videoPlayer.style.marginBottom = '20px';
+        // הגדרת סגנון לווידאו עצמו
+        videoPlayer.style.width = '100%';
+        videoPlayer.style.maxWidth = '100%';
         videoPlayer.style.borderRadius = '8px';
+        videoPlayer.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.4)';
         
-        // כפתורי הפעלה
-        const videoControls = document.createElement('div');
-        videoControls.className = 'video-controls';
-        videoControls.style.display = 'flex';
-        videoControls.style.flexDirection = 'row';
-        videoControls.style.justifyContent = 'center';
-        videoControls.style.width = '100%';
-        videoControls.style.marginTop = '20px';
-        
-        const downloadButton = document.createElement('button');
-        downloadButton.id = 'download-video';
-        downloadButton.className = 'control-button';
-        downloadButton.innerText = 'הורד MP4';
-        
-        const backButton = document.createElement('button');
-        backButton.id = 'back-to-editor';
-        backButton.className = 'control-button';
-        backButton.innerText = 'חזור לעריכה';
-        
-        videoControls.appendChild(downloadButton);
-        videoControls.appendChild(backButton);
-        
-        // נקה את המכל קודם למניעת כפילויות
-        while (videoContainer.firstChild) {
-          videoContainer.removeChild(videoContainer.firstChild);
-        }
-        
-        videoContainer.appendChild(videoPlayer);
-        videoContainer.appendChild(videoControls);
-        
-        // הגדרת אירועים לכפתורים
-        downloadButton.onclick = function() {
-          const a = document.createElement('a');
-          a.href = videoUrl;
-          a.download = 'effect-cube-video.mp4';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        };
-        
-        backButton.onclick = function() {
-          videoContainer.style.display = 'none';
-          document.querySelector('.controls-panel').style.display = 'flex';
-        };
-        
-        // סגנון כפתורים
-        const buttonsStyle = `
-          .control-button {
-            background-color: rgba(15, 15, 25, 0.85);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 25px;
-            margin: 0 10px;
-            font-family: 'Heebo', Arial, sans-serif;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
-            border-bottom: 2px solid #00f3ff;
-            backdrop-filter: blur(5px);
-          }
-          
-          .control-button:hover {
-            background-color: rgba(30, 30, 50, 0.9);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-            transform: translateY(-2px);
-          }
-          
-          #download-video {
-            background: linear-gradient(45deg, #00f3ff, #9d00ff);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-          }
-          
-          #download-video:hover {
-            background: linear-gradient(45deg, #00f3ff, #b700ff);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.7);
-          }
-        `;
-        
-        // הוספת סגנון לדף
-        const styleElement = document.createElement('style');
-        styleElement.textContent = buttonsStyle;
-        document.head.appendChild(styleElement);
-        
-        // התאמות ספציפיות למובייל
+        // בדיקה אם המכשיר הוא טלפון נייד (רוחב מסך קטן מ-768 פיקסלים)
         if (window.innerWidth <= 768) {
-          videoControls.style.flexDirection = 'column';
-          videoControls.style.alignItems = 'center';
-          downloadButton.style.marginBottom = '15px';
-          downloadButton.style.width = '80%';
-          backButton.style.width = '80%';
+          // הגדרות נוספות ספציפיות למובייל
+          videoContainer.style.maxWidth = '95%';
+          videoContainer.style.maxHeight = '90vh';
+          videoContainer.style.display = 'flex';
+          videoContainer.style.flexDirection = 'column';
+          videoContainer.style.justifyContent = 'center';
+          videoContainer.style.alignItems = 'center';
+          videoContainer.style.padding = '20px';
+          videoContainer.style.paddingBottom = '60px'; // הגדלת הפדינג התחתון
+          videoContainer.style.margin = '0 auto'; // מרכוז אופקי
+          videoContainer.style.right = 'auto'; // ביטול צמידה לצד
+          videoContainer.style.left = '50%'; // מיקום במרכז המסך
+          videoContainer.style.transform = 'translate(-50%, -50%)'; // שמירה על מרכוז אנכי ואופקי
+          videoContainer.style.height = 'auto'; // גובה אוטומטי
+          videoContainer.style.minHeight = '80vh'; // גובה מינימלי
           
-          // התאמת גודל הווידאו למובייל בהתאם לאוריינטציה
-          if (isPortrait) {
-            videoPlayer.style.height = '60vh';
-            videoPlayer.style.width = 'auto';
-          } else {
-            videoPlayer.style.width = '100%';
-            videoPlayer.style.maxHeight = '50vh';
+          // הגדרת סגנון לכפתורים
+          const videoControls = document.querySelector('.video-controls');
+          videoControls.style.position = 'relative';
+          videoControls.style.bottom = 'auto';
+          videoControls.style.left = '0';
+          videoControls.style.right = '0';
+          videoControls.style.width = '100%';
+          videoControls.style.display = 'flex';
+          videoControls.style.justifyContent = 'center';
+          videoControls.style.padding = '15px 10px';
+          videoControls.style.background = 'transparent';
+          videoControls.style.zIndex = '1001';
+          videoControls.style.marginTop = '70px'; // הגדלת המרווח מעל הכפתורים ל-70px
+          
+          // עיצוב חדש לכפתורים בהתאם לעיצוב הכללי של הממשק
+          const downloadButton = document.getElementById('download-video');
+          const backButton = document.getElementById('back-to-editor');
+          
+          // מערך הכפתורים לעיצוב
+          const buttonsToStyle = [downloadButton, backButton];
+          
+          buttonsToStyle.forEach(button => {
+            if (button) {
+              // עיצוב בסיסי
+              button.style.backgroundColor = 'rgba(10, 10, 20, 0.8)';
+              button.style.color = 'white';
+              button.style.border = 'none';
+              button.style.borderRadius = '8px';
+              button.style.padding = '12px 20px';
+              button.style.margin = '0 10px';
+              button.style.fontFamily = "'Heebo', Arial, sans-serif";
+              button.style.fontSize = '16px';
+              button.style.fontWeight = 'bold';
+              button.style.cursor = 'pointer';
+              button.style.transition = 'all 0.3s ease';
+              button.style.textAlign = 'center';
+              button.style.width = '100%';
+              button.style.boxSizing = 'border-box';
+              
+              // אפקטים מתקדמים - תאורת ניאון וגלו
+              button.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.3)';
+              button.style.borderBottom = '2px solid var(--neon-blue, #00f3ff)';
+              button.style.backdropFilter = 'blur(5px)';
+            }
+          });
+          
+          // עיצוב ספציפי לכפתור הורדה
+          if (downloadButton) {
+            downloadButton.style.background = 'linear-gradient(45deg, #00f3ff, #9d00ff)';
+            downloadButton.style.boxShadow = '0 0 15px rgba(0, 243, 255, 0.5)';
+          }
+          
+          // התאמת גודל הווידאו
+          videoPlayer.style.maxHeight = '50vh';
+          videoPlayer.style.marginBottom = '20px';
+          videoPlayer.style.objectFit = 'contain';
+          videoPlayer.style.margin = '0 auto'; // מרכוז אופקי
+          videoPlayer.style.display = 'block'; // חשוב לתצוגה נכונה
+          videoPlayer.style.position = 'relative'; // הגדרת מיקום יחסי
+          videoPlayer.style.right = 'auto'; // ביטול צמידה לצד ימין
+          videoPlayer.style.left = 'auto'; // ביטול צמידה לצד שמאל
+          
+          // התאמת הצגת מידע האפקטים
+          const videoInfo = document.querySelector('.video-info');
+          if (videoInfo) {
+            videoInfo.style.marginBottom = '15px';
+            videoInfo.style.marginTop = '0';
+            videoInfo.style.width = '90%';
+            videoInfo.style.padding = '8px 10px';
+            videoInfo.style.fontSize = '14px';
+            videoInfo.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
+            videoInfo.style.background = 'rgba(20, 20, 20, 0.8)';
           }
         }
-        
-        document.getElementById('video-container').style.display = 'flex';
-        document.getElementById('video-progress').style.display = 'none';
-        document.getElementById('create-video').disabled = false;
         
         // הפעלת הווידאו
         videoPlayer.play();
