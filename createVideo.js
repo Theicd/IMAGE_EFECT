@@ -50,10 +50,12 @@ function createVideoFull() {
       
       // התאמת גודל הווידאו לפי יחס התמונה
       if (isPortrait) {
-        // אם התמונה היא פורטרט, הפוך את הרוחב והגובה כדי שהתמונה תוצג נכון
+        // אם התמונה היא פורטרט, החלף את הרוחב והגובה
         videoWidth = 720;
         videoHeight = 1280;
         console.log('Using portrait video dimensions:', videoWidth, 'x', videoHeight);
+      } else {
+        console.log('Using landscape video dimensions:', videoWidth, 'x', videoHeight);
       }
     }
   }
@@ -62,6 +64,9 @@ function createVideoFull() {
   const imageRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   imageRenderer.setSize(videoWidth, videoHeight);
   imageRenderer.setClearColor(0x000000, 0);
+  
+  // ודא שהרקע שקוף
+  imageRenderer.setClearAlpha(0);
   
   // יצירת סצנה נפרדת רק לתמונה
   const imageScene = new THREE.Scene();
@@ -124,20 +129,39 @@ function createVideoFull() {
   
   imageComposer.render();
   
-  const stream = imageRenderer.domElement.captureStream(30);
-  const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+  // קביעת צבע רקע שחור ואטום כדי למנוע שקיפות ולהבטיח צבע בסיס למסגרת
+  document.body.style.backgroundColor = "rgba(0, 0, 0, 1)";
+  
+  // הגדרת המדיה רקורדר - חשוב להשתמש בגודל המתאים לפי סוג התמונה
+  const mediaStream = imageRenderer.domElement.captureStream(30);
+  const mediaRecorder = new MediaRecorder(mediaStream, {
+    mimeType: 'video/webm;codecs=vp9',
+    videoBitsPerSecond: 8000000 // איכות גבוהה
+  });
+  
+  document.getElementById('video-progress').style.display = 'block';
+  document.getElementById('video-progress').style.width = '0%';
+  
+  // רשימה לשמירת קטעי הוידאו שנקלטו
   const chunks = [];
-  mediaRecorder.ondataavailable = e => chunks.push(e.data);
+  
   mediaRecorder.start();
-  
-  let progress = 0;
-  const progressInterval = setInterval(() => {
-    progress += 2;
-    document.getElementById('video-progress').style.width = `${Math.min(progress, 100)}%`;
-  }, 100);
-  
   const startTime = Date.now();
   const duration = 5000; // 5 שניות
+  
+  // עדכון שורת ההתקדמות
+  const progressInterval = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(elapsed / duration * 100, 100);
+    document.getElementById('video-progress').style.width = progress + '%';
+  }, 50);
+  
+  // קביעת פונקציית האירוע לקליטת נתונים
+  mediaRecorder.ondataavailable = (e) => {
+    if (e.data.size > 0) {
+      chunks.push(e.data);
+    }
+  };
   
   // פונקציה להחלת האפקטים על העותק של התמונה
   function applyEffectsToImageCopy() {
@@ -326,6 +350,30 @@ function createVideoFull() {
         };
         
         const videoContainer = document.getElementById('video-container');
+        
+        // וידוא שמאפיין data-orientation הוגדר עבור הווידאו
+        if (isPortrait) {
+          videoPlayer.setAttribute('data-orientation', 'portrait');
+          console.log('Setting video to portrait mode');
+        } else {
+          videoPlayer.setAttribute('data-orientation', 'landscape');
+          console.log('Setting video to landscape mode');
+        }
+        
+        // הסרת סגנונות inline שעלולים להתנגש עם ה-CSS
+        videoPlayer.removeAttribute('style');
+        
+        // ווידוא שהסגנונות של ה-CSS החדשים חלים
+        // אבל גם הגדרה ישירה של כמה סגנונות קריטיים
+        if (isPortrait) {
+          videoPlayer.style.width = 'auto !important';
+          videoPlayer.style.height = '70vh !important';
+          videoPlayer.style.maxHeight = '80vh !important';
+          videoPlayer.style.objectFit = 'contain !important';
+        }
+        
+        // התאמת המכל
+        videoContainer.style.display = 'flex';
         videoContainer.style.position = 'fixed';
         videoContainer.style.top = '50%';
         videoContainer.style.left = '50%';
