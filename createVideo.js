@@ -334,7 +334,7 @@ function createVideoFull() {
         if (window.innerWidth <= 768) {
           // הגדרת סגנון ספציפי למובייל
           videoContainer.style.position = 'fixed';
-          videoContainer.style.top = '50%';
+          videoContainer.style.top = '40%';  
           videoContainer.style.left = '0';
           videoContainer.style.right = '0';
           videoContainer.style.transform = 'translateY(-50%)';
@@ -350,20 +350,28 @@ function createVideoFull() {
           // הגדרת סגנון לכפתורים
           const videoControls = document.querySelector('.video-controls');
           videoControls.style.position = 'fixed';
-          videoControls.style.bottom = '10px';
+          videoControls.style.bottom = '40px';  
           videoControls.style.left = '0';
           videoControls.style.right = '0';
           videoControls.style.width = '100%';
           videoControls.style.display = 'flex';
           videoControls.style.justifyContent = 'center';
-          videoControls.style.padding = '10px';
+          videoControls.style.padding = '15px 10px';  
           videoControls.style.background = 'rgba(10, 10, 10, 0.8)';
           videoControls.style.zIndex = '1001';
+          videoControls.style.marginTop = '30px';  
           
           // התאמת גודל הווידאו
-          videoElement.style.maxHeight = '60vh';
-          videoElement.style.marginBottom = '60px';
+          videoElement.style.maxHeight = '50vh';  
+          videoElement.style.marginBottom = '100px';  
           videoElement.style.objectFit = 'contain';
+          
+          // הוספת מרחק נוסף בין הווידאו לשאר האלמנטים
+          const videoInfo = document.querySelector('.video-info');
+          if (videoInfo) {
+            videoInfo.style.marginTop = '15px';
+            videoInfo.style.marginBottom = '15px';
+          }
         }
         
         // הפעלת הווידאו
