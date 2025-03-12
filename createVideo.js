@@ -62,27 +62,70 @@ function createVideoFull() {
   // וידוא שהעותק של התמונה מוצב ומשוקלל נכון
   // התאמת גודל התמונה לווידאו
   imageCopy.position.set(0, 0, 0);
+  
+  // בדיקת היחס של התמונה המקורית (portrait או landscape)
+  let isPortrait = false;
+  let aspectRatio = 1;
+  
+  // אחזור יחס הגובה-רוחב של התמונה המקורית
+  if (imageMesh.userData && imageMesh.userData.originalImageWidth && imageMesh.userData.originalImageHeight) {
+    aspectRatio = imageMesh.userData.originalImageHeight / imageMesh.userData.originalImageWidth;
+    isPortrait = aspectRatio > 1; // תמונה גבוהה יותר מרחבה
+  } else {
+    // אם אין מידע מדויק, ננסה להשתמש בגודל הטקסטורה
+    if (imageMesh.material && imageMesh.material.map) {
+      const texture = imageMesh.material.map;
+      if (texture.image) {
+        aspectRatio = texture.image.height / texture.image.width;
+        isPortrait = aspectRatio > 1;
+      }
+    }
+  }
+  
+  console.log("Image Aspect Ratio:", aspectRatio, "Is Portrait:", isPortrait);
+  
+  // התאמת המצלמה או התמונה בהתאם לפורמט התמונה
+  if (isPortrait) {
+    // עבור תמונות אנכיות, נזיז את המצלמה לאחור יותר כדי לכלול את כל התמונה
+    imageCamera.position.z = 1.3 * (aspectRatio * 1.5);
+    console.log("Adjusted camera position for portrait image:", imageCamera.position.z);
+  }
+  
   if (imageMesh.scale) {
     // בדיקה אם מדובר באפקט תנועת מצלמה, ואם כן - הגדלת התמונה יותר
     if (activeEffects.camera) {
       // הגדלה מוגברת לאפקטי תנועת מצלמה
       imageCopy.scale.copy(imageMesh.scale).multiplyScalar(2.0);
+      
+      // התאמה נוספת עבור תמונות אנכיות
+      if (isPortrait) {
+        // נקטין את הסקייל ההורזונטלי יחסית כדי לאפשר ראיה של כל התמונה
+        imageCopy.scale.x /= (aspectRatio * 0.7);
+        imageCopy.scale.y /= (aspectRatio * 0.7);
+      }
     } else {
       // הגדלה רגילה לשאר האפקטים
       imageCopy.scale.copy(imageMesh.scale).multiplyScalar(0.5);
+      
+      // התאמה נוספת עבור תמונות אנכיות
+      if (isPortrait) {
+        // נקטין את הסקייל יחסית כדי לאפשר ראיה של כל התמונה
+        imageCopy.scale.x /= (aspectRatio * 0.6);
+        imageCopy.scale.y /= (aspectRatio * 0.6);
+      }
     }
     // שמירת הסקייל המקורי לשימוש בפונקציות עדכון
     imageCopy.userData.originalScale = imageCopy.scale.clone();
   } else {
-    if (activeEffects.camera) {
-      // הגדלה מוגברת לאפקטי תנועת מצלמה
-      imageCopy.scale.set(2.0, 2.0, 2.0);
-      imageCopy.userData.originalScale = new THREE.Vector3(2.0, 2.0, 2.0);
-    } else {
-      // הגדלה רגילה לשאר האפקטים
-      imageCopy.scale.set(0.5, 0.5, 0.5);
-      imageCopy.userData.originalScale = new THREE.Vector3(0.5, 0.5, 0.5);
+    let baseScale = activeEffects.camera ? 2.0 : 0.5;
+    
+    // התאמת הסקייל עבור תמונות אנכיות
+    if (isPortrait) {
+      baseScale /= (aspectRatio * (activeEffects.camera ? 0.7 : 0.6));
     }
+    
+    imageCopy.scale.set(baseScale, baseScale, baseScale);
+    imageCopy.userData.originalScale = new THREE.Vector3(baseScale, baseScale, baseScale);
   }
   
   const imageComposer = new THREE.EffectComposer(imageRenderer);
