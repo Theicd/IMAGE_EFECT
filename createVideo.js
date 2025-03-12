@@ -366,11 +366,16 @@ function createVideoFull() {
           videoElement.style.marginBottom = '100px';  
           videoElement.style.objectFit = 'contain';
           
-          // הוספת מרחק נוסף בין הווידאו לשאר האלמנטים
+          // התאמת הצגת מידע האפקטים
           const videoInfo = document.querySelector('.video-info');
           if (videoInfo) {
-            videoInfo.style.marginTop = '15px';
             videoInfo.style.marginBottom = '15px';
+            videoInfo.style.marginTop = '0';
+            videoInfo.style.width = '90%';
+            videoInfo.style.padding = '8px 10px';
+            videoInfo.style.fontSize = '14px';
+            videoInfo.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
+            videoInfo.style.background = 'rgba(20, 20, 20, 0.8)';
           }
         }
         
