@@ -355,6 +355,10 @@ function createVideoFull() {
           videoContainer.style.justifyContent = 'center';
           videoContainer.style.alignItems = 'center';
           videoContainer.style.padding = '20px';
+          videoContainer.style.margin = '0 auto'; // מרכוז אופקי
+          videoContainer.style.right = 'auto'; // ביטול צמידה לצד
+          videoContainer.style.left = '50%'; // מיקום במרכז המסך
+          videoContainer.style.transform = 'translate(-50%, -50%)'; // שמירה על מרכוז אנכי ואופקי
           
           // הגדרת סגנון לכפתורים
           const videoControls = document.querySelector('.video-controls');
