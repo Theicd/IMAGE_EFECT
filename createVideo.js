@@ -378,6 +378,11 @@ function createVideoFull() {
           videoPlayer.style.maxHeight = '50vh';
           videoPlayer.style.marginBottom = '20px';
           videoPlayer.style.objectFit = 'contain';
+          videoPlayer.style.margin = '0 auto'; // מרכוז אופקי
+          videoPlayer.style.display = 'block'; // חשוב לתצוגה נכונה
+          videoPlayer.style.position = 'relative'; // הגדרת מיקום יחסי
+          videoPlayer.style.right = 'auto'; // ביטול צמידה לצד ימין
+          videoPlayer.style.left = 'auto'; // ביטול צמידה לצד שמאל
           
           // התאמת הצגת מידע האפקטים
           const videoInfo = document.querySelector('.video-info');
