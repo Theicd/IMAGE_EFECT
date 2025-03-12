@@ -363,7 +363,27 @@ function createVideoFull() {
           videoContainer.style.height = 'auto'; // גובה אוטומטי
           videoContainer.style.minHeight = '80vh'; // גובה מינימלי
           
-          // הגדרת סגנון לכפתורים
+          // התאמת הצגת מידע האפקטים במצב מובייל
+          const appliedEffects = document.getElementById('applied-effects');
+          if (appliedEffects) {
+            appliedEffects.style.marginBottom = '15px';
+            appliedEffects.style.marginTop = '0';
+            appliedEffects.style.width = '90%';
+            appliedEffects.style.padding = '8px 10px';
+            appliedEffects.style.fontSize = '15px';
+            appliedEffects.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
+            appliedEffects.style.background = 'rgba(20, 20, 20, 0.8)';
+            appliedEffects.style.position = 'relative';
+            appliedEffects.style.top = '-20px'; // הזזת שורת האפקטים 20px למעלה
+            appliedEffects.style.marginBottom = '0px'; // ביטול המרווח התחתון
+            appliedEffects.style.textAlign = 'center'; // מרכוז הטקסט
+            appliedEffects.style.display = 'block'; // הצגה כבלוק
+            appliedEffects.style.margin = '0 auto 15px auto'; // מרכוז באמצעות margin אוטומטי
+            appliedEffects.style.borderRadius = '8px'; // עיגול פינות
+            appliedEffects.style.border = '1px solid rgba(0, 243, 255, 0.3)'; // הוספת מסגרת דקה בצבע ניאון
+          }
+          
+          // עיצוב ספציפי לכפתורים
           const videoControls = document.querySelector('.video-controls');
           videoControls.style.position = 'relative';
           videoControls.style.bottom = 'auto';
@@ -439,6 +459,38 @@ function createVideoFull() {
             videoInfo.style.top = '-20px'; // הזזת שורת האפקטים 20px למעלה
             videoInfo.style.marginBottom = '0px'; // ביטול המרווח התחתון
             videoInfo.style.fontSize = '15px'; // הקטנת גודל הטקסט
+            videoInfo.style.textAlign = 'center'; // מרכוז הטקסט
+            videoInfo.style.display = 'block'; // הצגה כבלוק
+            videoInfo.style.margin = '0 auto 15px auto'; // מרכוז באמצעות margin אוטומטי
+            videoInfo.style.borderRadius = '8px'; // עיגול פינות
+            videoInfo.style.border = '1px solid rgba(0, 243, 255, 0.3)'; // הוספת מסגרת דקה בצבע ניאון
+          }
+        } else {
+          // הגדרות למחשב (לא טלפון)
+          videoPlayer.style.maxWidth = '720px';
+          videoPlayer.style.borderRadius = '6px';
+          videoPlayer.style.boxShadow = '0 0 20px rgba(0, 243, 255, 0.3)';
+          
+          // הגדרת הסגנון של השורה המציגה את האפקטים במצב דסקטופ
+          const appliedEffects = document.getElementById('applied-effects');
+          if (appliedEffects) {
+            appliedEffects.style.padding = '10px 15px';
+            appliedEffects.style.margin = '10px auto';
+            appliedEffects.style.width = 'auto';
+            appliedEffects.style.maxWidth = '720px';
+            appliedEffects.style.borderRadius = '6px';
+            appliedEffects.style.fontSize = '14px';
+            appliedEffects.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
+            appliedEffects.style.background = 'rgba(20, 20, 20, 0.8)';
+            appliedEffects.style.position = 'relative';
+            appliedEffects.style.top = '-20px'; // הזזת שורת האפקטים 20px למעלה
+            appliedEffects.style.marginBottom = '0px'; // ביטול המרווח התחתון
+            appliedEffects.style.fontSize = '15px'; // הקטנת גודל הטקסט
+            appliedEffects.style.textAlign = 'center'; // מרכוז הטקסט
+            appliedEffects.style.display = 'block'; // הצגה כבלוק
+            appliedEffects.style.margin = '0 auto 15px auto'; // מרכוז באמצעות margin אוטומטי
+            appliedEffects.style.borderRadius = '8px'; // עיגול פינות
+            appliedEffects.style.border = '1px solid rgba(0, 243, 255, 0.3)'; // הוספת מסגרת דקה בצבע ניאון
           }
         }
         
