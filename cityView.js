@@ -263,6 +263,66 @@ function createWindows(cityTexture) {
     return { leftWindowMaterial, rightWindowMaterial };
 }
 
+// מעקב אחר הגריד והרצפה הנוכחיים
+let currentFloorGrid = null;
+let currentFloor = null;
+
+// שיפור הרצפה המשקפת
+function enhanceReflectiveFloor() {
+    // מחיקת כל הגרידים הקודמים מהסצנה
+    for (let i = scene.children.length - 1; i >= 0; i--) {
+        const child = scene.children[i];
+        
+        // מחיקת כל הגרידים
+        if (child instanceof THREE.GridHelper || 
+            (child.isObject3D && child.type === "GridHelper") ||
+            (child.name === "floorGrid")) {
+            scene.remove(child);
+        }
+    }
+    
+    // מחיקת הרצפה הקיימת אם קיימת
+    if (currentFloor && scene.children.includes(currentFloor)) {
+        scene.remove(currentFloor);
+    }
+    
+    // מחיקת הגריד הקיים אם קיים
+    if (currentFloorGrid && scene.children.includes(currentFloorGrid)) {
+        scene.remove(currentFloorGrid);
+    }
+    
+    // יצירת רצפה חדשה בסגנון העיר התלת מימדית
+    const floorGeometry = new THREE.PlaneGeometry(10, 10);
+    
+    // יצירת חומר לרצפה בסגנון הרצפה של העיר
+    const floorMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0x000000, 
+        side: THREE.DoubleSide,
+        roughness: 10,
+        metalness: 0.6,
+        opacity: 0.9,
+        transparent: true,
+        shininess: 100
+    });
+    
+    currentFloor = new THREE.Mesh(floorGeometry, floorMaterial);
+    currentFloor.rotation.x = -Math.PI / 2;
+    currentFloor.position.y = -3;
+    currentFloor.receiveShadow = true;
+    currentFloor.name = "reflectiveFloor";
+    scene.add(currentFloor);
+    
+    // יצירת גריד חדש ומעודכן
+    currentFloorGrid = new THREE.GridHelper(10, 20, 0xFF0000, 0x000000);
+    currentFloorGrid.position.y = -2.99;
+    currentFloorGrid.name = "floorGrid";
+    scene.add(currentFloorGrid);
+    
+    // דיספוז של משאבים ישנים כדי להימנע מדליפות זיכרון
+    if (floorGeometry) floorGeometry.dispose();
+    if (floorMaterial) floorMaterial.dispose();
+}
+
 // פונקציה לעדכון הקווים העפים בשמיים
 function updateFlyingLines(cityObjects) {
     if (!cityObjects) return;
@@ -459,39 +519,4 @@ function startRoomTour() {
 // ערפל קל בחדר לתחושת עומק
 function addFogToRoom() {
     scene.fog = new THREE.FogExp2(0x000000, 0.05);
-}
-
-// שיפור הרצפה המשקפת
-function enhanceReflectiveFloor() {
-    // מחיקת הרצפה הקיימת
-    scene.children.forEach(child => {
-        if (child.position && child.position.y === -3 && child.rotation && child.rotation.x === -Math.PI / 2) {
-            scene.remove(child);
-        }
-    });
-    
-    // יצירת רצפה חדשה בסגנון העיר התלת מימדית
-    const floorGeometry = new THREE.PlaneGeometry(10, 10);
-    
-    // יצירת חומר לרצפה בסגנון הרצפה של העיר
-    const floorMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0x000000, 
-        side: THREE.DoubleSide,
-        roughness: 10,
-        metalness: 0.6,
-        opacity: 0.9,
-        transparent: true,
-        shininess: 100
-    });
-    
-    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -3;
-    floor.receiveShadow = true;
-    scene.add(floor);
-    
-    // הוספת רשת (grid) לרצפה כמו בדוגמת העיר
-    const gridHelper = new THREE.GridHelper(10, 20, 0xFF0000, 0x000000);
-    gridHelper.position.y = -2.99;
-    scene.add(gridHelper);
 }

@@ -3,7 +3,354 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Effect-Cube - חדר אפקטים תלת מימדי</title>
+  <title>Effect-Cube</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+  <link href="./style.css" rel="stylesheet">
+  
+  <!-- CSS למודאל הוראות שימוש -->
+  <style>
+    .modal-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+    }
+    
+    .instructions-modal {
+      max-width: 800px;
+      width: 90%;
+      background: rgba(10, 10, 10, 0.9);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+      padding: 30px;
+      overflow-y: auto;
+      max-height: 85vh;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .close-button {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      font-size: 28px;
+      background: linear-gradient(45deg, #ff3547, #ff7700);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 15px rgba(255, 53, 71, 0.6);
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    
+    .close-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 119, 0, 0.8);
+    }
+    
+    .close-button:active {
+      transform: scale(0.95);
+    }
+    
+    .instructions-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .instructions-title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, var(--neon-blue), var(--neon-pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+    }
+    
+    .instructions-subtitle {
+      font-size: 18px;
+      color: white;
+      opacity: 0.8;
+    }
+    
+    .instructions-content {
+      margin-bottom: 30px;
+    }
+    
+    .instruction-step {
+      display: flex;
+      margin-bottom: 40px;
+      align-items: center;
+    }
+    
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-left: 20px;
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+    }
+    
+    .step-content {
+      flex-grow: 1;
+    }
+    
+    .step-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--neon-blue);
+    }
+    
+    .step-description {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+    
+    .button-example {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(30, 30, 30, 0.8);
+      color: white;
+      font-family: 'Heebo', Arial, sans-serif;
+      margin: 10px 0;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+      pointer-events: none;
+    }
+    
+    .upload-button-example {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    
+    .upload-icon {
+      font-size: 20px;
+    }
+    
+    .create-video-example {
+      background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+      font-weight: bold;
+    }
+    
+    .select-example {
+      position: relative;
+      min-width: 120px;
+    }
+    
+    .select-example::after {
+      content: "▼";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    
+    .tips-section {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 20px;
+      border-right: 3px solid var(--neon-blue);
+    }
+    
+    .tips-title {
+      color: var(--neon-blue);
+      margin-bottom: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .tips-list {
+      list-style-type: none;
+    }
+    
+    .tips-list li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+      position: relative;
+      padding-right: 20px;
+    }
+    
+    .tips-list li::before {
+      content: "•";
+      color: var(--neon-blue);
+      position: absolute;
+      right: 0;
+      font-size: 18px;
+    }
+    
+    /* סגנון כפתור חזרה בתחתית המודאל */
+    .back-button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+      padding-bottom: 20px;
+    }
+    
+    .back-button {
+      background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(157, 0, 255, 0.6);
+    }
+    
+    .back-button:active {
+      transform: scale(0.98);
+    }
+
+    /* עיצוב מד הגלילה */
+    /* עבור WebKit (Chrome, Safari, Edge החדש) */
+    .instructions-modal::-webkit-scrollbar {
+      width: 12px;
+    }
+    
+    .instructions-modal::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+    }
+    
+    .instructions-modal::-webkit-scrollbar-thumb {
+      background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+      border-radius: 6px;
+      border: 2px solid rgba(0, 0, 0, 0.3);
+    }
+    
+    /* עבור Firefox */
+    .instructions-modal {
+      scrollbar-width: thin;
+      scrollbar-color: var(--neon-blue) rgba(0, 0, 0, 0.3);
+    }
+    
+    /* תמיכה במסכים קטנים */
+    @media (max-width: 768px) {
+      .instruction-step {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .step-number {
+        margin-bottom: 15px;
+        margin-left: 0;
+      }
+      
+      .instructions-modal {
+        padding: 20px;
+        width: 95%;
+      }
+      
+      .instructions-title {
+        font-size: 26px;
+      }
+    }
+    
+    /* סגנונות ייחודיים למודאל אודות */
+    .about-section {
+      margin-bottom: 30px;
+    }
+    
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: var(--neon-blue);
+    }
+    
+    .section-content {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    
+    .features-list, .uses-list {
+      list-style-type: none;
+      margin-bottom: 20px;
+    }
+    
+    .features-list li, .uses-list li {
+      margin-bottom: 10px;
+      line-height: 1.5;
+      position: relative;
+      padding-right: 25px;
+    }
+    
+    .features-list li:before {
+      content: "✦";
+      position: absolute;
+      right: 0;
+      color: var(--neon-pink);
+    }
+    
+    .uses-list li:before {
+      content: "•";
+      position: absolute;
+      right: 0;
+      color: var(--neon-blue);
+    }
+    
+    .uses-section {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 20px;
+      border-right: 3px solid var(--neon-blue);
+      margin-bottom: 30px;
+    }
+    
+    .uses-title {
+      color: var(--neon-blue);
+      margin-bottom: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .about-title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, var(--neon-blue), var(--neon-pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+    }
+  </style>
   
   <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="Effect-Cube - 3D Video Effects">
@@ -11,9 +358,6 @@
   <meta property="og:image" content="https://i.ibb.co/35hrRvMC/preview.jpg">
   <meta property="og:url" content="https://Theicd.github.io/Effect-Cube/">
   <meta property="og:type" content="website">
-  
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="loader">
@@ -26,8 +370,8 @@
       <div class="logo">Effect-Cube</div>
       <div class="menu">
         <a href="#" id="home-button" class="active">בית</a>
-        <a href="#">אודות</a>
-        <a href="#">צור קשר</a>
+        <a href="#" id="about-button" onclick="openAboutModal()">אודות</a>
+        <a href="#" id="instructions-button" onclick="openInstructionsModal()">הוראות שימוש</a>
       </div>
     </div>
 
@@ -41,15 +385,16 @@
       </div>
       
       <div class="effects-container">
-        <select id="effect-select">
-          <option value="neon">ניאון</option>
-          <option value="glitch">גליץ'</option>
-          <option value="wave">גלים</option>
-          <option value="particles">חלקיקים</option>
-          <option value="rotate">סיבוב</option>
-          <option value="bokeh">עומק שדה</option>
-          <option value="film">פילם ישן</option>
-          <option value="color">עריכת צבעים</option>
+        <select id="category-select">
+          <option value="" disabled selected>בחר קטגוריה</option>
+          <option value="appearance">הופעת תמונה</option>
+          <option value="camera">תנועת מצלמה</option>
+          <option value="objects">אובייקטים זזים</option>
+          <option value="light">אור וצבע</option>
+        </select>
+        
+        <select id="effect-select" disabled>
+          <option value="" disabled selected>בחר אפקט</option>
         </select>
       </div>
       
@@ -59,6 +404,7 @@
 
   <div id="video-container" style="display:none">
     <video id="output-video" controls></video>
+    <div id="applied-effects" class="video-info"></div>
     <div class="video-controls">
       <button id="download-video">הורד MP4</button>
       <button id="back-to-editor">חזור לעריכה</button>
@@ -67,11 +413,142 @@
 
   <canvas id="scene"></canvas>
 
-  <div class="progress-container" style="display:none">
-    <div class="progress-bar">
-      <div class="progress-fill"></div>
+  <div id="video-progress" class="progress-bar" style="display:none"></div>
+
+  <!-- מודאל הוראות שימוש -->
+  <div id="instructions-modal" class="modal-container" style="display:none">
+    <div class="instructions-modal">
+      <button class="close-button" onclick="closeInstructionsModal()">&times;</button>
+      
+      <div class="instructions-header">
+        <h1 class="instructions-title">הוראות שימוש</h1>
+        <p class="instructions-subtitle">מדריך מהיר ליצירת תמונות בתנועה עם Effect-Cube</p>
+      </div>
+      
+      <div class="instructions-content">
+        <div class="instruction-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3 class="step-title">בחירת תמונה</h3>
+            <p class="step-description">לחצו על כפתור העלה תמונה ובחרו תמונה מהאחסון המקומי שלכם</p>
+            <div class="button-example upload-button-example">
+              <span class="upload-icon">📸</span>
+              <span>העלה תמונה</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="instruction-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3 class="step-title">בחירת אפקטים</h3>
+            <p class="step-description">בחרו קטגוריית אפקט ואז בחרו אפקט ספציפי. ניתן לשלב מספר אפקטים מקטגוריות שונות - פשוט בחרו אפקט אחד מכל קטגוריה!</p>
+            <div class="button-example select-example">בחר קטגוריה</div>
+            <div class="button-example select-example">בחר אפקט</div>
+          </div>
+        </div>
+        
+        <div class="instruction-step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3 class="step-title">יצירת וידאו</h3>
+            <p class="step-description">לאחר שבחרתם את האפקטים הרצויים, לחצו על "צור וידאו" וחכו מספר שניות. המערכת תיצור עבורכם קטע וידאו קצר עם האפקטים שבחרתם.</p>
+            <div class="button-example create-video-example">צור וידאו</div>
+          </div>
+        </div>
+        
+        <div class="instruction-step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3 class="step-title">הורדה ושימוש</h3>
+            <p class="step-description">לאחר יצירת הוידאו, תוכלו להוריד אותו למחשב או להעתיק אותו ישירות לשימוש בתוכנות אחרות כמו Canva.</p>
+            <div class="button-example">הורד MP4</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tips-section">
+        <h3 class="tips-title">טיפים לתוצאות מיטביות</h3>
+        <ul class="tips-list">
+          <li>השתמשו בתמונות ברזולוציה גבוהה לקבלת תוצאה איכותית יותר.</li>
+          <li>ניתן לשלב אפקטים מקטגוריות שונות כדי ליצור אפקט מורכב ומעניין יותר.</li>
+          <li>אפקטי "תנועת מצלמה" ו"אובייקטים זזים" נותנים תחושת תנועה חזקה יותר.</li>
+          <li>אם האובייקט העיקרי בתמונה קרוב לשוליים, כדאי לבחור אפקטים שלא יגרמו לו להיחתך בזמן האנימציה.</li>
+          <li>צרו מספר גרסאות שונות עם שילובי אפקטים שונים כדי למצוא את התוצאה המיטבית.</li>
+        </ul>
+      </div>
+      
+      <div class="back-button-container">
+        <button class="back-button" onclick="closeInstructionsModal()">חזרה</button>
+      </div>
     </div>
-    <div class="progress-text">מעבד וידאו...</div>
+  </div>
+
+  <!-- מודאל אודות -->
+  <div id="about-modal" class="modal-container" style="display:none">
+    <div class="instructions-modal">
+      <button class="close-button" onclick="closeAboutModal()">&times;</button>
+      
+      <div class="instructions-header">
+        <h1 class="instructions-title">אודות</h1>
+        <p class="instructions-subtitle">Effect-Cube - הפיכת תמונות סטטיות לווידאו בתנועה</p>
+      </div>
+      
+      <div class="instructions-content">
+        <div class="about-section">
+          <p class="section-content">
+            Effect-Cube הוא כלי מתקדם המאפשר להפוך תמונות רגילות לקטעי וידאו קצרים עם אפקטים ותנועה. המערכת פשוטה לשימוש ומאפשרת לכל אחד, גם ללא ידע טכני, ליצור תוכן ויזואלי דינמי ומרשים.
+          </p>
+        </div>
+        
+        <div class="about-section">
+          <h3 class="section-title">יתרונות המערכת</h3>
+          <ul class="features-list">
+            <li>שימוש קל ואינטואיטיבי</li>
+            <li>מגוון רחב של אפקטים ויזואליים</li>
+            <li>עיבוד מהיר ויעיל</li>
+            <li>אפשרויות שימוש גמישות</li>
+            <li>תוצאות באיכות גבוהה</li>
+          </ul>
+        </div>
+        
+        <div class="about-section">
+          <h3 class="section-title">למה להשתמש ב-Effect-Cube?</h3>
+          <p class="section-content">
+            בעידן הרשתות החברתיות, תוכן בתנועה מושך יותר תשומת לב מתוכן סטטי. עם Effect-Cube, כל אחד יכול להפוך תמונות רגילות לתוכן דינמי מעניין במספר קליקים בלבד, מה שמגדיל משמעותית את החשיפה והאינטראקציה עם הקהל.
+          </p>
+        </div>
+        
+        <div class="uses-section">
+          <h3 class="uses-title">שימושים נפוצים</h3>
+          <ul class="uses-list">
+            <li>עיצוב פוסטים לרשתות חברתיות</li>
+            <li>יצירת תוכן שיווקי למותגים</li>
+            <li>הנפשת תמונות אישיות</li>
+            <li>שדרוג מצגות ותוכן עסקי</li>
+            <li>יצירת אלמנטים גרפיים לאתרי אינטרנט</li>
+          </ul>
+        </div>
+        
+        <div class="about-section">
+          <h3 class="section-title">טכנולוגיה</h3>
+          <p class="section-content">
+            Effect-Cube משתמש בטכנולוגיות תלת-מימד מתקדמות (Three.js) ואלגוריתמים חדשניים לעיבוד תמונה כדי להפיק אפקטים מרשימים תוך שמירה על איכות התמונה המקורית.
+          </p>
+        </div>
+        
+        <div class="about-section">
+          <h3 class="section-title">פיתוח</h3>
+          <p class="section-content">
+            הכלי פותח על ידי צוות מהנדסים ומעצבים ישראלים במטרה לאפשר לכל אדם ליצור תוכן ויזואלי מרשים בקלות ובמהירות.
+          </p>
+        </div>
+      </div>
+      
+      <div class="back-button-container">
+        <button class="back-button" onclick="closeAboutModal()">חזרה</button>
+      </div>
+    </div>
   </div>
 
   <!-- Three.js and dependencies -->
@@ -91,9 +568,38 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/shaders/ColorCorrectionShader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/shaders/FilmShader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.0/examples/js/postprocessing/FilmPass.js"></script>
+  <!-- Tween.js for animations -->
+  <script src="https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.6.4/dist/tween.umd.js"></script>
+  <!-- מודולים מפוצלים -->
+  <script src="./sceneSetup.js"></script>
+  <script src="./effectsManager.js"></script>
+  <script src="./animationEffects.js"></script>
+  <script src="./imageHandler.js"></script>
+  <script src="./uiManager.js"></script>
+  <!-- קובץ ראשי -->
   <script src="./script3d.js"></script>
+  <!-- קבצי תמיכה נוספים -->
+  <script src="./createVideo.js"></script>
   <script src="cityView.js"></script>
   <script>
+    // פונקציות פתיחה וסגירה של מודאל הוראות שימוש
+    function openInstructionsModal() {
+      document.getElementById('instructions-modal').style.display = 'flex';
+    }
+    
+    function closeInstructionsModal() {
+      document.getElementById('instructions-modal').style.display = 'none';
+    }
+    
+    // פונקציות פתיחה וסגירה של מודאל אודות
+    function openAboutModal() {
+      document.getElementById('about-modal').style.display = 'flex';
+    }
+    
+    function closeAboutModal() {
+      document.getElementById('about-modal').style.display = 'none';
+    }
+    
     // הפעלת השיפורים לחדר אחרי טעינת הדף
     document.addEventListener('DOMContentLoaded', function() {
       // בדיקה אם האתר רץ על שרת או מקומית
@@ -119,6 +625,12 @@
       document.getElementById('home-button').addEventListener('click', function(e) {
         e.preventDefault(); // מניעת התנהגות ברירת המחדל של הקישור
         location.reload(); // רענון הדף (כמו F5)
+      });
+      
+      // הוספת פונקציונליות לכפתור הוראות שימוש
+      document.getElementById('instructions-button').addEventListener('click', function(e) {
+        e.preventDefault(); // מניעת התנהגות ברירת המחדל של הקישור
+        openInstructionsModal(); // פתיחת המודאל
       });
     });
   </script>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>הוראות שימוש - Effect-Cube</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --neon-blue: #00f3ff;
+      --neon-pink: #ff00ff;
+      --neon-purple: #9d00ff;
+      --dark-bg: #0a0a0a;
+      --darker-bg: #050505;
+      --ui-bg: rgba(10, 10, 10, 0.7);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      height: 100%;
+      font-family: 'Heebo', Arial, sans-serif;
+      background-color: var(--dark-bg);
+      color: white;
+      overflow-x: hidden;
+    }
+    
+    .modal-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      padding-top: 550px; /* הגדלת המרחק ל-15px מהחלק העליון */
+    }
+    
+    .instructions-modal {
+      max-width: 800px;
+      width: 90%;
+      background: var(--ui-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5),
+                  0 0 30px rgba(0, 243, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      position: relative;
+    }
+    
+    .instructions-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .instructions-title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, var(--neon-blue), var(--neon-pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+    }
+    
+    .instructions-subtitle {
+      font-size: 18px;
+      color: white;
+      opacity: 0.8;
+    }
+    
+    .instructions-content {
+      margin-bottom: 30px;
+    }
+    
+    .instruction-step {
+      display: flex;
+      margin-bottom: 40px;
+      align-items: center;
+    }
+    
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-left: 20px;
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+    }
+    
+    .step-content {
+      flex-grow: 1;
+    }
+    
+    .step-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--neon-blue);
+    }
+    
+    .step-description {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+    
+    .button-example {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(30, 30, 30, 0.8);
+      color: white;
+      font-family: 'Heebo', Arial, sans-serif;
+      margin: 10px 0;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+      pointer-events: none;
+    }
+    
+    .upload-button-example {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    
+    .upload-icon {
+      font-size: 20px;
+    }
+    
+    .create-video-example {
+      background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+      font-weight: bold;
+    }
+    
+    .select-example {
+      position: relative;
+      min-width: 120px;
+    }
+    
+    .select-example::after {
+      content: "▼";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    
+    .image-placeholder {
+      width: 100%;
+      height: 160px;
+      background: rgba(30, 30, 30, 0.5);
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.6);
+      border: 1px dashed rgba(255, 255, 255, 0.3);
+      margin: 15px 0;
+    }
+    
+    .tips-section {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 20px;
+      border-right: 3px solid var(--neon-blue);
+    }
+    
+    .tips-title {
+      color: var(--neon-blue);
+      margin-bottom: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .tips-list {
+      list-style-type: none;
+    }
+    
+    .tips-list li {
+      margin-bottom: 12px;
+      line-height: 1.5;
+      position: relative;
+      padding-right: 20px;
+    }
+    
+    .tips-list li::before {
+      content: "•";
+      color: var(--neon-pink);
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    
+    .close-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .close-button:hover {
+      color: var(--neon-pink);
+      transform: scale(1.1);
+    }
+    
+    @media (max-width: 768px) {
+      .instruction-step {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .step-number {
+        margin-bottom: 15px;
+        margin-left: 0;
+      }
+      
+      .instructions-modal {
+        padding: 20px;
+      }
+    }
+    
+    /* נפשט פנימה כשהמודל מופעל */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .instructions-modal {
+      animation: fadeIn 0.3s ease-out;
+    }
+  </style>
+</head>
+<body>
+
+<div class="modal-container">
+  <div class="instructions-modal">
+    <button class="close-button" onclick="window.close()">&times;</button>
+    
+    <div class="instructions-header">
+      <h1 class="instructions-title">הוראות שימוש</h1>
+      <p class="instructions-subtitle">מדריך מהיר ליצירת תמונות בתנועה עם Effect-Cube</p>
+    </div>
+    
+    <div class="instructions-content">
+      <div class="instruction-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3 class="step-title">בחירת תמונה</h3>
+          <p class="step-description">לחצי על כפתור העלה תמונה בחרו תמונה מהאחסון המקומי שלכם</p>
+          <div class="button-example upload-button-example">
+            <span class="upload-icon">📸</span>
+            <span>העלה תמונה</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="instruction-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3 class="step-title">בחירת אפקטים</h3>
+          <p class="step-description">בחרו קטגוריית אפקט ואז בחרו אפקט ספציפי. ניתן לשלב מספר אפקטים מקטגוריות שונות - פשוט בחרו אפקט אחד מכל קטגוריה!</p>
+          <div class="button-example select-example">בחר קטגוריה</div>
+          <div class="button-example select-example">בחר אפקט</div>
+        </div>
+      </div>
+      
+      <div class="instruction-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3 class="step-title">יצירת וידאו</h3>
+          <p class="step-description">לאחר שבחרתם את האפקטים הרצויים, לחצו על "צור וידאו" וחכו מספר שניות. המערכת תיצור עבורכם קטע וידאו קצר עם האפקטים שבחרתם.</p>
+          <div class="button-example create-video-example">צור וידאו</div>
+        </div>
+      </div>
+      
+      <div class="instruction-step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h3 class="step-title">הורדה ושימוש</h3>
+          <p class="step-description">לאחר יצירת הוידאו, תוכלו להוריד אותו למחשב או להעתיק אותו ישירות לשימוש בתוכנות אחרות כמו Canva.</p>
+          <div class="button-example">הורד MP4</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="tips-section">
+      <h3 class="tips-title">טיפים לתוצאות מיטביות</h3>
+      <ul class="tips-list">
+        <li>השתמשו בתמונות ברזולוציה גבוהה לקבלת תוצאה איכותית יותר.</li>
+        <li>ניתן לשלב אפקטים מקטגוריות שונות כדי ליצור אפקט מורכב ומעניין יותר.</li>
+        <li>אפקטי "תנועת מצלמה" ו"אובייקטים זזים" נותנים תחושת תנועה חזקה יותר.</li>
+        <li>אם האובייקט העיקרי בתמונה קרוב לשוליים, כדאי לבחור אפקטים שלא יגרמו לו להיחתך בזמן האנימציה.</li>
+        <li>צרו מספר גרסאות שונות עם שילובי אפקטים שונים כדי למצוא את התוצאה המיטבית.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  // הוספת אפשרות לסגירת המודל בלחיצה על Escape
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      window.close();
+    }
+  });
+  
+  // אפשרות לסגירה בלחיצה מחוץ למודל
+  document.querySelector('.modal-container').addEventListener('click', function(event) {
+    if (event.target === this) {
+      window.close();
+    }
+  });
+</script>
+
+</body>
+</html>
