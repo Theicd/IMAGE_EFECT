@@ -363,6 +363,21 @@ function createVideoFull() {
           videoContainer.style.height = 'auto'; // גובה אוטומטי
           videoContainer.style.minHeight = '80vh'; // גובה מינימלי
           
+          // עיצוב ספציפי לכפתורים
+          const videoControls = document.querySelector('.video-controls');
+          videoControls.style.position = 'relative';
+          videoControls.style.bottom = 'auto';
+          videoControls.style.left = '0';
+          videoControls.style.right = '0';
+          videoControls.style.width = '100%';
+          videoControls.style.display = 'flex';
+          videoControls.style.justifyContent = 'center';
+          videoControls.style.alignItems = 'center';
+          videoControls.style.padding = '15px 10px';
+          videoControls.style.background = 'transparent';
+          videoControls.style.zIndex = '1001';
+          videoControls.style.marginTop = '95px'; // הגדלת המרווח מעל הכפתורים ל-95px (70px + 25px נוספים)
+          
           // התאמת הצגת מידע האפקטים במצב מובייל
           const appliedEffects = document.getElementById('applied-effects');
           if (appliedEffects) {
@@ -381,23 +396,23 @@ function createVideoFull() {
             appliedEffects.style.margin = '0 auto 15px auto'; // מרכוז באמצעות margin אוטומטי
             appliedEffects.style.borderRadius = '8px'; // עיגול פינות
             appliedEffects.style.border = '1px solid rgba(0, 243, 255, 0.3)'; // הוספת מסגרת דקה בצבע ניאון
+            appliedEffects.style.left = '0'; // איפוס מיקום שמאלי
+            appliedEffects.style.right = '0'; // איפוס מיקום ימני
+            appliedEffects.style.maxWidth = '80%'; // הגבלת הרוחב המקסימלי
           }
           
-          // עיצוב ספציפי לכפתורים
-          const videoControls = document.querySelector('.video-controls');
-          videoControls.style.position = 'relative';
-          videoControls.style.bottom = 'auto';
-          videoControls.style.left = '0';
-          videoControls.style.right = '0';
-          videoControls.style.width = '100%';
-          videoControls.style.display = 'flex';
-          videoControls.style.justifyContent = 'center';
-          videoControls.style.padding = '15px 10px';
-          videoControls.style.background = 'transparent';
-          videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '95px'; // הגדלת המרווח מעל הכפתורים ל-95px (70px + 25px נוספים)
+          // התאמת גודל הווידאו
+          videoPlayer.style.maxHeight = '50vh';
+          videoPlayer.style.marginBottom = '20px';
+          videoPlayer.style.objectFit = 'contain';
+          videoPlayer.style.margin = '0 auto'; // מרכוז אופקי
+          videoPlayer.style.display = 'block'; // חשוב לתצוגה נכונה
+          videoPlayer.style.position = 'relative'; // הגדרת מיקום יחסי
+          videoPlayer.style.right = 'auto'; // ביטול צמידה לצד ימין
+          videoPlayer.style.left = 'auto'; // ביטול צמידה לצד שמאל
+          videoPlayer.style.width = '100%'; // רוחב מלא
           
-          // עיצוב חדש לכפתורים בהתאם לעיצוב הכללי של הממשק
+          // שיפור המרכוז של הכפתורים
           const downloadButton = document.getElementById('download-video');
           const backButton = document.getElementById('back-to-editor');
           
@@ -419,8 +434,11 @@ function createVideoFull() {
               button.style.cursor = 'pointer';
               button.style.transition = 'all 0.3s ease';
               button.style.textAlign = 'center';
-              button.style.width = '100%';
+              button.style.width = '85%'; // הקטנת הרוחב מ-100% ל-85% לכפתורים
+              button.style.maxWidth = '320px'; // הגבלת רוחב מקסימלי
               button.style.boxSizing = 'border-box';
+              button.style.display = 'block'; // הצגה כבלוק
+              button.style.margin = '10px auto'; // מרכוז עם margin אוטומטי
               
               // אפקטים מתקדמים - תאורת ניאון וגלו
               button.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.3)';
@@ -444,6 +462,7 @@ function createVideoFull() {
           videoPlayer.style.position = 'relative'; // הגדרת מיקום יחסי
           videoPlayer.style.right = 'auto'; // ביטול צמידה לצד ימין
           videoPlayer.style.left = 'auto'; // ביטול צמידה לצד שמאל
+          videoPlayer.style.width = '100%'; // רוחב מלא
           
           // התאמת הצגת מידע האפקטים
           const videoInfo = document.querySelector('.video-info');
