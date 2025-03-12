@@ -14,13 +14,17 @@ let bloomPass, glitchPass, bokehPass, fxaaPass, colorPass, filmPass;
 let waveUniforms;
 
 // מאזיני אירועים
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', function() {
+  init();
+  updateMobileButtonStyles(); // עדכון סגנון כפתורים במצב טלפון
+});
 window.addEventListener('resize', function() {
   if (window.sceneSetup && window.sceneSetup.onWindowResize) {
     window.sceneSetup.onWindowResize();
   } else {
     onWindowResize();
   }
+  updateMobileButtonStyles(); // עדכון סגנון כפתורים במצב טלפון
 });
 document.getElementById('image-upload').addEventListener('change', function(event) {
   if (window.imageHandler && window.imageHandler.handleImageUpload) {
@@ -68,6 +72,51 @@ document.getElementById('create-video').addEventListener('click', createVideo);
 document.getElementById('back-to-editor').addEventListener('click', () => {
   document.getElementById('video-container').style.display = 'none';
 });
+
+// פונקציה לעדכון סגנון הכפתורים במצב טלפון
+function updateMobileButtonStyles() {
+  // בדיקה אם המכשיר הוא טלפון נייד (רוחב מסך קטן מ-768 פיקסלים)
+  if (window.innerWidth <= 768) {
+    // רשימת כפתורים לעדכון
+    const buttonsToStyle = [
+      document.querySelector('.upload-button'), // כפתור העלה תמונה
+      document.getElementById('category-select'), // כפתור בחר קטגוריה
+      document.getElementById('effect-select'), // כפתור בחר אפקט
+      document.getElementById('create-video') // כפתור צור וידאו
+    ];
+    
+    buttonsToStyle.forEach(button => {
+      if (button) {
+        // עיצוב בסיסי
+        button.style.backgroundColor = 'rgba(10, 10, 20, 0.8)';
+        button.style.color = 'white';
+        button.style.border = 'none';
+        button.style.borderRadius = '8px';
+        button.style.padding = '12px 15px';
+        button.style.margin = '5px';
+        button.style.fontFamily = "'Heebo', Arial, sans-serif";
+        button.style.fontSize = '15px';
+        button.style.fontWeight = 'bold';
+        button.style.cursor = 'pointer';
+        button.style.transition = 'all 0.3s ease';
+        button.style.textAlign = 'center';
+        button.style.boxSizing = 'border-box';
+        
+        // אפקטים מתקדמים - תאורת ניאון וגלו
+        button.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.3)';
+        button.style.borderBottom = '2px solid var(--neon-blue, #00f3ff)';
+        button.style.backdropFilter = 'blur(5px)';
+      }
+    });
+    
+    // עיצוב ספציפי לכפתור צור וידאו
+    const createVideoButton = document.getElementById('create-video');
+    if (createVideoButton) {
+      createVideoButton.style.background = 'linear-gradient(45deg, #00f3ff, #9d00ff)';
+      createVideoButton.style.boxShadow = '0 0 15px rgba(0, 243, 255, 0.5)';
+    }
+  }
+}
 
 // פונקציית אתחול
 async function init() {
