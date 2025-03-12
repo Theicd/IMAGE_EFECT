@@ -334,37 +334,45 @@ function createVideoFull() {
         if (window.innerWidth <= 768) {
           // הגדרת סגנון ספציפי למובייל
           videoContainer.style.position = 'fixed';
-          videoContainer.style.top = '40%';  
-          videoContainer.style.left = '0';
-          videoContainer.style.right = '0';
-          videoContainer.style.transform = 'translateY(-50%)';
+          videoContainer.style.top = '50%';
+          videoContainer.style.left = '50%';
+          videoContainer.style.transform = 'translate(-50%, -50%)';
+          videoContainer.style.width = '95%';
+          videoContainer.style.height = 'auto';
           videoContainer.style.maxWidth = '100%';
           videoContainer.style.maxHeight = '100vh';
           videoContainer.style.display = 'flex';
           videoContainer.style.flexDirection = 'column';
           videoContainer.style.justifyContent = 'center';
           videoContainer.style.alignItems = 'center';
-          videoContainer.style.padding = '10px';
+          videoContainer.style.padding = '20px';
           videoContainer.style.zIndex = '1000';
+          videoContainer.style.background = 'rgba(15, 15, 25, 0.92)';
+          videoContainer.style.backdropFilter = 'blur(10px)';
+          videoContainer.style.boxShadow = '0 0 20px rgba(0, 200, 255, 0.3)';
+          videoContainer.style.border = '1px solid rgba(100, 200, 255, 0.15)';
           
           // הגדרת סגנון לכפתורים
           const videoControls = document.querySelector('.video-controls');
-          videoControls.style.position = 'fixed';
-          videoControls.style.bottom = '40px';  
+          videoControls.style.position = 'relative';
+          videoControls.style.bottom = 'auto';
           videoControls.style.left = '0';
           videoControls.style.right = '0';
           videoControls.style.width = '100%';
           videoControls.style.display = 'flex';
           videoControls.style.justifyContent = 'center';
-          videoControls.style.padding = '15px 10px';  
-          videoControls.style.background = 'rgba(10, 10, 10, 0.8)';
+          videoControls.style.padding = '15px 10px';
+          videoControls.style.background = 'transparent';
           videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '30px';  
+          videoControls.style.marginTop = '20px';
           
           // התאמת גודל הווידאו
-          videoElement.style.maxHeight = '50vh';  
-          videoElement.style.marginBottom = '100px';  
+          videoElement.style.maxHeight = '50vh';
+          videoElement.style.marginBottom = '20px';
           videoElement.style.objectFit = 'contain';
+          videoElement.style.width = '100%';
+          videoElement.style.borderRadius = '8px';
+          videoElement.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.4)';
           
           // התאמת הצגת מידע האפקטים
           const videoInfo = document.querySelector('.video-info');
