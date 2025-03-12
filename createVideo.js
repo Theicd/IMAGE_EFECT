@@ -349,16 +349,19 @@ function createVideoFull() {
         if (window.innerWidth <= 768) {
           // הגדרות נוספות ספציפיות למובייל
           videoContainer.style.maxWidth = '95%';
-          videoContainer.style.maxHeight = '95vh';
+          videoContainer.style.maxHeight = '90vh';
           videoContainer.style.display = 'flex';
           videoContainer.style.flexDirection = 'column';
           videoContainer.style.justifyContent = 'center';
           videoContainer.style.alignItems = 'center';
-          videoContainer.style.padding = '40px'; 
-          videoContainer.style.margin = '0 auto'; 
-          videoContainer.style.right = 'auto'; 
-          videoContainer.style.left = '50%'; 
-          videoContainer.style.transform = 'translate(-50%, -50%)'; 
+          videoContainer.style.padding = '20px';
+          videoContainer.style.paddingBottom = '60px'; // הגדלת הפדינג התחתון
+          videoContainer.style.margin = '0 auto'; // מרכוז אופקי
+          videoContainer.style.right = 'auto'; // ביטול צמידה לצד
+          videoContainer.style.left = '50%'; // מיקום במרכז המסך
+          videoContainer.style.transform = 'translate(-50%, -50%)'; // שמירה על מרכוז אנכי ואופקי
+          videoContainer.style.height = 'auto'; // גובה אוטומטי
+          videoContainer.style.minHeight = '80vh'; // גובה מינימלי
           
           // הגדרת סגנון לכפתורים
           const videoControls = document.querySelector('.video-controls');
@@ -372,17 +375,17 @@ function createVideoFull() {
           videoControls.style.padding = '15px 10px';
           videoControls.style.background = 'transparent';
           videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '40px'; 
+          videoControls.style.marginTop = '40px'; // הגדלת המרווח בין הווידאו לכפתורים
           
           // התאמת גודל הווידאו
-          videoPlayer.style.maxHeight = '60vh'; 
-          videoPlayer.style.marginBottom = '40px'; 
+          videoPlayer.style.maxHeight = '50vh';
+          videoPlayer.style.marginBottom = '20px';
           videoPlayer.style.objectFit = 'contain';
-          videoPlayer.style.margin = '0 auto'; 
-          videoPlayer.style.display = 'block'; 
-          videoPlayer.style.position = 'relative'; 
-          videoPlayer.style.right = 'auto'; 
-          videoPlayer.style.left = 'auto'; 
+          videoPlayer.style.margin = '0 auto'; // מרכוז אופקי
+          videoPlayer.style.display = 'block'; // חשוב לתצוגה נכונה
+          videoPlayer.style.position = 'relative'; // הגדרת מיקום יחסי
+          videoPlayer.style.right = 'auto'; // ביטול צמידה לצד ימין
+          videoPlayer.style.left = 'auto'; // ביטול צמידה לצד שמאל
           
           // התאמת הצגת מידע האפקטים
           const videoInfo = document.querySelector('.video-info');
@@ -395,20 +398,6 @@ function createVideoFull() {
             videoInfo.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
             videoInfo.style.background = 'rgba(20, 20, 20, 0.8)';
           }
-        } else {
-          // במצב דסקטופ - הגדרות אחרות
-          videoContainer.style.width = '80%';
-          videoContainer.style.maxWidth = '1280px';
-          videoContainer.style.padding = '50px'; 
-          
-          // הגדרות למיקום הכפתורים במצב דסקטופ
-          const videoControls = document.querySelector('.video-controls');
-          if (videoControls) {
-            videoControls.style.marginTop = '40px'; 
-          }
-          
-          // הגדרות לווידאו במצב דסקטופ
-          videoPlayer.style.marginBottom = '40px'; 
         }
         
         // הפעלת הווידאו
