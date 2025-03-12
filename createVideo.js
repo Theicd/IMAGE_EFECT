@@ -347,24 +347,20 @@ function createVideoFull() {
           videoPlayer.style.width = 'auto';
           videoPlayer.style.height = '70vh';
           videoPlayer.style.maxHeight = '80vh';
+          videoPlayer.style.objectFit = 'contain'; // מבטיח שכל התמונה תהיה נראית
         } else {
           console.log('Applying landscape video styling');
           
           // הגדרת סגנון לווידאו עצמו - ברירת מחדל
           videoPlayer.style.width = '100%';
           videoPlayer.style.maxWidth = '100%';
+          videoPlayer.style.objectFit = 'contain'; // מבטיח שכל התמונה תהיה נראית
         }
         
         videoPlayer.style.display = 'block';
         videoPlayer.style.margin = '0 auto';
         videoPlayer.style.marginBottom = '20px';
-        
-        // התאמת המכל של הווידאו
-        videoContainer.style.display = 'flex';
-        videoContainer.style.flexDirection = 'column';
-        videoContainer.style.alignItems = 'center';
-        videoContainer.style.justifyContent = 'center';
-        videoContainer.style.padding = '20px';
+        videoPlayer.style.borderRadius = '8px';
         
         // כפתורי הפעלה
         const videoControls = document.createElement('div');
