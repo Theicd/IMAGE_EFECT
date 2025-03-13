@@ -76,7 +76,11 @@ function loadEffectFiles() {
   const effectLoadPromises = effectFiles.map(file => {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = `./movingEffects1/${file}`;
+      // בדיקה אם האתר רץ על גיטהאב או מקומית
+      const isGitHub = window.location.href.includes('github.io') || window.location.href.includes('theicd.github.io');
+      // התאמת הנתיב בהתאם למיקום
+      const basePath = isGitHub ? '/IMAGE_EFECT' : '';
+      script.src = `${basePath}/movingEffects1/${file}`;
       script.onload = () => {
         console.log(`נטען קובץ אפקט: ${file}`);
         resolve();
