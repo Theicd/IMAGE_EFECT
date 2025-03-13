@@ -565,7 +565,7 @@ select option {
   
   .video-controls {
     position: fixed;
-    bottom: 10px;
+    bottom: 40px;
     left: 0;
     right: 0;
     width: 100%;
@@ -574,21 +574,22 @@ select option {
     padding: 10px;
     background: rgba(10, 10, 10, 0.8);
     z-index: 30;
+    gap: 10px;
   }
   
   #output-video {
     max-height: 70vh;
-    margin-bottom: 60px;
-    object-fit: contain;
+    margin-bottom: 90px;
   }
   
-  .video-info {
-    margin: 10px 0;
-    font-size: 14px;
-  }
-  
-  #download-video, #back-to-editor {
-    padding: 8px 12px;
-    font-size: 14px;
+  /* עיצוב הכפתורים בתוך video-controls */
+  .video-controls button {
+    min-width: auto;
+    width: auto;
+    padding: 10px 15px;
+    margin: 0;
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: bold;
   }
 }
