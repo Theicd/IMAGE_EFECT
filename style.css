@@ -548,13 +548,13 @@ select option {
 /* התאמות למסך טלפון נייד */
 @media screen and (max-width: 768px) {
   #video-container {
-    padding: 10px;
+    padding: 5px;
     max-width: 100%;
-    max-height: 100vh;
-    top: 50%;
+    max-height: 70vh;
+    top: 30%;
     left: 0;
     right: 0;
-    transform: translateY(-50%);
+    transform: translateY(-30%);
     border-radius: 0;
     position: fixed;
     display: flex;
@@ -565,7 +565,7 @@ select option {
   
   .video-controls {
     position: fixed;
-    bottom: 30px;
+    bottom: 10px;
     left: 0;
     right: 0;
     width: 100%;
@@ -574,11 +574,12 @@ select option {
     padding: 10px;
     background: rgba(10, 10, 10, 0.8);
     z-index: 30;
+    margin-top: 1px; /* הוספת מרחק של 10px בין הנגן לכפתורים */
   }
   
   #output-video {
     max-height: 70vh;
-    margin-bottom: 80px;
+    margin-bottom: 60px;
     object-fit: contain;
   }
   
