@@ -365,6 +365,8 @@ function createVideoFull() {
           
           // עיצוב ספציפי לכפתורים
           const videoControls = document.querySelector('.video-controls');
+          
+          // מיקום במרכז המסך - אחיד לכל המכשירים
           videoControls.style.position = 'relative';
           videoControls.style.bottom = 'auto';
           videoControls.style.left = '0';
@@ -376,7 +378,7 @@ function createVideoFull() {
           videoControls.style.padding = '15px 10px';
           videoControls.style.background = 'transparent';
           videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '95px'; // הגדלת המרווח מעל הכפתורים ל-95px (70px + 25px נוספים)
+          videoControls.style.marginTop = '120px'; // הגדלת המרווח מעל הכפתורים ל-95px (70px + 25px נוספים)
           
           // התאמת הצגת מידע האפקטים במצב מובייל
           const appliedEffects = document.getElementById('applied-effects');
