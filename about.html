@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>אודות - Effect-Cube</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --neon-blue: #00f3ff;
+      --neon-pink: #ff00ff;
+      --neon-purple: #9d00ff;
+      --dark-bg: #0a0a0a;
+      --darker-bg: #050505;
+      --ui-bg: rgba(10, 10, 10, 0.7);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      height: 100%;
+      font-family: 'Heebo', Arial, sans-serif;
+      background-color: var(--dark-bg);
+      color: white;
+      overflow-x: hidden;
+    }
+    
+    .modal-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      padding-top: 550px; /* הגדלת המרחק ל-15px מהחלק העליון */
+    }
+    
+    .about-modal {
+      max-width: 800px;
+      width: 90%;
+      background: var(--ui-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5),
+                  0 0 30px rgba(0, 243, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      position: relative;
+    }
+    
+    .about-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .about-title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, var(--neon-blue), var(--neon-pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+    }
+    
+    .about-subtitle {
+      font-size: 18px;
+      color: white;
+      opacity: 0.8;
+    }
+    
+    .about-content {
+      margin-bottom: 30px;
+    }
+    
+    .about-section {
+      margin-bottom: 30px;
+    }
+    
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: var(--neon-blue);
+    }
+    
+    .section-content {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    
+    .features-list {
+      list-style-type: none;
+      margin-bottom: 20px;
+    }
+    
+    .features-list li {
+      margin-bottom: 10px;
+      line-height: 1.5;
+      position: relative;
+      padding-right: 25px;
+    }
+    
+    .features-list li:before {
+      content: "✦";
+      position: absolute;
+      right: 0;
+      color: var(--neon-pink);
+    }
+    
+    .uses-section {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 20px;
+      border-right: 3px solid var(--neon-blue);
+      margin-bottom: 30px;
+    }
+    
+    .uses-title {
+      color: var(--neon-blue);
+      margin-bottom: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .uses-list {
+      list-style-type: none;
+    }
+    
+    .uses-list li {
+      margin-bottom: 10px;
+      line-height: 1.5;
+      position: relative;
+      padding-right: 20px;
+    }
+    
+    .uses-list li:before {
+      content: "•";
+      position: absolute;
+      right: 0;
+      color: var(--neon-pink);
+    }
+    
+    .close-button {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.2s;
+    }
+    
+    .close-button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+    
+    @media (max-width: 768px) {
+      .about-modal {
+        padding: 20px;
+      }
+    }
+    
+    /* נפשט פנימה כשהמודל מופעל */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .about-modal {
+      animation: fadeIn 0.3s ease-out;
+    }
+  </style>
+</head>
+<body>
+
+<div class="modal-container">
+  <div class="about-modal">
+    <button class="close-button" onclick="window.close()">&times;</button>
+    
+    <div class="about-header">
+      <h1 class="about-title">אודות</h1>
+      <p class="about-subtitle">Effect-Cube - הפיכת תמונות סטטיות לווידאו בתנועה</p>
+    </div>
+    
+    <div class="about-content">
+      <div class="about-section">
+        <p class="section-content">
+          Effect-Cube הוא כלי מתקדם המאפשר להפוך תמונות רגילות לקטעי וידאו קצרים עם אפקטים ותנועה. המערכת פשוטה לשימוש ומאפשרת לכל אחד, גם ללא ידע טכני, ליצור תוכן ויזואלי דינמי ומרשים.
+        </p>
+      </div>
+      
+      <div class="about-section">
+        <h3 class="section-title">יתרונות המערכת</h3>
+        <ul class="features-list">
+          <li>שימוש קל ואינטואיטיבי</li>
+          <li>מגוון רחב של אפקטים ויזואליים</li>
+          <li>עיבוד מהיר ויעיל</li>
+          <li>אפשרויות שימוש גמישות</li>
+          <li>תוצאות באיכות גבוהה</li>
+        </ul>
+      </div>
+      
+      <div class="about-section">
+        <h3 class="section-title">למה להשתמש ב-Effect-Cube?</h3>
+        <p class="section-content">
+          בעידן הרשתות החברתיות, תוכן בתנועה מושך יותר תשומת לב מתוכן סטטי. עם Effect-Cube, כל אחד יכול להפוך תמונות רגילות לתוכן דינמי מעניין במספר קליקים בלבד, מה שמגדיל משמעותית את החשיפה והאינטראקציה עם הקהל.
+        </p>
+      </div>
+      
+      <div class="uses-section">
+        <h3 class="uses-title">שימושים נפוצים</h3>
+        <ul class="uses-list">
+          <li>עיצוב פוסטים לרשתות חברתיות</li>
+          <li>יצירת תוכן שיווקי למותגים</li>
+          <li>הנפשת תמונות אישיות</li>
+          <li>שדרוג מצגות ותוכן עסקי</li>
+          <li>יצירת אלמנטים גרפיים לאתרי אינטרנט</li>
+        </ul>
+      </div>
+      
+      <div class="about-section">
+        <h3 class="section-title">טכנולוגיה</h3>
+        <p class="section-content">
+          Effect-Cube משתמש בטכנולוגיות תלת-מימד מתקדמות (Three.js) ואלגוריתמים חדשניים לעיבוד תמונה כדי להפיק אפקטים מרשימים תוך שמירה על איכות התמונה המקורית.
+        </p>
+      </div>
+      
+      <div class="about-section">
+        <h3 class="section-title">פיתוח</h3>
+        <p class="section-content">
+          הכלי פותח על ידי צוות מהנדסים ומעצבים ישראלים במטרה לאפשר לכל אדם ליצור תוכן ויזואלי מרשים בקלות ובמהירות.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // הוספת אפשרות לסגירת המודל בלחיצה על Escape
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      window.close();
+    }
+  });
+  
+  // אפשרות לסגירה בלחיצה מחוץ למודל
+  document.querySelector('.modal-container').addEventListener('click', function(event) {
+    if (event.target === this) {
+      window.close();
+    }
+  });
+</script>
+
+</body>
+</html>
