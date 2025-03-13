@@ -40,7 +40,7 @@ function handleImageUpload(event) {
       
       // יצירת הבסיס האחורי (לוח)
       const backPlateGeometry = new THREE.BoxGeometry(
-        width + frameThickness * 2, 
+        width + frameThickness * 6, 
         height + frameThickness * 2, 
         frameDepth
       );
@@ -61,6 +61,7 @@ function handleImageUpload(event) {
       // שמירת הקבוצה כ-imageMesh לשמירה על תאימות עם שאר הקוד
       imageMesh = imageGroup;
       imageMesh.position.z = -4;
+      imageMesh.position.y = 0.5; // הזזת התמונה למעלה בציר ה-Y
       
       // שמירת התמונה עצמה כדי שאפקטים יוכלו לגשת אליה ישירות
       imageMesh.userData.imagePlane = imagePlane;

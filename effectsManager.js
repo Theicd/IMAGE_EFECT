@@ -174,8 +174,13 @@ function applyLegacyEffect(effect, targetMesh) {
   
   // בדיקה אם זו קבוצה עם מסגרת
   if (targetMesh === imageMesh && targetMesh.userData && targetMesh.userData.imagePlane) {
-    // מיקום הקבוצה המלאה
-    targetMesh.position.set(0, 0, -4);
+    // שמירה על המיקום הנוכחי - לא מאפסים למיקום ברירת המחדל
+    // יש לשמור על ערכי Y כדי שהתמונה תישאר גבוה
+    const currentY = targetMesh.position.y; // שמירת הגובה הנוכחי
+    const currentZ = targetMesh.position.z; // שמירת העומק הנוכחי
+    
+    // איפוס רק של המיקום האופקי (X)
+    targetMesh.position.set(0, currentY, currentZ);
     targetMesh.scale.set(1, 1, 1);
     
     // קבלת התמונה עצמה
