@@ -136,6 +136,9 @@ canvas {
 
 .upload-container {
   margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .effects-container {
@@ -398,6 +401,7 @@ select option {
   cursor: pointer;
   min-width: 160px;
   text-align: center;
+  margin-top: 5px;
 }
 
 #orientation-select:focus {
@@ -486,37 +490,60 @@ select option {
 
 /* התאמות למסך טלפון נייד */
 @media (max-width: 768px) {
-  select, #category-select, #effect-select {
-    min-width: 120px;
+  select, #category-select, #effect-select, #orientation-select {
+    min-width: 100%;
     padding: 12px 15px;
-    margin: 5px;
+    margin: 5px 0;
     font-size: 15px;
     font-weight: bold;
     border-bottom: 2px solid var(--neon-blue) !important;
   }
   
-  .controls-panel {
-    flex-wrap: wrap;
-    justify-content: center;
+  #orientation-select {
+    margin-top: 10px;
   }
-}
-
-@media (max-width: 768px) {
+  
   .controls-panel {
     flex-direction: column;
     width: 90%;
     gap: 10px;
+    padding: 15px;
+  }
+  
+  .effects-container {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .upload-container {
+    margin: 0 0 10px 0;
+    width: 100%;
+  }
+  
+  .upload-button {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 15px;
+  }
+  
+  #create-video {
+    width: 100%;
+    margin-top: 10px;
+    padding: 15px;
   }
   
   .header {
     flex-direction: column;
     gap: 15px;
     text-align: center;
+    padding: 15px 10px;
   }
   
   .menu {
     width: 100%;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
   }
   
   #video-container {
@@ -525,53 +552,34 @@ select option {
   
   .video-controls {
     flex-direction: column;
+    gap: 10px;
+  }
+  
+  #speed-control-container {
+    width: 100%;
+    margin: 10px 0;
   }
 }
 
-/* התאמות למסך טלפון נייד */
-@media screen and (max-width: 768px) {
-  #video-container {
-    padding: 10px;
-    max-width: 100%;
-    max-height: 100vh;
-    top: 50%;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    border-radius: 0;
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+/* התאמות נוספות למסך טלפון נייד */
+@media screen and (max-width: 480px) {
+  .logo {
+    font-size: 22px;
   }
   
-  .video-controls {
-    position: fixed;
-    bottom: 10px;
-    left: 0;
-    right: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-    background: rgba(10, 10, 10, 0.8);
-    z-index: 30;
-  }
-  
-  #output-video {
-    max-height: 70vh;
-    margin-bottom: 60px;
-    object-fit: contain;
-  }
-  
-  .video-info {
-    margin: 10px 0;
+  .menu a {
     font-size: 14px;
-  }
-  
-  #download-video, #back-to-editor {
     padding: 8px 12px;
-    font-size: 14px;
+    background: rgba(10, 10, 20, 0.5);
+    border-radius: 5px;
+  }
+  
+  #applied-effects {
+    top: auto;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90%;
+    width: auto;
   }
 }

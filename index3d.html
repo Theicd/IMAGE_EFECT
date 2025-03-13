@@ -382,6 +382,12 @@
           <span>העלה תמונה</span>
         </label>
         <input type="file" id="image-upload" accept="image/*" style="display:none">
+        
+        <!-- העברת בחירת כיוון התמונה מתחת לכפתור העלה תמונה -->
+        <select id="orientation-select">
+          <option value="landscape" selected>רוחבי (לנדסקייפ)</option>
+          <option value="portrait">אורכי (פורטרט)</option>
+        </select>
       </div>
       
       <div class="effects-container">
@@ -395,11 +401,6 @@
         
         <select id="effect-select" disabled>
           <option value="" disabled selected>בחר אפקט</option>
-        </select>
-        
-        <select id="orientation-select">
-          <option value="landscape" selected>רוחבי (לנדסקייפ)</option>
-          <option value="portrait">אורכי (פורטרט)</option>
         </select>
         
         <!-- מד מהירות לאפקטי הופעת תמונה -->
