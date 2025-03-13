@@ -136,6 +136,8 @@ canvas {
 
 .upload-container {
   margin-left: 10px;
+  position: relative;
+  padding-bottom: 60px;
 }
 
 .effects-container {
@@ -413,74 +415,19 @@ select option {
   font-family: 'Heebo', Arial, sans-serif !important;
 }
 
-/* סגנון עבור בחירת מהירות האפקט */
-#speed-control-container {
-  margin-top: 15px;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 10px;
-  padding: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.speed-label {
-  display: block;
-  color: white;
-  margin-bottom: 8px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.speed-slider-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: white;
-  font-size: 0.9em;
-}
-
-#effect-speed {
-  flex-grow: 1;
-  margin: 0 10px;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 5px;
-  background: linear-gradient(to right, #4a00e0, #8e2de2);
-  border-radius: 5px;
-  outline: none;
-}
-
-#effect-speed::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: white;
-  cursor: pointer;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-}
-
-#effect-speed::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: white;
-  cursor: pointer;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-}
-
-/* התאמה למסכים קטנים */
+/* התאמות למסך טלפון נייד - סידור כפתור בחירת כיוון תמונה */
 @media (max-width: 768px) {
-  #speed-control-container {
-    padding: 8px;
+  #orientation-select {
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    margin-top: 10px;
+    z-index: 10;
   }
   
-  .speed-slider-container {
-    font-size: 0.8em;
-  }
-  
-  #effect-speed {
-    margin: 0 5px;
+  .upload-container {
+    position: relative;
+    padding-bottom: 60px;
   }
 }
 
@@ -576,17 +523,73 @@ select option {
   }
 }
 
-/* התאמות למסך טלפון נייד - סידור כפתור בחירת כיוון תמונה */
+/* סגנון עבור בחירת מהירות האפקט */
+#speed-control-container {
+  margin-top: 15px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.speed-label {
+  display: block;
+  color: white;
+  margin-bottom: 8px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.speed-slider-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  font-size: 0.9em;
+}
+
+#effect-speed {
+  flex-grow: 1;
+  margin: 0 10px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  background: linear-gradient(to right, #4a00e0, #8e2de2);
+  border-radius: 5px;
+  outline: none;
+}
+
+#effect-speed::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+#effect-speed::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+/* התאמה למסכים קטנים */
 @media (max-width: 768px) {
-  .upload-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
+  #speed-control-container {
+    padding: 8px;
   }
   
-  #orientation-select {
-    order: 2;
-    margin-top: 10px;
+  .speed-slider-container {
+    font-size: 0.8em;
+  }
+  
+  #effect-speed {
+    margin: 0 5px;
   }
 }
