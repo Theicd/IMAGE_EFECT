@@ -1,5 +1,19 @@
 // imageAppearanceEffects.js - אפקטים הקשורים להופעת התמונה
 
+// משתנה גלובלי לשמירת מהירות האפקט
+let effectSpeedMultiplier = 1.0;
+
+// פונקציה לעדכון מהירות האפקט
+function updateEffectSpeed(speedValue) {
+  effectSpeedMultiplier = parseFloat(speedValue);
+}
+
+// פונקציה להמרת זמן אנימציה בהתאם למהירות שנבחרה
+function getAdjustedDuration(baseDuration) {
+  // הערך הנמוך יותר של המכפיל אומר מהירות גבוהה יותר (זמן קצר יותר)
+  return Math.round(baseDuration / effectSpeedMultiplier);
+}
+
 // רשימת האפקטים בקטגוריה זו
 const imageAppearanceEffects = {
   // אפקט פופ - התמונה מופיעה בפופ
@@ -17,14 +31,14 @@ const imageAppearanceEffects = {
       new TWEEN.Tween(mesh.scale)
         .to({ x: mesh.userData.originalScale.x * 1.05, 
               y: mesh.userData.originalScale.y * 1.05, 
-              z: mesh.userData.originalScale.z * 1.05 }, 300)
+              z: mesh.userData.originalScale.z * 1.05 }, getAdjustedDuration(300))
         .easing(TWEEN.Easing.Back.Out)
         .onComplete(() => {
           // חזרה לגודל רגיל
           new TWEEN.Tween(mesh.scale)
             .to({ x: mesh.userData.originalScale.x, 
                   y: mesh.userData.originalScale.y, 
-                  z: mesh.userData.originalScale.z }, 150)
+                  z: mesh.userData.originalScale.z }, getAdjustedDuration(150))
             .easing(TWEEN.Easing.Quadratic.Out)
             .start();
         })
@@ -57,7 +71,7 @@ const imageAppearanceEffects = {
         mesh.material.opacity = 0;
         
         new TWEEN.Tween(mesh.material)
-          .to({ opacity: 1 }, 1000)
+          .to({ opacity: 1 }, getAdjustedDuration(1000))
           .easing(TWEEN.Easing.Cubic.InOut)
           .start();
       }
@@ -93,7 +107,7 @@ const imageAppearanceEffects = {
       
       // הגדרת אנימציה
       new TWEEN.Tween(mesh.position)
-        .to({ x: mesh.userData.originalPosition.x }, 800)
+        .to({ x: mesh.userData.originalPosition.x }, getAdjustedDuration(800))
         .easing(TWEEN.Easing.Cubic.Out)
         .start();
     },
@@ -115,12 +129,13 @@ const imageAppearanceEffects = {
       // שמירת הסקייל המקורי
       mesh.userData.originalScale = mesh.scale.clone();
       
+      // אפקט דהייה עם שקיפות
       if (mesh.material) {
         mesh.material.transparent = true;
         mesh.material.opacity = 0;
         
         new TWEEN.Tween(mesh.material)
-          .to({ opacity: 1 }, 1500)
+          .to({ opacity: 1 }, getAdjustedDuration(1200))
           .easing(TWEEN.Easing.Quadratic.InOut)
           .start();
       }
@@ -140,65 +155,32 @@ const imageAppearanceEffects = {
     name: "סיבוב",
     value: "spin",
     apply: function(mesh, scene, composer) {
-      // שמירת הסיבוב המקורי של התמונה
-      if (!mesh.userData.originalRotation) {
-        mesh.userData.originalRotation = mesh.rotation.clone();
-      }
+      // שמירת המצב המקורי
+      mesh.userData.originalScale = mesh.scale.clone();
+      mesh.userData.originalRotation = {
+        x: mesh.rotation.x,
+        y: mesh.rotation.y,
+        z: mesh.rotation.z
+      };
       
-      // שמירת הגודל המקורי של התמונה
-      if (!mesh.userData.originalScale) {
-        mesh.userData.originalScale = mesh.scale.clone();
-      }
+      // אפקט התחלתי - סיבוב והקטנה
+      mesh.scale.set(0.01, 0.01, 0.01);
+      mesh.rotation.y = -Math.PI * 2; // סיבוב מלא בכיוון השעון
       
-      // סיבוב התמונה ל-180 מעלות ב-Z כדי שתסתובב חזרה למצב הרגיל
-      mesh.rotation.z = Math.PI;
-      
-      // הגדרת שקיפות התחלתית ל-0 אם יש material
-      // בדיקת מבנה התמונה (רגיל או עם מסגרת)
-      let targetMaterial = null;
-      
-      // אם זו תמונה עם מסגרת, ייתכן שהמטריאל נמצא ב-imagePlane
-      if (mesh.userData && mesh.userData.imagePlane && mesh.userData.imagePlane.material) {
-        targetMaterial = mesh.userData.imagePlane.material;
-      } 
-      // אחרת, אם יש לו מטריאל ישירות
-      else if (mesh.material) {
-        targetMaterial = mesh.material;
-      }
-      
-      // וידוא שיש לנו מטריאל תקין לאנימציה
-      if (targetMaterial) {
-        // שמירת השקיפות המקורית
-        if (!mesh.userData.originalOpacity) {
-          mesh.userData.originalOpacity = targetMaterial.opacity;
-        }
+      // אנימציית סיבוב וגדילה
+      new TWEEN.Tween(mesh.rotation)
+        .to({ y: 0 }, getAdjustedDuration(1000))
+        .easing(TWEEN.Easing.Back.Out)
+        .start();
         
-        // הגדרת השקיפות ההתחלתית
-        targetMaterial.opacity = 0;
-        targetMaterial.transparent = true;
-        
-        // אנימציית סיבוב
-        const rotationTween = new TWEEN.Tween(mesh.rotation)
-          .to({ z: mesh.userData.originalRotation.z }, 1200)
-          .easing(TWEEN.Easing.Cubic.Out);
-          
-        // אנימציית שקיפות - רק אם יש מטריאל תקין
-        const opacityTween = new TWEEN.Tween(targetMaterial)
-          .to({ opacity: mesh.userData.originalOpacity || 1 }, 1000)
-          .easing(TWEEN.Easing.Cubic.In);
-        
-        rotationTween.start();
-        opacityTween.start();
-      } else {
-        console.warn("לא נמצא material לאנימציית שקיפות באפקט spin");
-        
-        // הפעל לפחות את אנימציית הסיבוב
-        const rotationTween = new TWEEN.Tween(mesh.rotation)
-          .to({ z: mesh.userData.originalRotation.z }, 1200)
-          .easing(TWEEN.Easing.Cubic.Out);
-          
-        rotationTween.start();
-      }
+      new TWEEN.Tween(mesh.scale)
+        .to({ 
+          x: mesh.userData.originalScale.x, 
+          y: mesh.userData.originalScale.y, 
+          z: mesh.userData.originalScale.z 
+        }, getAdjustedDuration(1000))
+        .easing(TWEEN.Easing.Back.Out)
+        .start();
     },
     
     // הוספת פונקציית עדכון שתשמור על גודל התמונה בווידאו
@@ -254,3 +236,4 @@ function resetAppearanceEffects(mesh) {
 // ייצוא הפונקציות והאפקטים
 window.imageAppearanceEffects = imageAppearanceEffects;
 window.applyImageAppearanceEffect = applyImageAppearanceEffect;
+window.updateEffectSpeed = updateEffectSpeed;

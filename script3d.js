@@ -47,6 +47,14 @@ document.getElementById('category-select').addEventListener('change', (e) => {
   // הפעלת תפריט האפקטים
   const effectSelect = document.getElementById('effect-select');
   effectSelect.disabled = false;
+  
+  // הצגת או הסתרת מד המהירות בהתאם לקטגוריה שנבחרה
+  const speedControlContainer = document.getElementById('speed-control-container');
+  if (currentCategory === 'appearance') {
+    speedControlContainer.style.display = 'block';
+  } else {
+    speedControlContainer.style.display = 'none';
+  }
 });
 
 // מאזין לבחירת אפקט
@@ -68,10 +76,63 @@ document.getElementById('effect-select').addEventListener('change', (e) => {
   }
 });
 
+// מאזין לשינוי מהירות האפקט
+document.getElementById('effect-speed').addEventListener('input', (e) => {
+  const speedValue = e.target.value;
+  // עדכון מהירות האפקט אם הפונקציה קיימת
+  if (window.updateEffectSpeed) {
+    window.updateEffectSpeed(speedValue);
+  }
+  
+  // החלת האפקט מחדש אם כבר נבחר אפקט
+  if (currentCategory === 'appearance' && currentEffect) {
+    // איפוס האפקט הנוכחי
+    if (window.resetAppearanceEffects && imageMesh) {
+      window.resetAppearanceEffects(imageMesh);
+    }
+    
+    // החלת האפקט מחדש עם המהירות החדשה
+    if (window.applyImageAppearanceEffect && imageMesh) {
+      window.applyImageAppearanceEffect(currentEffect, imageMesh, scene, composer);
+    }
+  }
+});
+
 document.getElementById('create-video').addEventListener('click', createVideo);
 document.getElementById('back-to-editor').addEventListener('click', () => {
   document.getElementById('video-container').style.display = 'none';
 });
+
+// פונקציה לבדיקת כיוון התמונה ויצירת וידאו בהתאם
+function createVideo() {
+  console.log("יצירת וידאו");
+  
+  // בדיקת כיוון התמונה הנבחר
+  const orientation = document.getElementById('orientation-select').value;
+  
+  if (orientation === 'portrait') {
+    // יצירת וידאו במצב פורטרט (אורכי)
+    if (window.createPortraitVideo) {
+      window.createPortraitVideo();
+    } else {
+      console.error("פונקציית יצירת וידאו במצב פורטרט לא נמצאה");
+      alert("שגיאה: לא ניתן ליצור וידאו במצב פורטרט. נסה שוב מאוחר יותר.");
+    }
+  } else {
+    // יצירת וידאו במצב לנדסקייפ (אופקי)
+    if (window.createVideoFull) {
+      window.createVideoFull();
+    } else {
+      // גיבוי במקרה שהפונקציה המלאה לא זמינה
+      document.getElementById('video-container').style.display = 'flex';
+      
+      // יצירת וידאו לדוגמה
+      const videoElement = document.getElementById('output-video');
+      videoElement.src = 'sample-video.mp4';
+      videoElement.play();
+    }
+  }
+}
 
 // פונקציה לעדכון סגנון הכפתורים במצב טלפון
 function updateMobileButtonStyles() {
@@ -285,21 +346,4 @@ async function loadEffectScripts() {
       resolve();
     });
   });
-}
-
-// יצירת וידאו
-function createVideo() {
-  console.log("יצירת וידאו");
-  
-  if (window.createVideoFull) {
-    window.createVideoFull();
-  } else {
-    // גיבוי במקרה שהפונקציה המלאה לא זמינה
-    document.getElementById('video-container').style.display = 'flex';
-    
-    // יצירת וידאו לדוגמה
-    const videoElement = document.getElementById('output-video');
-    videoElement.src = 'sample-video.mp4';
-    videoElement.play();
-  }
 }

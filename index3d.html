@@ -396,6 +396,21 @@
         <select id="effect-select" disabled>
           <option value="" disabled selected>בחר אפקט</option>
         </select>
+        
+        <select id="orientation-select">
+          <option value="landscape" selected>רוחבי (לנדסקייפ)</option>
+          <option value="portrait">אורכי (פורטרט)</option>
+        </select>
+        
+        <!-- מד מהירות לאפקטי הופעת תמונה -->
+        <div id="speed-control-container" style="display:none;">
+          <label for="effect-speed" class="speed-label">מהירות האפקט:</label>
+          <div class="speed-slider-container">
+            <span>איטי</span>
+            <input type="range" id="effect-speed" min="0.5" max="2.0" step="0.1" value="1.0">
+            <span>מהיר</span>
+          </div>
+        </div>
       </div>
       
       <button id="create-video" disabled>צור וידאו</button>
@@ -451,14 +466,23 @@
         <div class="instruction-step">
           <div class="step-number">3</div>
           <div class="step-content">
-            <h3 class="step-title">יצירת וידאו</h3>
-            <p class="step-description">לאחר שבחרתם את האפקטים הרצויים, לחצו על "צור וידאו" וחכו מספר שניות. המערכת תיצור עבורכם קטע וידאו קצר עם האפקטים שבחרתם.</p>
-            <div class="button-example create-video-example">צור וידאו</div>
+            <h3 class="step-title">בחירת כיוון התמונה</h3>
+            <p class="step-description">בחרו את כיוון התמונה הרצוי - רוחבי (לנדסקייפ) או אורכי (פורטרט). מצב אורכי מתאים במיוחד לתצוגה במכשירים ניידים.</p>
+            <div class="button-example select-example">בחר כיוון תמונה</div>
           </div>
         </div>
         
         <div class="instruction-step">
           <div class="step-number">4</div>
+          <div class="step-content">
+            <h3 class="step-title">יצירת וידאו</h3>
+            <p class="step-description">לאחר שבחרתם את האפקטים הרצויים וכיוון התמונה, לחצו על "צור וידאו" וחכו מספר שניות. המערכת תיצור עבורכם קטע וידאו קצר עם האפקטים שבחרתם.</p>
+            <div class="button-example create-video-example">צור וידאו</div>
+          </div>
+        </div>
+        
+        <div class="instruction-step">
+          <div class="step-number">5</div>
           <div class="step-content">
             <h3 class="step-title">הורדה ושימוש</h3>
             <p class="step-description">לאחר יצירת הוידאו, תוכלו להוריד אותו למחשב או להעתיק אותו ישירות לשימוש בתוכנות אחרות כמו Canva.</p>
@@ -580,6 +604,7 @@
   <script src="./script3d.js"></script>
   <!-- קבצי תמיכה נוספים -->
   <script src="./createVideo.js"></script>
+  <script src="./createPortraitVideo.js"></script>
   <script src="cityView.js"></script>
   <script>
     // פונקציות פתיחה וסגירה של מודאל הוראות שימוש
