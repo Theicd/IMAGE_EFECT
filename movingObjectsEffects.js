@@ -76,7 +76,7 @@ function loadEffectFiles() {
   const effectLoadPromises = effectFiles.map(file => {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = `./movingEffects/${file}`;
+      script.src = `./${file}`;
       script.onload = () => {
         console.log(`נטען קובץ אפקט: ${file}`);
         resolve();
