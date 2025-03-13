@@ -393,10 +393,10 @@ select option {
   transition: all 0.3s ease !important;
   padding: 12px 15px;
   margin: 5px;
-  font-size: 16px;
+  font-size: 24px;
   font-weight: bold;
   cursor: pointer;
-  min-width: 160px;
+  min-width: 80px;
   text-align: center;
 }
 
@@ -411,6 +411,8 @@ select option {
   color: white !important;
   padding: 12px !important;
   font-family: 'Heebo', Arial, sans-serif !important;
+  font-size: 24px;
+  text-align: center;
 }
 
 /* סגנון עבור בחירת מהירות האפקט */
@@ -486,16 +488,31 @@ select option {
 
 /* התאמות למסך טלפון נייד */
 @media (max-width: 768px) {
-  select, #category-select, #effect-select {
-    min-width: 120px;
-    padding: 12px 15px;
-    margin: 5px;
+  select, #category-select, #effect-select, #orientation-select {
+    min-width: auto;
+    width: auto;
+    padding: 8px 25px 8px 8px;
+    margin: 3px;
     font-size: 15px;
     font-weight: bold;
     border-bottom: 2px solid var(--neon-blue) !important;
   }
   
+  .upload-button, #create-video {
+    min-width: auto;
+    width: auto;
+    padding: 8px 12px;
+    margin: 3px;
+    white-space: nowrap;
+  }
+  
   .controls-panel {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+  }
+  
+  .effects-container {
     flex-wrap: wrap;
     justify-content: center;
   }
