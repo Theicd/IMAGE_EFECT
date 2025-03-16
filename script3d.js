@@ -252,8 +252,12 @@ async function init() {
     scene = new THREE.Scene();
     
     // יצירת מצלמה
-    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 0, 3);
+    const isMobile = window.innerWidth <= 768;
+    const fov = isMobile ? 90 : 70; // הגדלת שדה הראייה במובייל מ-70 ל-90 מעלות
+    const zDistance = isMobile ? 4.5 : 3; // הרחקת המצלמה במובייל מ-3 ל-4.5 יחידות
+    
+    camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, zDistance);
     
     // יצירת רנדרר
     const canvas = document.getElementById('scene');
@@ -270,8 +274,8 @@ async function init() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.enableZoom = true;
-    controls.minDistance = 2;
-    controls.maxDistance = 10;
+    controls.minDistance = isMobile ? 3 : 2; // התאמת מרחק מינימלי במובייל
+    controls.maxDistance = isMobile ? 15 : 10; // התאמת מרחק מקסימלי במובייל
   }
   
   // יצירת אפקט Bloom
