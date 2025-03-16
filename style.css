@@ -557,69 +557,62 @@ select option {
 /* התאמות למסך טלפון נייד */
 @media screen and (max-width: 768px) {
   #video-container {
-    padding: 15px;
-    max-width: 98%;
-    width: 98%;
-    margin: 0 auto;
-    max-height: 90vh;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 8px;
-    position: fixed;
+    padding: 10px;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
     display: flex;
     flex-direction: column;
+    align-items: center;
     background-color: #0a0a14;
-    box-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
-    border: 1px solid rgba(0, 243, 255, 0.3);
-    overflow: hidden; /* מונע חריגה מהמסגרת */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: none;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
   }
   
   .video-info {
-    margin: 5px 0 10px 0;
+    margin: 5px 0;
     font-size: 14px;
     text-align: center;
     color: white;
   }
   
   #output-video {
-    max-height: 50vh; /* הקטנת גובה הווידאו מ-60vh ל-50vh */
-    margin: 0 auto 5px auto;
-    width: 90%; /* הקטנת רוחב הווידאו מ-100% ל-90% */
+    max-height: 50vh;
+    width: 90%;
     border-radius: 4px;
     object-fit: contain;
+    margin-bottom: 15px;
   }
   
   .video-controls {
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin-top: 0;
-    margin-bottom: 10px; /* הוספת מרווח בתחתית */
-    width: 100%;
+    padding: 0;
+    margin: 0;
+    width: 90%;
     position: relative;
   }
   
   #download-video, #back-to-editor {
-    padding: 8px 15px; /* הקטנת הפדינג מ-10px 20px ל-8px 15px */
+    padding: 12px 20px;
     border-radius: 25px;
     background: linear-gradient(45deg, #00c3ff, #7d2ae8);
     color: white;
     border: none;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
+    font-size: 16px;
     text-align: center;
-    min-width: 90px; /* הקטנת הרוחב המינימלי מ-100px ל-90px */
-  }
-  
-  #download-video:hover, #back-to-editor:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 195, 255, 0.4);
-  }
-  
-  #download-video:active, #back-to-editor:active {
-    transform: translateY(0);
+    width: 45%;
+    max-width: 150px;
   }
 }
