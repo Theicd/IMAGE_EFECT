@@ -342,6 +342,7 @@ function createVideoFull() {
         // הגדרת סגנון לווידאו עצמו
         videoPlayer.style.width = '100%';
         videoPlayer.style.maxWidth = '100%';
+        videoPlayer.style.maxHeight = '80vh'; // הגדלת הגובה המקסימלי
         videoPlayer.style.borderRadius = '8px';
         videoPlayer.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.4)';
         
