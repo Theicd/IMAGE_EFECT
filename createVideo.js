@@ -342,7 +342,6 @@ function createVideoFull() {
         // הגדרת סגנון לווידאו עצמו
         videoPlayer.style.width = '100%';
         videoPlayer.style.maxWidth = '100%';
-        videoPlayer.style.maxHeight = '80vh'; // הגדלת הגובה המקסימלי
         videoPlayer.style.borderRadius = '8px';
         videoPlayer.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.4)';
         
@@ -379,7 +378,7 @@ function createVideoFull() {
           videoControls.style.padding = '15px 10px';
           videoControls.style.background = 'transparent';
           videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '20px'; // הקטנת המרווח מעל הכפתורים ל-20px
+          videoControls.style.marginTop = '1px'; // הגדלת המרווח מעל הכפתורים ל-95px (70px + 25px נוספים)
           
           // התאמת הצגת מידע האפקטים במצב מובייל
           const appliedEffects = document.getElementById('applied-effects');
@@ -403,6 +402,52 @@ function createVideoFull() {
             appliedEffects.style.right = '0'; // איפוס מיקום ימני
             appliedEffects.style.maxWidth = '80%'; // הגבלת הרוחב המקסימלי
           }
+          
+          // התאמת גודל הווידאו
+          videoPlayer.style.maxHeight = '50vh';
+          videoPlayer.style.marginBottom = '20px';
+          videoPlayer.style.objectFit = 'contain';
+          videoPlayer.style.margin = '0 auto'; // מרכוז אופקי
+          videoPlayer.style.display = 'block'; // חשוב לתצוגה נכונה
+          videoPlayer.style.position = 'relative'; // הגדרת מיקום יחסי
+          videoPlayer.style.right = 'auto'; // ביטול צמידה לצד ימין
+          videoPlayer.style.left = 'auto'; // ביטול צמידה לצד שמאל
+          videoPlayer.style.width = '100%'; // רוחב מלא
+          
+          // שיפור המרכוז של הכפתורים
+          const downloadButton = document.getElementById('download-video');
+          const backButton = document.getElementById('back-to-editor');
+          
+          // מערך הכפתורים לעיצוב
+          const buttonsToStyle = [downloadButton, backButton];
+          
+          buttonsToStyle.forEach(button => {
+            if (button) {
+              // עיצוב בסיסי
+              button.style.backgroundColor = 'rgba(10, 10, 20, 0.8)';
+              button.style.color = 'white';
+              button.style.border = 'none';
+              button.style.borderRadius = '8px';
+              button.style.padding = '12px 20px';
+              button.style.margin = '0 10px';
+              button.style.fontFamily = "'Heebo', Arial, sans-serif";
+              button.style.fontSize = '16px';
+              button.style.fontWeight = 'bold';
+              button.style.cursor = 'pointer';
+              button.style.transition = 'all 0.3s ease';
+              button.style.textAlign = 'center';
+              button.style.width = '85%'; // הקטנת הרוחב מ-100% ל-85% לכפתורים
+              button.style.maxWidth = '320px'; // הגבלת רוחב מקסימלי
+              button.style.boxSizing = 'border-box';
+              button.style.display = 'block'; // הצגה כבלוק
+              button.style.margin = '10px auto'; // מרכוז עם margin אוטומטי
+              
+              // אפקטים מתקדמים - תאורת ניאון וגלו
+              button.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.3)';
+              button.style.borderBottom = '2px solid var(--neon-blue, #00f3ff)';
+              button.style.backdropFilter = 'blur(5px)';
+            }
+          });
           
           // עיצוב ספציפי לכפתור הורדה
           if (downloadButton) {

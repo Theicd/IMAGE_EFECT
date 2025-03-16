@@ -59,7 +59,7 @@ function createPortraitVideo() {
   // הרחקת המצלמה כדי לכלול את כל התמונה בגודל סביר
   imageCamera.position.z = 2.5; // הרחקת המצלמה יותר (מ-1.5 ל-2.5) כדי לראות את כל התמונה
   
-  // ודא שהעותק של התמונה מוצב ומשוקלל נכון
+  // וידוא שהעותק של התמונה מוצב ומשוקלל נכון
   // התאמת גודל התמונה לווידאו במצב פורטרט
   imageCopy.position.set(0, 0, 0);
   
@@ -322,34 +322,29 @@ function createPortraitVideo() {
         videoContainer.style.zIndex = '1000';
         
         // הגדרת סגנון לווידאו עצמו - התאמה למצב פורטרט
-        videoPlayer.style.width = '100%'; // שינוי ל-100% כדי למלא את המיכל
+        videoPlayer.style.width = 'auto'; // שינוי מ-100% ל-auto כדי לשמור על יחס הגובה-רוחב
         videoPlayer.style.maxWidth = '100%';
-        videoPlayer.style.maxHeight = '80vh'; // הגדלת הגובה המקסימלי מ-70vh ל-80vh
+        videoPlayer.style.maxHeight = '70vh'; // הגבלת גובה מקסימלי
         videoPlayer.style.borderRadius = '8px';
         videoPlayer.style.boxShadow = '0 0 15px rgba(0, 0, 0, 0.4)';
         
         // בדיקה אם המכשיר הוא טלפון נייד (רוחב מסך קטן מ-768 פיקסלים)
         if (window.innerWidth <= 768) {
           // הגדרות נוספות ספציפיות למובייל
-          videoContainer.style.maxWidth = '100%'; 
-          videoContainer.style.maxHeight = '95vh'; 
+          videoContainer.style.maxWidth = '95%';
+          videoContainer.style.maxHeight = '90vh';
           videoContainer.style.display = 'flex';
           videoContainer.style.flexDirection = 'column';
           videoContainer.style.justifyContent = 'center';
           videoContainer.style.alignItems = 'center';
-          videoContainer.style.padding = '10px'; 
-          videoContainer.style.paddingBottom = '40px'; 
-          videoContainer.style.margin = '0 auto'; 
-          videoContainer.style.right = 'auto'; 
-          videoContainer.style.left = '50%'; 
-          videoContainer.style.transform = 'translate(-50%, -50%)'; 
-          videoContainer.style.height = 'auto'; 
-          videoContainer.style.minHeight = '85vh'; 
-          
-          // התאמות ספציפיות לווידאו במובייל
-          videoPlayer.style.width = '100%';
-          videoPlayer.style.maxHeight = '70vh';
-          videoPlayer.style.objectFit = 'contain';  
+          videoContainer.style.padding = '20px';
+          videoContainer.style.paddingBottom = '60px'; // הגדלת הפדינג התחתון
+          videoContainer.style.margin = '0 auto'; // מרכוז אופקי
+          videoContainer.style.right = 'auto'; // ביטול צמידה לצד
+          videoContainer.style.left = '50%'; // מיקום במרכז המסך
+          videoContainer.style.transform = 'translate(-50%, -50%)'; // שמירה על מרכוז אנכי ואופקי
+          videoContainer.style.height = 'auto'; // גובה אוטומטי
+          videoContainer.style.minHeight = '80vh'; // גובה מינימלי
           
           // עיצוב ספציפי לכפתורים
           const videoControls = document.querySelector('.video-controls');
@@ -366,7 +361,7 @@ function createPortraitVideo() {
           videoControls.style.padding = '15px 10px';
           videoControls.style.background = 'transparent';
           videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '5px'; 
+          videoControls.style.marginTop = '120px'; // הגדלת המרווח מעל הכפתורים
           
           // התאמת הצגת מידע האפקטים במצב מובייל
           const appliedEffects = document.getElementById('applied-effects');
@@ -379,14 +374,14 @@ function createPortraitVideo() {
             appliedEffects.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
             appliedEffects.style.background = 'rgba(20, 20, 20, 0.8)';
             appliedEffects.style.position = 'relative';
-            appliedEffects.style.top = '-20px'; 
-            appliedEffects.style.marginBottom = '0px'; 
-            appliedEffects.style.textAlign = 'center'; 
-            appliedEffects.style.display = 'block'; 
-            appliedEffects.style.margin = '0 auto 15px auto'; 
-            appliedEffects.style.borderRadius = '8px'; 
-            appliedEffects.style.border = '1px solid rgba(0, 243, 255, 0.3)'; 
-            appliedEffects.style.left = '0'; 
+            appliedEffects.style.top = '-20px'; // הזזת שורת האפקטים 20px למעלה
+            appliedEffects.style.marginBottom = '0px'; // ביטול המרווח התחתון
+            appliedEffects.style.textAlign = 'center'; // מרכוז הטקסט
+            appliedEffects.style.display = 'block'; // הצגה כבלוק
+            appliedEffects.style.margin = '0 auto 15px auto'; // מרכוז באמצעות margin אוטומטי
+            appliedEffects.style.borderRadius = '8px'; // עיגול פינות
+            appliedEffects.style.border = '1px solid rgba(0, 243, 255, 0.3)'; // הוספת מסגרת דקה בצבע ניאון
+            appliedEffects.style.left = '0'; // איפוס מיקום שמאלי
           }
         }
         
