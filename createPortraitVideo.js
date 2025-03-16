@@ -361,7 +361,7 @@ function createPortraitVideo() {
           videoControls.style.padding = '15px 10px';
           videoControls.style.background = 'transparent';
           videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '120px'; // הגדלת המרווח מעל הכפתורים
+          videoControls.style.marginTop = '20px'; // הקטנת המרווח מעל הכפתורים מ-120px ל-20px
           
           // התאמת הצגת מידע האפקטים במצב מובייל
           const appliedEffects = document.getElementById('applied-effects');
