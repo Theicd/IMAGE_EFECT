@@ -132,7 +132,8 @@ function createPortraitVideo() {
   }, 100);
   
   const startTime = Date.now();
-  const duration = 5000; // 5 שניות
+  const durationSelect = document.getElementById('duration-select');
+  const duration = (durationSelect ? parseInt(durationSelect.value) : 5) * 1000; // המרת ערך הבחירה לאלפיות שנייה, ברירת מחדל 5 שניות
   
   // פונקציה להחלת האפקטים על העותק של התמונה
   function applyEffectsToImageCopy() {

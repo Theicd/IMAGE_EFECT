@@ -488,7 +488,7 @@ select option {
 
 /* התאמות למסך טלפון נייד */
 @media (max-width: 768px) {
-  select, #category-select, #effect-select, #orientation-select {
+  select, #category-select, #effect-select, #orientation-select, #duration-select {
     min-width: auto;
     width: auto;
     padding: 8px 25px 8px 8px;

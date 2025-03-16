@@ -130,7 +130,8 @@ function createVideoFull() {
   }, 100);
   
   const startTime = Date.now();
-  const duration = 5000; // 5 שניות
+  const durationSelect = document.getElementById('duration-select');
+  const duration = (durationSelect ? parseInt(durationSelect.value) : 5) * 1000; // המרת ערך הבחירה לאלפיות שנייה, ברירת מחדל 5 שניות
   
   // פונקציה להחלת האפקטים על העותק של התמונה
   function applyEffectsToImageCopy() {
@@ -403,18 +404,7 @@ function createVideoFull() {
             appliedEffects.style.maxWidth = '80%'; // הגבלת הרוחב המקסימלי
           }
           
-          // התאמת גודל הווידאו
-          videoPlayer.style.maxHeight = '50vh';
-          videoPlayer.style.marginBottom = '20px';
-          videoPlayer.style.objectFit = 'contain';
-          videoPlayer.style.margin = '0 auto'; // מרכוז אופקי
-          videoPlayer.style.display = 'block'; // חשוב לתצוגה נכונה
-          videoPlayer.style.position = 'relative'; // הגדרת מיקום יחסי
-          videoPlayer.style.right = 'auto'; // ביטול צמידה לצד ימין
-          videoPlayer.style.left = 'auto'; // ביטול צמידה לצד שמאל
-          videoPlayer.style.width = '100%'; // רוחב מלא
-          
-          // שיפור המרכוז של הכפתורים
+          // עיצוב ספציפי לכפתורים
           const downloadButton = document.getElementById('download-video');
           const backButton = document.getElementById('back-to-editor');
           
@@ -435,12 +425,12 @@ function createVideoFull() {
               button.style.fontWeight = 'bold';
               button.style.cursor = 'pointer';
               button.style.transition = 'all 0.3s ease';
-              button.style.textAlign = 'center';
+              button.style.textAlign = 'center'; // מרכוז הטקסט
               button.style.width = '85%'; // הקטנת הרוחב מ-100% ל-85% לכפתורים
               button.style.maxWidth = '320px'; // הגבלת רוחב מקסימלי
               button.style.boxSizing = 'border-box';
               button.style.display = 'block'; // הצגה כבלוק
-              button.style.margin = '10px auto'; // מרכוז עם margin אוטומטי
+              button.style.margin = '10px auto'; // מרכוז באמצעות margin אוטומטי
               
               // אפקטים מתקדמים - תאורת ניאון וגלו
               button.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.3)';
