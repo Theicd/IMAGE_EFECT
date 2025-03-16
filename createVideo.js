@@ -414,7 +414,7 @@ function createVideoFull() {
           buttonsToStyle.forEach(button => {
             if (button) {
               // עיצוב בסיסי
-              button.style.backgroundColor = 'rgba(10, 10, 20, 0.8)';
+              button.style.backgroundColor = 'rgba(10, 10, 20, 0.6)'; // שקיפות מוגברת מ-0.8 ל-0.6
               button.style.color = 'white';
               button.style.border = 'none';
               button.style.borderRadius = '8px';
@@ -433,16 +433,16 @@ function createVideoFull() {
               button.style.margin = '10px auto'; // מרכוז באמצעות margin אוטומטי
               
               // אפקטים מתקדמים - תאורת ניאון וגלו
-              button.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.3)';
-              button.style.borderBottom = '2px solid var(--neon-blue, #00f3ff)';
-              button.style.backdropFilter = 'blur(5px)';
+              button.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)'; // שקיפות מוגברת מ-0.3 ל-0.2
+              button.style.borderBottom = '2px solid rgba(0, 243, 255, 0.3)'; // שימוש ב-rgba במקום var
+              button.style.backdropFilter = 'blur(8px)'; // הגדלת אפקט הבלור לשיפור הקריאות
             }
           });
           
           // עיצוב ספציפי לכפתור הורדה
           if (downloadButton) {
-            downloadButton.style.background = 'linear-gradient(45deg, #00f3ff, #9d00ff)';
-            downloadButton.style.boxShadow = '0 0 15px rgba(0, 243, 255, 0.5)';
+            downloadButton.style.background = 'linear-gradient(45deg, rgba(0, 243, 255, 0.7), rgba(157, 0, 255, 0.7))'; // הוספת שקיפות לגרדיאנט
+            downloadButton.style.boxShadow = '0 0 15px rgba(0, 243, 255, 0.3)'; // שקיפות מוגברת מ-0.5 ל-0.3
           }
           
           // התאמת גודל הווידאו

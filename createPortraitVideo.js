@@ -348,41 +348,44 @@ function createPortraitVideo() {
           videoContainer.style.minHeight = '80vh'; // גובה מינימלי
           
           // עיצוב ספציפי לכפתורים
-          const videoControls = document.querySelector('.video-controls');
+          const downloadButton = document.getElementById('download-video');
+          const backButton = document.getElementById('back-to-editor');
           
-          // מיקום במרכז המסך - אחיד לכל המכשירים
-          videoControls.style.position = 'relative';
-          videoControls.style.bottom = 'auto';
-          videoControls.style.left = '0';
-          videoControls.style.right = '0';
-          videoControls.style.width = '100%';
-          videoControls.style.display = 'flex';
-          videoControls.style.justifyContent = 'center';
-          videoControls.style.alignItems = 'center';
-          videoControls.style.padding = '15px 10px';
-          videoControls.style.background = 'transparent';
-          videoControls.style.zIndex = '1001';
-          videoControls.style.marginTop = '1px'; // עדכון הערך ל-1px בהתאם לקובץ createVideo.js
+          // מערך הכפתורים לעיצוב
+          const buttonsToStyle = [downloadButton, backButton];
           
-          // התאמת הצגת מידע האפקטים במצב מובייל
-          const appliedEffects = document.getElementById('applied-effects');
-          if (appliedEffects) {
-            appliedEffects.style.marginBottom = '15px';
-            appliedEffects.style.marginTop = '0';
-            appliedEffects.style.width = '90%';
-            appliedEffects.style.padding = '8px 10px';
-            appliedEffects.style.fontSize = '15px';
-            appliedEffects.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)';
-            appliedEffects.style.background = 'rgba(20, 20, 20, 0.8)';
-            appliedEffects.style.position = 'relative';
-            appliedEffects.style.top = '-20px'; // הזזת שורת האפקטים 20px למעלה
-            appliedEffects.style.marginBottom = '0px'; // ביטול המרווח התחתון
-            appliedEffects.style.textAlign = 'center'; // מרכוז הטקסט
-            appliedEffects.style.display = 'block'; // הצגה כבלוק
-            appliedEffects.style.margin = '0 auto 15px auto'; // מרכוז באמצעות margin אוטומטי
-            appliedEffects.style.borderRadius = '8px'; // עיגול פינות
-            appliedEffects.style.border = '1px solid rgba(0, 243, 255, 0.3)'; // הוספת מסגרת דקה בצבע ניאון
-            appliedEffects.style.left = '0'; // איפוס מיקום שמאלי
+          buttonsToStyle.forEach(button => {
+            if (button) {
+              // עיצוב בסיסי
+              button.style.backgroundColor = 'rgba(10, 10, 20, 0.6)'; // שקיפות מוגברת
+              button.style.color = 'white';
+              button.style.border = 'none';
+              button.style.borderRadius = '8px';
+              button.style.padding = '12px 20px';
+              button.style.margin = '0 10px';
+              button.style.fontFamily = "'Heebo', Arial, sans-serif";
+              button.style.fontSize = '16px';
+              button.style.fontWeight = 'bold';
+              button.style.cursor = 'pointer';
+              button.style.transition = 'all 0.3s ease';
+              button.style.textAlign = 'center'; // מרכוז הטקסט
+              button.style.width = '85%'; // הקטנת הרוחב לכפתורים
+              button.style.maxWidth = '320px'; // הגבלת רוחב מקסימלי
+              button.style.boxSizing = 'border-box';
+              button.style.display = 'block'; // הצגה כבלוק
+              button.style.margin = '10px auto'; // מרכוז באמצעות margin אוטומטי
+              
+              // אפקטים מתקדמים - תאורת ניאון וגלו
+              button.style.boxShadow = '0 0 10px rgba(0, 243, 255, 0.2)'; // שקיפות מוגברת
+              button.style.borderBottom = '2px solid rgba(0, 243, 255, 0.3)'; // שימוש ב-rgba במקום var
+              button.style.backdropFilter = 'blur(8px)'; // הגדלת אפקט הבלור לשיפור הקריאות
+            }
+          });
+          
+          // עיצוב ספציפי לכפתור הורדה
+          if (downloadButton) {
+            downloadButton.style.background = 'linear-gradient(45deg, rgba(0, 243, 255, 0.7), rgba(157, 0, 255, 0.7))'; // הוספת שקיפות לגרדיאנט
+            downloadButton.style.boxShadow = '0 0 15px rgba(0, 243, 255, 0.3)'; // שקיפות מוגברת
           }
         }
         
