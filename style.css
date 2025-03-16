@@ -481,7 +481,7 @@ select option {
 }
 
 /* התאמה למסכים קטנים */
-@media (max-width: 768px) {
+@media (max-width: 720px) {
   #speed-control-container {
     padding: 8px;
   }
