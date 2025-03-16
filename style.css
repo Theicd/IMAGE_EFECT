@@ -549,46 +549,56 @@ select option {
 @media screen and (max-width: 768px) {
   #video-container {
     padding: 10px;
-    max-width: 100%;
-    max-height: 100vh;
+    max-width: 90%;  
+    max-height: 90vh; 
     top: 50%;
-    left: 0;
-    right: 0;
+    left: 5%; 
+    right: 5%; 
     transform: translateY(-50%);
-    border-radius: 0;
+    border-radius: 8px; 
     position: fixed;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: rgba(10, 10, 10, 0.9); 
+    border: 1px solid rgba(0, 243, 255, 0.2); 
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); 
   }
   
   .video-controls {
-    position: fixed;
-    bottom: 10px;
-    left: 0;
-    right: 0;
-    width: 100%;
+    position: relative; 
+    bottom: auto; 
+    left: auto;
+    right: auto;
+    width: 90%; 
     display: flex;
     justify-content: center;
     padding: 10px;
+    margin-top: 15px; 
     background: rgba(10, 10, 10, 0.8);
     z-index: 30;
+    border-radius: 8px; 
   }
   
   #output-video {
-    max-height: 70vh;
-    margin-bottom: 60px;
+    max-height: 60vh; 
+    margin-bottom: 10px; 
     object-fit: contain;
+    width: 90%; 
+    border-radius: 6px; 
   }
   
   .video-info {
     margin: 10px 0;
     font-size: 14px;
+    width: 90%; 
   }
   
   #download-video, #back-to-editor {
     padding: 8px 12px;
     font-size: 14px;
+    flex: 1; 
+    text-align: center;
   }
 }
