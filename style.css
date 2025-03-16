@@ -213,26 +213,22 @@ canvas {
 }
 
 #video-container {
-  border-radius: 15px;
-  position: fixed;
+  padding: 10px;
+  max-width: 90%;  
+  max-height: 90vh; 
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 90%;
-  max-height: 90vh;
-  text-align: center;
-  padding: 20px;
-  background: rgba(0, 243, 255, 0.15);
-  box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 243, 255, 0.4);
-  z-index: 50;
+  left: 5%; 
+  right: 5%; 
+  transform: translateY(-50%);
+  border-radius: 8px; 
+  position: fixed;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  width: auto;
-  margin: 0;
+  align-items: center;
+  background-color: rgba(0, 25, 40, 0.7); 
+  border: 1px solid rgba(0, 243, 255, 0.15); 
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); 
 }
 
 #output-video {
@@ -247,65 +243,33 @@ canvas {
 }
 
 .video-controls {
-  margin-top: 20px;
+  position: relative; 
+  bottom: auto; 
+  left: auto;
+  right: auto;
+  width: 90%; 
   display: flex;
-  gap: 15px;
-}
-
-#video-progress {
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  max-width: 500px;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
-  z-index: 100;
-}
-
-#video-progress::before {
-  content: '';
-  position: absolute;
-  top: -20px;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 14px;
-  color: white;
-  text-shadow: 0 0 8px var(--neon-blue);
-  content: 'מעבד וידאו...';
+  justify-content: center;
+  padding: 10px;
+  margin-top: 15px; 
+  background: rgba(0, 180, 220, 0.3); 
+  z-index: 30;
+  border-radius: 8px; 
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(0, 243, 255, 0.2); 
 }
 
 .video-info {
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  color: white;
-  text-align: center;
-  max-width: 90%;
-  padding: 10px 15px;
-  background: rgba(30, 30, 30, 0.7);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 10;
-  position: relative;
+  margin: 10px 0;
+  font-size: 14px;
+  width: 90%; 
 }
 
 #download-video, #back-to-editor {
-  padding: 10px 15px;
-  border-radius: 8px;
-  border: none;
-  background: rgba(30, 30, 30, 0.8);
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: 'Heebo', Arial, sans-serif;
-}
-
-#download-video:hover, #back-to-editor:hover {
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+  padding: 8px 12px;
+  font-size: 14px;
+  flex: 1; 
+  text-align: center;
 }
 
 #applied-effects {
@@ -561,8 +525,8 @@ select option {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 243, 255, 0.15); 
-    border: 1px solid rgba(0, 243, 255, 0.4); 
+    background-color: rgba(0, 25, 40, 0.7); 
+    border: 1px solid rgba(0, 243, 255, 0.15); 
     box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); 
   }
   
@@ -576,11 +540,11 @@ select option {
     justify-content: center;
     padding: 10px;
     margin-top: 15px; 
-    background: rgba(0, 243, 255, 0.2); 
+    background: rgba(0, 180, 220, 0.3); 
     z-index: 30;
     border-radius: 8px; 
-    backdrop-filter: blur(8px); 
-    border: 1px solid rgba(0, 243, 255, 0.3); 
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0, 243, 255, 0.2); 
   }
   
   #output-video {
