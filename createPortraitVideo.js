@@ -59,7 +59,7 @@ function createPortraitVideo() {
   // הרחקת המצלמה כדי לכלול את כל התמונה בגודל סביר
   imageCamera.position.z = 2.5; // הרחקת המצלמה יותר (מ-1.5 ל-2.5) כדי לראות את כל התמונה
   
-  // וידוא שהעותק של התמונה מוצב ומשוקלל נכון
+  // ודא שהעותק של התמונה מוצב ומשוקלל נכון
   // התאמת גודל התמונה לווידאו במצב פורטרט
   imageCopy.position.set(0, 0, 0);
   
@@ -388,20 +388,18 @@ function createPortraitVideo() {
         // הוספת כפתור הורדה
         const downloadButton = document.getElementById('download-video');
         if (downloadButton) {
-          downloadButton.addEventListener('click', async () => {
+          downloadButton.onclick = () => {
             try {
-              // יצירת קישור להורדה
+              // יצירת קישור להורדה - שיטה פשוטה יותר שעובדת טוב יותר בטלפונים
               const a = document.createElement('a');
               a.href = videoUrl;
               a.download = 'portrait-video-effect.webm';
-              document.body.appendChild(a);
               a.click();
-              document.body.removeChild(a);
             } catch (error) {
               console.error('שגיאה בהורדת הווידאו:', error);
               alert('אירעה שגיאה בהורדת הווידאו. נסה שוב מאוחר יותר.');
             }
-          });
+          };
         }
       } catch (error) {
         console.error('שגיאה ביצירת הווידאו:', error);
