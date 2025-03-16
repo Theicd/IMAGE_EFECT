@@ -222,10 +222,10 @@ canvas {
   max-height: 90vh;
   text-align: center;
   padding: 20px;
-  background: rgba(15, 15, 25, 0.92);
-  box-shadow: 0 0 25px rgba(0, 200, 255, 0.35);
+  background: rgba(0, 243, 255, 0.15);
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(100, 200, 255, 0.15);
+  border: 1px solid rgba(0, 243, 255, 0.4);
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -561,9 +561,9 @@ select option {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(10, 10, 10, 0.7); 
-    border: 1px solid rgba(0, 243, 255, 0.15); 
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4); 
+    background-color: rgba(0, 243, 255, 0.15); 
+    border: 1px solid rgba(0, 243, 255, 0.4); 
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); 
   }
   
   .video-controls {
@@ -576,10 +576,11 @@ select option {
     justify-content: center;
     padding: 10px;
     margin-top: 15px; 
-    background: rgba(10, 10, 10, 0.6);
+    background: rgba(0, 243, 255, 0.2); 
     z-index: 30;
     border-radius: 8px; 
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px); 
+    border: 1px solid rgba(0, 243, 255, 0.3); 
   }
   
   #output-video {
