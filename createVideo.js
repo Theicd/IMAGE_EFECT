@@ -481,6 +481,8 @@ function createVideoFull() {
           videoPlayer.style.maxWidth = '720px';
           videoPlayer.style.borderRadius = '6px';
           videoPlayer.style.boxShadow = '0 0 20px rgba(0, 243, 255, 0.3)';
+          videoPlayer.style.margin = '0 auto';
+
           
           // הגדרת הסגנון של השורה המציגה את האפקטים במצב דסקטופ
           const appliedEffects = document.getElementById('applied-effects');

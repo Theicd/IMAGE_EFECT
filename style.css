@@ -214,21 +214,22 @@ canvas {
 
 #video-container {
   padding: 10px;
-  max-width: 90%;  
-  max-height: 90vh; 
+  max-width: 90%;
+  max-height: 90vh;
+  width: 90%; /* הוספת הגדרת רוחב מפורשת */
   top: 50%;
-  left: 5%; 
-  right: 5%; 
-  transform: translateY(-50%);
-  border-radius: 8px; 
+  left: 50%; /* שינוי ממיקום שמאלי למרכז אופקי */
+  right: auto; /* ביטול ההגדרה הקודמת */
+  transform: translate(-50%, -50%); /* תרגום גם בציר X */
+  border-radius: 8px;
   position: fixed;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 25, 40, 0.7); 
-  border: 1px solid rgba(0, 243, 255, 0.15); 
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); 
+  background-color: rgba(0, 25, 40, 0.7);
+  border: 1px solid rgba(0, 243, 255, 0.15);
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
 }
 
 #output-video {
