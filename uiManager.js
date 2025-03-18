@@ -34,7 +34,8 @@ async function loadEffectScripts() {
       });
     }
     
-    // טעינת כל קבצי האפקטים
+    // טעינת כל קבצי האפקטים בצורה מסורתית
+    console.log("טוען קבצי אפקטים בצורה מסורתית");
     Promise.all([
       loadScript('./imageAppearanceEffects.js'),
       loadScript('./cameraMovementEffects.js'),
@@ -42,13 +43,53 @@ async function loadEffectScripts() {
       loadScript('./lightAndColorEffects.js')
     ]).then(() => {
       console.log("כל קבצי האפקטים נטענו בהצלחה");
+      
+      // התקנת מאזיני אירועים לסליידר המהירות
+      setupSpeedSliderListeners();
+      
       resolve();
+    }).catch(error => {
+      console.error("שגיאה בטעינת קבצי האפקטים:", error);
+      resolve(); // להמשיך בכל מקרה
     });
   });
+}
+
+// פונקציה להתקנת מאזיני אירועים לסליידר המהירות
+function setupSpeedSliderListeners() {
+  const speedSlider = document.getElementById('effect-speed');
+  if (speedSlider) {
+    console.log("מתקין מאזין אירועים לסליידר המהירות");
+    
+    speedSlider.addEventListener('input', updateEffectSpeed);
+    speedSlider.addEventListener('change', updateEffectSpeed);
+  }
+}
+
+// פונקציה לעדכון מהירות האפקט המוחל כעת
+function updateEffectSpeed() {
+  const speedValue = parseFloat(this.value) || 1.0;
+  console.log(`עדכון מהירות האפקט: ${speedValue}`);
+  
+  // אם יש אפקט נוכחי מוחל, נחיל אותו מחדש
+  const currentCategory = document.querySelector('.effect-category.active');
+  const currentEffect = document.querySelector('.effect-item.active');
+  
+  if (currentCategory && currentEffect) {
+    const categoryName = currentCategory.dataset.category;
+    const effectName = currentEffect.dataset.effect;
+    
+    console.log(`מחיל מחדש אפקט: ${categoryName} - ${effectName}`);
+    
+    // הפעלת האפקט הנבחר עם המהירות החדשה
+    applyEffect(categoryName, effectName);
+  }
 }
 
 // ייצוא הפונקציות
 window.uiManager = {
   animate,
-  loadEffectScripts
+  loadEffectScripts,
+  setupSpeedSliderListeners,
+  updateEffectSpeed
 };

@@ -284,95 +284,54 @@ const imageAppearanceEffects = {
   spin: {
     name: "סיבוב",
     value: "spin",
-    apply: function(object3D, scene, composer) {
-        const processObject = (obj) => {
-            if (obj.isMesh) {
-                // עצירת כל האנימציות הקיימות
-                TWEEN.removeAll();
-                
-                // שמירת מצב מקורי עם הגנה מפני דריסה
-                obj.userData.originalScale = obj.userData.originalScale || obj.scale.clone();
-                obj.userData.originalRotation = obj.userData.originalRotation || obj.rotation.clone();
-                obj.userData.originalPosition = obj.userData.originalPosition || obj.position.clone();
-
-                // אתחול אפקט
-                obj.scale.set(0.001, 0.001, 0.001);
-                obj.rotation.set(-Math.PI, Math.PI / 2, 0);
-                obj.position.y = -5;
-                obj.visible = true; // וידוא נראות
-
-                // משכי זמן בסיסיים
-                const baseDurations = {
-                    rotation: 1200,
-                    scale: 1000,
-                    position: 900
-                };
-
-                // יצירת אנימציות חדשות עם משך מעודכן
-                const createTweens = () => {
-                    obj.userData.tweens = {
-                        rotation: new TWEEN.Tween(obj.rotation)
-                            .to({ x: 0, y: 0, z: 0 }, getAdjustedDuration(baseDurations.rotation))
-                            .easing(TWEEN.Easing.Exponential.Out)
-                            .start(),
-                            
-                        scale: new TWEEN.Tween(obj.scale)
-                            .to(obj.userData.originalScale, getAdjustedDuration(baseDurations.scale))
-                            .easing(TWEEN.Easing.Back.Out)
-                            .start(),
-                            
-                        position: new TWEEN.Tween(obj.position)
-                            .to(obj.userData.originalPosition, getAdjustedDuration(baseDurations.position))
-                            .easing(TWEEN.Easing.Cubic.InOut)
-                            .start()
-                    };
-                    
-                    // שמירת משכי הבסיס
-                    obj.userData.baseDurations = baseDurations;
-                };
-
-                createTweens();
-            } else if (obj.isGroup) {
-                obj.children.forEach(child => processObject(child));
-            }
+    apply: function(mesh, scene, composer) {
+        // שמירת מצב מקורי משופרת
+        mesh.userData.original = {
+            scale: mesh.scale.clone(),
+            position: mesh.position.clone(),
+            rotation: new THREE.Euler().copy(mesh.rotation)
         };
 
-        processObject(object3D);
+        // אתחול אפקט תלת-מימדי
+        mesh.scale.set(0.01, 0.01, 0.01);
+        mesh.position.y -= 2; // הזזה התחלתית כלפי מטה
+        mesh.rotation.set(
+            THREE.MathUtils.degToRad(-30), // הטיה ציר X
+            -Math.PI * 2, // סיבוב מלא Y
+            THREE.MathUtils.degToRad(15) // הטיה ציר Z
+        );
+
+        // יצירת טווינים עם הבדלי easing
+        const duration = getAdjustedDuration(1200);
+        
+        new TWEEN.Tween(mesh.rotation)
+            .to({ 
+                x: mesh.userData.original.rotation.x,
+                y: mesh.userData.original.rotation.y,
+                z: mesh.userData.original.rotation.z
+            }, duration)
+            .easing(TWEEN.Easing.Elastic.Out) // אפקט "קפיצי"
+            .start();
+            
+        new TWEEN.Tween(mesh.scale)
+            .to(mesh.userData.original.scale, duration * 0.8) // משך קצר יותר לסקייל
+            .easing(TWEEN.Easing.Back.Out)
+            .start();
+            
+        new TWEEN.Tween(mesh.position)
+            .to(mesh.userData.original.position, duration)
+            .easing(TWEEN.Easing.Bounce.Out) // אפקט "קפיצה" למיקום
+            .start();
     },
     
-    update: function(object3D, delta) {
-        const processObject = (obj) => {
-            if (obj.isMesh && obj.userData.tweens) {
-                // עצירה ומחיקה של טווינים קיימים
-                Object.values(obj.userData.tweens).forEach(tween => tween.stop());
-                
-                // יצירת טווינים חדשים עם משך מעודכן
-                const baseDurations = obj.userData.baseDurations;
-                obj.userData.tweens.rotation = new TWEEN.Tween(obj.rotation)
-                    .to({ x: 0, y: 0, z: 0 }, getAdjustedDuration(baseDurations.rotation))
-                    .easing(TWEEN.Easing.Exponential.Out)
-                    .start();
-                
-                obj.userData.tweens.scale = new TWEEN.Tween(obj.scale)
-                    .to(obj.userData.originalScale, getAdjustedDuration(baseDurations.scale))
-                    .easing(TWEEN.Easing.Back.Out)
-                    .start();
-                
-                obj.userData.tweens.position = new TWEEN.Tween(obj.position)
-                    .to(obj.userData.originalPosition, getAdjustedDuration(baseDurations.position))
-                    .easing(TWEEN.Easing.Cubic.InOut)
-                    .start();
-            } else if (obj.isGroup) {
-                obj.children.forEach(child => processObject(child));
-            }
-        };
-
-        processObject(object3D);
-        TWEEN.update(); // עדכון כל האנימציות
+    update: function(mesh, delta) {
+        // הוסר הצורך באכיפת סקייל - התנועות מנוהלות ע"י טווינים
+    }
+} // עדכון כל האנימציות
         // אין צורך באיפוס ידני
     }
-} // כאן נגמר אובייקט ה-spin ללא פסיק או סוגר נוסף
-  }
+ // כאן נגמר אובייקט ה-spin ללא פסיק או סוגר נוסף
+  
 
 
 // פונקציה להחלת אפקט הופעת תמונה

@@ -216,11 +216,11 @@ canvas {
   padding: 10px;
   max-width: 90%;
   max-height: 90vh;
-  width: 90%; /* הוספת הגדרת רוחב מפורשת */
+  width: 90%; 
   top: 50%;
-  left: 50%; /* שינוי ממיקום שמאלי למרכז אופקי */
-  right: auto; /* ביטול ההגדרה הקודמת */
-  transform: translate(-50%, -50%); /* תרגום גם בציר X */
+  left: 50%; 
+  right: auto; 
+  transform: translate(-50%, -50%); 
   border-radius: 8px;
   position: fixed;
   display: flex;
@@ -568,4 +568,102 @@ select option {
     flex: 1; 
     text-align: center;
   }
+}
+
+/* סגנון מותאם לאפקט אור מהבהב (גליץ') */
+.light-flicker-preview #scene-container {
+  overflow: hidden !important;
+}
+
+/* וידוא שכל אלמנטי התצוגה לא חורגים מהמיכל */
+#scene-container, #scene-container canvas {
+  overflow: hidden !important;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* גדרות ספציפיות לקנבס התלת-מימדי */
+#scene {
+  overflow: hidden !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: 100%; 
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* תיקון למיכלים שעוטפים את הקנבס */
+.three-container,
+#scene-container {
+  position: relative;
+  width: 100%; 
+  height: 100%;
+  overflow: hidden !important;
+  box-sizing: border-box;
+}
+
+/* הגבלות למש תלת-מימדי */
+.three-mesh {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* מניעת גלישה מה-viewport */
+body {
+  overflow-x: hidden;
+}
+
+/* ווידוא שהאלמנטים כלואים בתוך המיכלים שלהם */
+.control-panel,
+.effect-container,
+.effect-preview {
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* הגבלות ספציפיות לתצוגה המקדימה של אפקט הבהוב אור */
+.light-flicker-preview canvas,
+.light-flicker-preview .three-mesh {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain;
+  overflow: hidden !important;
+}
+
+/* גבלת גודל ומניעת גלישה ב-canvas ובמיכלי 3D */
+canvas, .three-container {
+  overflow: hidden;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* התאמת תמונות ואובייקטים בתוך מיכלים */
+.effect-container img, 
+.preview-container img,
+.effect-preview img,
+#effect-preview canvas {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* הגבלת גודל של אובייקטים שנוצרים ע"י three.js */
+#scene-container,
+#effect-preview {
+  overflow: hidden;
+  position: relative;
+}
+
+/* וידוא שכל התוכן שמוצג בתצוגה מקדימה נשאר בגבולות */
+.preview-content,
+.effect-preview-content {
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
 }

@@ -154,7 +154,7 @@ function createVideoFull() {
       switch (category) {
         case 'appearance':
           if (window.applyImageAppearanceEffect) {
-            window.applyImageAppearanceEffect(effect, imageCopy, imageScene, imageComposer);
+            window.applyImageAppearanceEffect(effect, imageCopy, imageScene, imageComposer, true); // true = isVideoCreation
             // לא מאפסים את גודל התמונה עבור אפקטי הופעת תמונה
             // כדי שהתמונה תמלא את כל המסך
             // imageCopy.scale.copy(imageCopy.userData.originalScale);
@@ -162,7 +162,7 @@ function createVideoFull() {
           break;
         case 'camera':
           if (window.applyCameraMovementEffect) {
-            window.applyCameraMovementEffect(effect, imageCopy, imageScene, imageComposer);
+            window.applyCameraMovementEffect(effect, imageCopy, imageScene, imageComposer, true); // true = isVideoCreation
             // לא מאפסים את גודל התמונה עבור אפקטי תנועת מצלמה
             // כדי שהתמונה תמלא את כל המסך
             // imageCopy.scale.copy(imageCopy.userData.originalScale);
@@ -170,7 +170,7 @@ function createVideoFull() {
           break;
         case 'objects':
           if (window.applyMovingObjectsEffect) {
-            window.applyMovingObjectsEffect(effect, imageCopy, imageScene, imageComposer);
+            window.applyMovingObjectsEffect(effect, imageCopy, imageScene, imageComposer, true); // true = isVideoCreation
             // לא מאפסים את גודל התמונה עבור אפקטי אובייקטים זזים
             // כדי שהתמונה תמלא את כל המסך
             // imageCopy.scale.copy(imageCopy.userData.originalScale);
@@ -178,7 +178,7 @@ function createVideoFull() {
           break;
         case 'light':
           if (window.applyLightAndColorEffect) {
-            window.applyLightAndColorEffect(effect, imageCopy, imageScene, imageComposer);
+            window.applyLightAndColorEffect(effect, imageCopy, imageScene, imageComposer, true); // true = isVideoCreation
             // לא מאפסים את גודל התמונה עבור אפקטי אור וצבע
             // כדי שהתמונה תמלא את כל המסך
             // imageCopy.scale.copy(imageCopy.userData.originalScale);

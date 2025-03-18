@@ -103,7 +103,7 @@ function updateEffects() {
 }
 
 // החלת אפקט
-function applyEffect(category, effect) {
+function applyEffect(category, effect, isVideoCreation = false) {
   if (!imageMesh) return;
   
   // בדיקה אם זו קבוצה עם מסגרת (מהשינוי החדש) או מש בודד
@@ -131,42 +131,68 @@ function applyEffect(category, effect) {
   // בדיקה אם האפקט של קטגוריה זו קיים
   let applied = false;
   
+  // במצב תצוגה מקדימה (כשלא מייצרים וידאו) נשתמש ב-isPreview=true
+  const isPreview = !isVideoCreation;
+  
+  // שמירת הגדרות אפקט במידה ויהיה צורך להחיל אותו מחדש
+  if (!window.currentEffectSettings) {
+    window.currentEffectSettings = {};
+  }
+  
+  window.currentEffectSettings = {
+    category,
+    effect,
+    isVideoCreation,
+    isPreview
+  };
+  
+  // בדיקה אם נבחרה קטגוריית "הופעת תמונה" ועדכון נראות של סליידר המהירות
+  const speedControlContainer = document.getElementById('speed-control-container');
+  if (speedControlContainer) {
+    speedControlContainer.style.display = category === 'appearance' ? 'block' : 'none';
+  }
+  
   switch (category) {
     case 'appearance':
       if (window.applyImageAppearanceEffect) {
-        applied = window.applyImageAppearanceEffect(effect, targetMesh, scene, composer);
+        // נוסיף טיפול במהירות האפקט אם נמצא את הסליידר
+        const speedSlider = document.getElementById('effect-speed');
+        const speedValue = speedSlider ? parseFloat(speedSlider.value) || 1.0 : 1.0;
+        
+        console.log(`מהירות אפקט הופעת תמונה: ${speedValue}`);
+        applied = window.applyImageAppearanceEffect(effect, targetMesh, scene, composer, isPreview, speedValue);
       }
       break;
     case 'camera':
       if (window.applyCameraMovementEffect) {
-        applied = window.applyCameraMovementEffect(effect, targetMesh, scene, composer);
+        applied = window.applyCameraMovementEffect(effect, targetMesh, scene, composer, isPreview);
       }
       break;
     case 'objects':
       if (window.applyMovingObjectsEffect) {
-        applied = window.applyMovingObjectsEffect(effect, targetMesh, scene, composer);
+        applied = window.applyMovingObjectsEffect(effect, targetMesh, scene, composer, isPreview);
       }
       break;
     case 'light':
       if (window.applyLightAndColorEffect) {
-        applied = window.applyLightAndColorEffect(effect, targetMesh, scene, composer);
+        applied = window.applyLightAndColorEffect(effect, targetMesh, scene, composer, isPreview);
       }
       break;
     default:
       // אם אין קטגוריה, נפעיל את האפקטים הישנים
-      applyLegacyEffect(effect, targetMesh);
+      applyLegacyEffect(effect, targetMesh, isPreview);
       return;
   }
   
   if (!applied) {
     console.warn(`האפקט ${effect} בקטגוריה ${category} לא נמצא או נכשל`);
   } else {
-    console.log(`הוחל האפקט ${effect} מקטגוריה ${category}`);
+    console.log(`הוחל האפקט ${effect} מקטגוריה ${category} במצב ${isPreview ? 'תצוגה מקדימה' : 'וידאו'}`);
   }
 }
 
 // החלת אפקט מהגרסה הישנה, לצורך תאימות לאחור
-function applyLegacyEffect(effect, targetMesh) {
+function applyLegacyEffect(effect, targetMesh, isPreview = true) {
   if (!targetMesh) return;
   
   // איפוס אפקטים קודמים

@@ -108,6 +108,7 @@ const lightAndColorEffects = {
         const sepiaPass = new THREE.ShaderPass(sepiaShader);
         sepiaPass.enabled = true;
         
+        // הוספת ה-pass לקומפוזר
         if (composer) {
           composer.addPass(sepiaPass);
           
@@ -135,7 +136,7 @@ const lightAndColorEffects = {
         // שמירת ה-material המקורי
         targetMesh.userData.originalMaterial = targetMesh.material.clone();
         
-        // הוספת אפקט הגברת ניגודיות באמצעות shader
+        // הוספת אפקט ניגודיות באמצעות shader
         const contrastShader = {
           uniforms: {
             tDiffuse: { value: null },
@@ -155,10 +156,9 @@ const lightAndColorEffects = {
             uniform float brightness;
             varying vec2 vUv;
             void main() {
-              vec4 color = texture2D(tDiffuse, vUv);
-              color.rgb += brightness;
-              color.rgb = (color.rgb - 0.5) * contrast + 0.5;
-              gl_FragColor = color;
+              vec4 texel = texture2D(tDiffuse, vUv);
+              texel.rgb = (texel.rgb - 0.5) * contrast + 0.5 + brightness;
+              gl_FragColor = texel;
             }
           `
         };
@@ -167,6 +167,7 @@ const lightAndColorEffects = {
         const contrastPass = new THREE.ShaderPass(contrastShader);
         contrastPass.enabled = true;
         
+        // הוספת ה-pass לקומפוזר
         if (composer) {
           composer.addPass(contrastPass);
           
@@ -183,38 +184,34 @@ const lightAndColorEffects = {
     name: "זוהר",
     value: "glow",
     apply: function(mesh, scene, composer) {
-      // בדיקה אם זו קבוצה עם מסגרת - זה לא משנה כאן כי UnrealBloomPass מתייחס לכל הסצנה
-      // אבל בכל זאת נשמור על עקביות בקוד
+      // בדיקה אם זו קבוצה עם מסגרת
       let targetMesh = mesh;
       if (mesh.userData && mesh.userData.imagePlane) {
         targetMesh = mesh.userData.imagePlane;
         console.log("משתמש ב-imagePlane לאפקט זוהר");
       }
       
-      if (composer) {
-        // יצירת אפקט זוהר באמצעות UnrealBloomPass
+      if (targetMesh.material) {
+        // שמירת ה-material המקורי
+        targetMesh.userData.originalMaterial = targetMesh.material.clone();
+        
+        // הוספת אפקט זוהר באמצעות bloom pass
         const bloomPass = new THREE.UnrealBloomPass(
           new THREE.Vector2(window.innerWidth, window.innerHeight),
-          1.5,   // עוצמה
-          0.4,   // גודל
-          0.85   // סף
+          1.5,  // חוזק
+          0.4,  // רדיוס
+          0.85  // סף
         );
-        bloomPass.enabled = true;
-        composer.addPass(bloomPass);
         
-        // שמירת ה-pass לניקוי מאוחר יותר
-        mesh.userData.customPasses = mesh.userData.customPasses || [];
-        mesh.userData.customPasses.push(bloomPass);
+        // הוספת ה-pass לקומפוזר
+        if (composer) {
+          composer.addPass(bloomPass);
+          
+          // שמירת ה-pass לניקוי מאוחר יותר
+          mesh.userData.customPasses = mesh.userData.customPasses || [];
+          mesh.userData.customPasses.push(bloomPass);
+        }
       }
-      
-      // הוספת אור נקודתי להגברת האפקט
-      const pointLight = new THREE.PointLight(0xffffff, 0.8, 10);
-      pointLight.position.set(0, 0, targetMesh.position.z - 2);
-      scene.add(pointLight);
-      
-      // שמירת המשתנים לניקוי מאוחר יותר
-      mesh.userData.customObjects = mesh.userData.customObjects || [];
-      mesh.userData.customObjects.push(pointLight);
     }
   },
   
@@ -223,26 +220,22 @@ const lightAndColorEffects = {
     name: "שינוי גוון",
     value: "hueShift",
     apply: function(mesh, scene, composer) {
-      // בדיקה אם יש material
+      // בדיקה אם זו קבוצה עם מסגרת
       let targetMesh = mesh;
-      
-      // בדיקה אם זו קבוצה עם מסגרת (מהשינוי החדש)
       if (mesh.userData && mesh.userData.imagePlane) {
         targetMesh = mesh.userData.imagePlane;
         console.log("משתמש ב-imagePlane לאפקט שינוי גוון");
       }
       
-      // שמירה על המטריאל המקורי, גם אם לא נשתמש בו ישירות
       if (targetMesh.material) {
+        // שמירת ה-material המקורי
         targetMesh.userData.originalMaterial = targetMesh.material.clone();
-      }
-      
-      if (composer) {
+        
         // הוספת אפקט שינוי גוון באמצעות shader
         const hueShiftShader = {
           uniforms: {
             tDiffuse: { value: null },
-            hue: { value: 0 }
+            hue: { value: 0.0 }
           },
           vertexShader: `
             varying vec2 vUv;
@@ -256,33 +249,30 @@ const lightAndColorEffects = {
             uniform float hue;
             varying vec2 vUv;
             
-            // פונקציה להמרה מ-RGB ל-HSL
-            vec3 rgb2hsl(vec3 color) {
-              float maxVal = max(color.r, max(color.g, color.b));
-              float minVal = min(color.r, min(color.g, color.b));
-              float delta = maxVal - minVal;
+            vec3 rgb2hsl(vec3 rgb) {
+              float maxColor = max(max(rgb.r, rgb.g), rgb.b);
+              float minColor = min(min(rgb.r, rgb.g), rgb.b);
+              float delta = maxColor - minColor;
               
-              float h = 0.0;
-              float s = 0.0;
-              float l = (maxVal + minVal) / 2.0;
+              vec3 hsl = vec3(0.0, 0.0, (maxColor + minColor) / 2.0);
               
-              if (delta > 0.0) {
-                s = l < 0.5 ? delta / (maxVal + minVal) : delta / (2.0 - maxVal - minVal);
+              if (delta != 0.0) {
+                hsl.y = hsl.z < 0.5 ? delta / (maxColor + minColor) : delta / (2.0 - maxColor - minColor);
                 
-                if (color.r == maxVal) {
-                  h = (color.g - color.b) / delta + (color.g < color.b ? 6.0 : 0.0);
-                } else if (color.g == maxVal) {
-                  h = (color.b - color.r) / delta + 2.0;
+                if (rgb.r == maxColor) {
+                  hsl.x = (rgb.g - rgb.b) / delta + (rgb.g < rgb.b ? 6.0 : 0.0);
+                } else if (rgb.g == maxColor) {
+                  hsl.x = ((rgb.b - rgb.r) / delta) + 2.0;
                 } else {
-                  h = (color.r - color.g) / delta + 4.0;
+                  hsl.x = ((rgb.r - rgb.g) / delta) + 4.0;
                 }
-                h /= 6.0;
+                
+                hsl.x /= 6.0;
               }
               
-              return vec3(h, s, l);
+              return hsl;
             }
             
-            // פונקציה להמרה מ-HSL ל-RGB
             float hue2rgb(float p, float q, float t) {
               if (t < 0.0) t += 1.0;
               if (t > 1.0) t -= 1.0;
@@ -293,20 +283,16 @@ const lightAndColorEffects = {
             }
             
             vec3 hsl2rgb(vec3 hsl) {
-              float h = hsl.x;
-              float s = hsl.y;
-              float l = hsl.z;
+              vec3 rgb = vec3(0.0);
               
-              vec3 rgb;
-              
-              if (s == 0.0) {
-                rgb = vec3(l);
+              if (hsl.y == 0.0) {
+                rgb = vec3(hsl.z);
               } else {
-                float q = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
-                float p = 2.0 * l - q;
-                rgb.r = hue2rgb(p, q, h + 1.0/3.0);
-                rgb.g = hue2rgb(p, q, h);
-                rgb.b = hue2rgb(p, q, h - 1.0/3.0);
+                float q = hsl.z < 0.5 ? hsl.z * (1.0 + hsl.y) : hsl.z + hsl.y - hsl.z * hsl.y;
+                float p = 2.0 * hsl.z - q;
+                rgb.r = hue2rgb(p, q, hsl.x + 1.0/3.0);
+                rgb.g = hue2rgb(p, q, hsl.x);
+                rgb.b = hue2rgb(p, q, hsl.x - 1.0/3.0);
               }
               
               return rgb;
@@ -345,111 +331,142 @@ const lightAndColorEffects = {
   lightFlicker: {
     name: "הבהוב אור",
     value: "lightFlicker",
-    apply: function(mesh, scene, composer) {
-      // קביעת מיקום ה-Z של התמונה
-      let targetMesh = mesh;
-      if (mesh.userData && mesh.userData.imagePlane) {
-        targetMesh = mesh.userData.imagePlane;
+    
+    apply: function(mesh, scene, composer, isPreview = true) {
+      // שמירת המצב המקורי לפני החלת האפקט
+      const targetMesh = mesh;
+      
+      // שמירת המצב המקורי
+      const originalState = {
+        material: targetMesh.material.clone(),
+        position: targetMesh.position.clone(),
+        scale: targetMesh.scale.clone(),
+        rotation: targetMesh.rotation.clone(),
+        uvOffset: new THREE.Vector2(0, 0)
+      };
+      
+      // שמירת המצב המקורי לצורך איפוס
+      targetMesh.userData.originalState = originalState;
+      
+      // יצירת טקסטורה זהה של התמונה
+      let glitchMaterial = new THREE.MeshBasicMaterial({
+        map: targetMesh.material.map,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending
+      });
+      
+      // עריכת הצבע לוורוד-סגול
+      glitchMaterial.color.setRGB(1.5, 0.5, 1.5);
+      
+      // יצירת העתק של התמונה כשכבת גליץ'
+      const glitchGeometry = targetMesh.geometry.clone();
+      const glitchMesh = new THREE.Mesh(glitchGeometry, glitchMaterial);
+      
+      // קביעת המיקום והסיבוב בדיוק כמו התמונה המקורית
+      glitchMesh.position.copy(targetMesh.position);
+      // תיקון מיקום בציר ה-Z - להזיז מעט קדימה כך שלא יהיה רחוק מדי מהקיר
+      glitchMesh.position.z = -0.01; // מיקום קצת קדימה מהקיר אך עדיין קרוב מאוד
+      glitchMesh.rotation.copy(targetMesh.rotation);
+      // קביעת גודל זהה בדיוק לתמונה המקורית
+      glitchMesh.scale.copy(targetMesh.scale);
+      scene.add(glitchMesh);
+
+      // הגדרת מקדם הגדלה מותאם למצב תצוגה מקדימה או וידאו
+      // במצב תצוגה מקדימה, נשתמש בהגדלה מאוד קטנה של 1% בלבד
+      // במצב וידאו נשתמש בהגדלה של 10%
+      const scaleIncrease = isPreview ? 0.01 : 0.1;
+      
+      // שימוש בקלאס CSS ייעודי עבור מיכל התצוגה של האפקט
+      const container = document.getElementById('scene-container');
+      if (container && isPreview) {
+        container.classList.add('light-flicker-preview');
       }
       
-      // שמירת ה-material המקורי
-      if (targetMesh.material) {
-        targetMesh.userData.originalMaterial = targetMesh.material.clone();
-        
-        // יצירת material שמשתנה עם הזמן
-        const newMaterial = new THREE.MeshBasicMaterial({
-          map: targetMesh.material.map,
-          color: 0xffffff,
-          transparent: true,
-          opacity: 1.0
-        });
-        
-        // החלפת ה-material
-        targetMesh.material = newMaterial;
+      // קבלת מהירות האפקט מהסליידר (אם קיים)
+      let speedMultiplier = 1.0;
+      const speedSlider = document.getElementById('effect-speed');
+      if (speedSlider) {
+        speedMultiplier = parseFloat(speedSlider.value) || 1.0;
       }
       
-      console.log("מחיל אפקט הבהוב אור מסוג ניאון");
-      
-      // קביעת מיקום מדויק של האורות יחסית לתמונה
-      const imagePos = new THREE.Vector3();
-      targetMesh.getWorldPosition(imagePos);
-      
-      // יצירת אורות ניאון צבעוניים עם עוצמה גבוהה יותר
-      const redLight = new THREE.PointLight(0xff0077, 5.0, 4);
-      redLight.position.set(imagePos.x - 0.5, imagePos.y + 0.5, imagePos.z - 0.2);
-      scene.add(redLight);
-      
-      const blueLight = new THREE.PointLight(0x00ffff, 5.0, 4);
-      blueLight.position.set(imagePos.x + 0.5, imagePos.y - 0.5, imagePos.z - 0.2);
-      scene.add(blueLight);
-      
-      // שמירת המשתנים לניקוי מאוחר יותר
-      mesh.userData.customObjects = mesh.userData.customObjects || [];
-      mesh.userData.customObjects.push(redLight, blueLight);
-      
-      // מערך צבעים לשינויים מחזוריים
-      const colors = [
-        new THREE.Color(0xff0077),  // ורוד
-        new THREE.Color(0x00ffff),  // טורקיז
-        new THREE.Color(0xbb00ff),  // סגול
-        new THREE.Color(0x55ffbb),  // ירוק-טורקיז
-        new THREE.Color(0xffaa00)   // כתום
-      ];
-      
-      // שמירת הזמן ההתחלתי
-      const startTime = Date.now();
-      
-      // פונקציית עדכון עם אנימציה דרמטית יותר
-      mesh.userData.updateFunction = function(delta) {
-        const elapsedTime = (Date.now() - startTime) * 0.001; // זמן בשניות
-        
-        // הבהוב אורות עם עוצמה משתנה והבזקים מדי פעם
-        const pulseR = 2.5 + 2.0 * Math.sin(elapsedTime * 3.5);
-        const pulseB = 2.5 + 2.0 * Math.sin(elapsedTime * 4.2 + 1.1);
-        
-        // הוספת הבזקים אקראיים
-        if (Math.random() > 0.95) {
-          redLight.intensity = 10.0;
-          setTimeout(() => { redLight.intensity = pulseR; }, 50);
-        } else {
-          redLight.intensity = pulseR;
+      // פרמטרים לאנימציה - מותאמים למצב תצוגה מקדימה או וידאו
+      let time = 0;
+      const glitchParams = {
+        // במצב תצוגה מקדימה נקטין את עוצמת האפקט
+        intensity: isPreview ? 0.01 : 0.02,
+        speed: 0.8 * speedMultiplier,  // מהירות מושפעת מהסליידר
+        hueSpeed: 0.1 * speedMultiplier // מהירות שינוי צבע מושפעת מהסליידר
+      };
+
+      // הפעלת אנימציה
+      function animateGlitch() {
+        // העדכון מהסליידר (אם קיים וערכו השתנה)
+        if (speedSlider && speedMultiplier !== parseFloat(speedSlider.value)) {
+          speedMultiplier = parseFloat(speedSlider.value) || 1.0;
+          glitchParams.speed = 0.8 * speedMultiplier;
+          glitchParams.hueSpeed = 0.1 * speedMultiplier;
         }
         
-        if (Math.random() > 0.95) {
-          blueLight.intensity = 10.0;
-          setTimeout(() => { blueLight.intensity = pulseB; }, 50);
-        } else {
-          blueLight.intensity = pulseB;
+        // עדכון הזמן בהתאם למהירות
+        time += 0.006 * speedMultiplier;
+        const glitchOffset = Math.sin(time * 8) * glitchParams.intensity;
+        const hueRotate = (time * glitchParams.hueSpeed) % 1;
+
+        if (targetMesh.material.map) {
+          // הקטנת היסט המפה ב-UV לערכים קטנים יותר למניעת עיוותים גדולים
+          targetMesh.material.map.offset.x = Math.sin(time * 5) * 0.005;
+          targetMesh.material.map.offset.y = Math.cos(time * 4) * 0.005;
+        }
+
+        const hueColor = new THREE.Color().setHSL(hueRotate, 0.8, 0.5);
+        targetMesh.material.color.lerp(hueColor, 0.03);
+
+        // שמירה על מיקום ביחס לתמונה המקורית, רק עם רעידות קטנות
+        glitchMesh.position.x = targetMesh.position.x + (Math.random() - 0.5) * glitchParams.intensity * 0.02;
+        glitchMesh.position.y = targetMesh.position.y + (Math.random() - 0.5) * glitchParams.intensity * 0.02;
+        // שמירת מיקום ה-Z קבוע כדי שהתמונה תישאר צמודה לקיר
+        glitchMesh.position.z = -0.01; // שמירה על המיקום הקבוע ביחס לקיר
+
+        // וידוא שהגודל נשאר קבוע לאורך כל האנימציה
+        glitchMesh.scale.copy(targetMesh.scale);
+
+        if (glitchMaterial.map) {
+          glitchMaterial.map.offset.x = originalState.uvOffset.x + glitchOffset;
+          glitchMaterial.map.offset.y = originalState.uvOffset.y + glitchOffset;
+        }
+
+        // עדכון ידני של ה-scene
+        glitchMesh.updateMatrixWorld();
+        requestAnimationFrame(animateGlitch);
+      }
+
+      animateGlitch();
+
+      // פונקציית ניקוי
+      mesh.userData.cleanup = () => {
+        // הסרת קלאס CSS ייעודי
+        const container = document.getElementById('scene-container');
+        if (container) {
+          container.classList.remove('light-flicker-preview');
         }
         
-        // החלפת צבעים בתמונה עצמה
-        if (targetMesh.material && targetMesh.material.color) {
-          // מחזור בין הצבעים
-          const colorIndex = Math.floor(elapsedTime * 2) % colors.length;
-          const nextColorIndex = (colorIndex + 1) % colors.length;
-          
-          // אינטרפולציה בין שני צבעים
-          const mixRatio = (elapsedTime * 2) % 1;
-          const currentColor = new THREE.Color().copy(colors[colorIndex]);
-          currentColor.lerp(colors[nextColorIndex], mixRatio);
-          
-          // הוספת פקטור לבן למתן את הצבע
-          const white = new THREE.Color(0xffffff);
-          const finalColor = currentColor.clone().lerp(white, 0.5);
-          
-          // עדכון צבע התמונה
-          targetMesh.material.color.copy(finalColor);
-          
-          // שינוי האטימות לאפקט הבהוב
-          targetMesh.material.opacity = 0.7 + 0.3 * Math.sin(elapsedTime * 5.0);
-        }
+        // ניקוי TWEEN אם יש כאלה שקשורים לאנימציה
+        TWEEN.removeAll();
+        
+        targetMesh.material = originalState.material;
+        targetMesh.position.copy(originalState.position);
+        targetMesh.scale.copy(originalState.scale);
+        targetMesh.rotation.copy(originalState.rotation);
+        if (targetMesh.material.map) targetMesh.material.map.offset.copy(originalState.uvOffset);
+        scene.remove(glitchMesh);
       };
     }
-  },
+  }
 };
 
 // פונקציה להחלת אפקט אור וצבע
-function applyLightAndColorEffect(effect, mesh, scene, composer) {
+function applyLightAndColorEffect(effect, mesh, scene, composer, isPreview = false) {
   // בדיקה אם האפקט קיים
   if (lightAndColorEffects[effect] && lightAndColorEffects[effect].apply) {
     // איפוס אפקטים קודמים
@@ -457,94 +474,61 @@ function applyLightAndColorEffect(effect, mesh, scene, composer) {
     
     // בדיקה אם זו קבוצה עם מסגרת (מהשינוי החדש) או mesh בודד
     let targetMesh = mesh;
-    
-    // אם יש שדה userData.imagePlane, זה אומר שזוהי קבוצה עם מסגרת
     if (mesh.userData && mesh.userData.imagePlane) {
-      // לאפקטים של אור וצבע נשתמש ב-imagePlane כי הוא מכיל את ה-material של התמונה
       targetMesh = mesh.userData.imagePlane;
-      console.log("משתמש ב-imagePlane לאפקט אור וצבע:", effect);
+      console.log("משתמש ב-imagePlane לאפקט אור וצבע", effect);
     }
     
-    // הפעלת האפקט
-    lightAndColorEffects[effect].apply(targetMesh, scene, composer);
-    return true;
+    // להחיל את האפקט עם הפרמטר isPreview
+    lightAndColorEffects[effect].apply(targetMesh, scene, composer, isPreview);
   }
-  return false;
 }
 
 // פונקציה לאיפוס אפקטים
 function resetLightAndColorEffects(mesh, scene, composer) {
   // בדיקה אם זו קבוצה עם מסגרת
   let targetMesh = mesh;
-  let rootMesh = mesh; // שמירה על ההפניה למש המקורי/קבוצה
-  
   if (mesh.userData && mesh.userData.imagePlane) {
-    // אם יש לנו קבוצה, נבדוק גם את ה-imagePlane לאיפוס ה-material
     targetMesh = mesh.userData.imagePlane;
+    console.log("משתמש ב-imagePlane לאיפוס אפקטים");
   }
   
   // איפוס material
   if (targetMesh.userData && targetMesh.userData.originalMaterial) {
     console.log("איפוס ה-material המקורי");
     if (targetMesh.material) targetMesh.material.dispose();
-    targetMesh.material = targetMesh.userData.originalMaterial.clone();
+    targetMesh.material = targetMesh.userData.originalMaterial;
     delete targetMesh.userData.originalMaterial;
   }
   
+  // איפוס state (מהאפקטים החדשים)
+  if (targetMesh.userData && targetMesh.userData.originalState) {
+    console.log("איפוס ה-state המקורי");
+    if (targetMesh.userData.cleanup && typeof targetMesh.userData.cleanup === 'function') {
+      targetMesh.userData.cleanup();
+    }
+    delete targetMesh.userData.originalState;
+    delete targetMesh.userData.cleanup;
+  }
+  
   // הסרת passes מותאמים אישית
-  // בדיקה גם ב-rootMesh וגם ב-targetMesh
-  [rootMesh, targetMesh].forEach(msh => {
-    if (msh.userData && msh.userData.customPasses && composer) {
-      console.log(`מוחק ${msh.userData.customPasses.length} passes מותאמים אישית`);
-      msh.userData.customPasses.forEach(pass => {
-        pass.enabled = false;
-        
-        // הסרת ה-pass מה-composer (אם אפשרי)
-        for (let i = 0; i < composer.passes.length; i++) {
-          if (composer.passes[i] === pass) {
-            console.log(`הסרת pass מהמיקום ${i} בתוך composer`);
-            composer.passes.splice(i, 1);
-            i--; // התאמת האינדקס אחרי הסרה
-          }
-        }
-      });
-      delete msh.userData.customPasses;
-    }
-  });
+  if (mesh.userData && mesh.userData.customPasses && composer) {
+    console.log("הסרת passes מותאמים אישית");
+    mesh.userData.customPasses.forEach(pass => {
+      pass.enabled = false;
+      composer.removePass(pass);
+    });
+    delete mesh.userData.customPasses;
+  }
   
-  // הסרת אובייקטים מותאמים אישית (אורות וכו')
-  // בדיקה גם ב-rootMesh וגם ב-targetMesh
-  [rootMesh, targetMesh].forEach(msh => {
-    if (msh.userData && msh.userData.customObjects) {
-      console.log(`מוחק ${msh.userData.customObjects.length} אובייקטים מותאמים אישית`);
-      msh.userData.customObjects.forEach(obj => {
-        scene.remove(obj);
-        if (obj.dispose) obj.dispose();
-      });
-      delete msh.userData.customObjects;
-    }
-  });
-  
-  // איפוס פונקציות עדכון
-  // בדיקה גם ב-rootMesh וגם ב-targetMesh
-  [rootMesh, targetMesh].forEach(msh => {
-    if (msh.userData && msh.userData.updateFunction) {
-      delete msh.userData.updateFunction;
-    }
-  });
-  
-  // איפוס Composer - חשוב ביותר!
-  if (composer) {
-    // שמירת המעבר הראשון בלבד (RenderPass)
-    // ואיפוס כל שאר המעברים
-    while (composer.passes.length > 1) {
-      const passToRemove = composer.passes[composer.passes.length - 1];
-      composer.passes.pop();
-      if (passToRemove.dispose) passToRemove.dispose();
-    }
+  // איפוס פונקציית עדכון
+  if (mesh.userData && mesh.userData.updateFunction) {
+    console.log("איפוס פונקציית עדכון");
+    delete mesh.userData.updateFunction;
   }
 }
 
-// ייצוא הפונקציות והאפקטים
+// ייצוא הפונקציות והאפקטים למודל הגלובלי
 window.lightAndColorEffects = lightAndColorEffects;
 window.applyLightAndColorEffect = applyLightAndColorEffect;
+window.resetLightAndColorEffects = resetLightAndColorEffects;
